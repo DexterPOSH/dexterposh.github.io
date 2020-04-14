@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>Azure DevOps Tip - Find private APIs // Notes from a system engineer&#39;s desk</title>
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.65.3" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Deepak Singh Dhami" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="https://dexterposh.github.io/css/main.min.6771f69a4cfbbdc6c8cfbcff2d6dfc6fe413957aa52d065a017cae25be619595.css" />
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Azure DevOps Tip - Find private APIs"/>
+<meta name="twitter:description" content="Problem Often working with Azure DevOps, I hit a wall trying to automate some tasks but there are no REST APIs made public yet.
+It was one of those task of automating creation of Environments in multi-stage YAML based pipelines in AzDO.
+Quick research reveals that this has been requested in uservoice (please upvote). Let&rsquo;s see one of the very simple ways to discover some of these APIs.
+Developers Tools to rescue Using your browser&rsquo;s developers tools you can actually inspect the HTTP requests being made while performing an action in the web portal."/>
+
+    <meta property="og:title" content="Azure DevOps Tip - Find private APIs" />
+<meta property="og:description" content="Problem Often working with Azure DevOps, I hit a wall trying to automate some tasks but there are no REST APIs made public yet.
+It was one of those task of automating creation of Environments in multi-stage YAML based pipelines in AzDO.
+Quick research reveals that this has been requested in uservoice (please upvote). Let&rsquo;s see one of the very simple ways to discover some of these APIs.
+Developers Tools to rescue Using your browser&rsquo;s developers tools you can actually inspect the HTTP requests being made while performing an action in the web portal." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://dexterposh.github.io/posts/002-azdo-tip-api/" />
+<meta property="article:published_time" content="2020-04-14T15:06:22+05:30" />
+<meta property="article:modified_time" content="2020-04-14T15:06:22+05:30" />
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://dexterposh.github.io/"><img class="app-header-avatar" src="/avatar.jpg" alt="Deepak Singh Dhami" /></a>
+      <h1>Notes from a system engineer&#39;s desk</h1>
+      <p>Dev?Ops</p>
+      <div class="app-header-social">
+        
+          <a target="_blank" href="https://github.com/dexterposh" rel="noreferrer noopener"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg></a>
+        
+          <a target="_blank" href="https://twitter.com/dexterposh" rel="noreferrer noopener"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-twitter">
+  <title>twitter</title>
+  <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+</svg></a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Azure DevOps Tip - Find private APIs</h1>
+      <div class="post-meta">
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Apr 14, 2020
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          3 min read
+        </div></div>
+    </header>
+    <div class="post-content">
+      <h2 id="problem">Problem</h2>
+<p>Often working with Azure DevOps, I hit a wall trying to automate some tasks but
+there are no REST APIs made public yet.</p>
+<p>It was one of those task of automating creation of Environments in multi-stage
+YAML based pipelines in AzDO.</p>
+<p><img src="/static/002/env.png" alt="Azure DevOps environments"></p>
+<p>Quick research reveals that this has been requested in <a href="https://developercommunity.visualstudio.com/content/problem/820737/rest-apis-for-environments-and-its-resources-multi.html">uservoice</a> (please upvote).
+Let&rsquo;s see one of the very simple ways to discover some of these APIs.</p>
+<h2 id="developers-tools-to-rescue">Developers Tools to rescue</h2>
+<p>Using your browser&rsquo;s developers tools you can actually inspect the HTTP requests
+being made while performing an action in the web portal.</p>
+<p>Let&rsquo;s do this.</p>
+<p><img src="/static/002/devnetwork.png" alt="Developer tools"></p>
+<p>Let&rsquo;s click on the &ldquo;Create Environment&rdquo; button, fill out some dummy values,
+hit create and keep an eye on the network tab in the developer tools.</p>
+<p><img src="/static/002/envcreatenetwork.png" alt="Create env watch network"></p>
+<p>We see some activity, it might take you some time to walk through what happened but in this case the top activity named &ldquo;environments&rdquo; has the required details.</p>
+<p>See below and note the URL &amp; method used:</p>
+<p><img src="/static/002/analyzerequest.png" alt="Analyze request sent"></p>
+<p>Also, make note of the Json request in the payload.</p>
+<p><img src="/static/002/requestpayload.png" alt="Request payload"></p>
+<p>That&rsquo;s mostly it, fire up postman/PowerShell to make the API call to test this.</p>
+<h2 id="invoke-restmethod-in-pwsh">Invoke-RestMethod in Pwsh</h2>
+<p><a href="https://docs.microsoft.com/en-us/azure/devops/organizations/accounts/use-personal-access-tokens-to-authenticate?view=azure-devops&amp;tabs=preview-page">Generate a Personal Access Token</a> in AzDO, typically start with a short lived PAT token with full access and then nail down on the specific permissions you need.</p>
+<p>Below is the code snippet, I used with AzDO to hit the REST API endpoint:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">$url = <span style="color:#e6db74">&#39;https://dev.azure.com/ddhami/BITPro.AzDeploy/_apis/distributedtask/environments&#39;</span>
+$cred = Get-Credential -UserName <span style="color:#e6db74">&#39;vsts&#39;</span> -Message <span style="color:#e6db74">&#39;Enter AzDO Personal Access Token with privs to create env&#39;</span>
+$encodedValue = <span style="color:#66d9ef">[Convert]</span>::ToBase64String(
+            <span style="color:#66d9ef">[Text.Encoding]</span>::ASCII.GetBytes(
+                (<span style="color:#e6db74">&#34;{0}:{1}&#34;</span> <span style="color:#f92672">-f</span> <span style="color:#e6db74">&#39;&#39;</span>, $cred.GetNetworkCredential().Password)
+            )
+        )
+
+$body = @{
+  name = <span style="color:#e6db74">&#39;test-pwsh-env&#39;</span>;
+  description = <span style="color:#e6db74">&#39;test environment from APR&#39;</span>
+} | ConvertTo-Json
+$headers = @{
+  Accept = <span style="color:#e6db74">&#39;application/json;&#39;</span>;
+  Authorization = <span style="color:#e6db74">&#34;Basic {0}&#34;</span> <span style="color:#f92672">-f</span> $encodedValue
+}
+
+Invoke-RestMethod -Method POST -Uri $url -Body $body -Headers $headers -ContentType <span style="color:#e6db74">&#39;application/json&#39;</span>
+</code></pre></div><p>But when I execute the above code, it gives me an error.</p>
+<p><img src="/static/002/pwsherror.png" alt="Error thrown"></p>
+<p>The error thrown is below.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
+    <span style="color:#f92672">&#34;$id&#34;</span>: <span style="color:#e6db74">&#34;1&#34;</span>,
+    <span style="color:#f92672">&#34;innerException&#34;</span>: <span style="color:#66d9ef">null</span>,
+    <span style="color:#f92672">&#34;message&#34;</span>: <span style="color:#e6db74">&#34;No api-version was supplied for the \&#34;POST\&#34; request. The version must be supplied either as part of the Accept header (e.g. \&#34;application/json; api-version=1.0\&#34;) or as a query parameter (e.g. \&#34;?api-version=1.0\&#34;).&#34;</span>,
+    <span style="color:#f92672">&#34;typeName&#34;</span>: <span style="color:#e6db74">&#34;Microsoft.VisualStudio.Services.WebApi.VssVersionNotSpecifiedException, Microsoft.VisualStudio.Services.WebApi&#34;</span>,
+    <span style="color:#f92672">&#34;typeKey&#34;</span>: <span style="color:#e6db74">&#34;VssVersionNotSpecifiedException&#34;</span>,
+    <span style="color:#f92672">&#34;errorCode&#34;</span>: <span style="color:#ae81ff">0</span>,
+    <span style="color:#f92672">&#34;eventId&#34;</span>: <span style="color:#ae81ff">3000</span>
+}
+</code></pre></div><p>Read the error message, it explains that the api-version is missing. Also, looking back at the capture and see where the api-version was specified.</p>
+<p><img src="/static/002/apiversion.png" alt="API Version in header"></p>
+<p>Let&rsquo;s make the same change in our code snippet to include API version in the
+header.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">$url = <span style="color:#e6db74">&#39;https://dev.azure.com/ddhami/BITPro.AzDeploy/_apis/distributedtask/environments&#39;</span>
+$cred = Get-Credential -UserName <span style="color:#e6db74">&#39;vsts&#39;</span> -Message <span style="color:#e6db74">&#39;Enter AzDO Personal Access Token with privs to create env&#39;</span>
+$encodedValue = <span style="color:#66d9ef">[Convert]</span>::ToBase64String(
+            <span style="color:#66d9ef">[Text.Encoding]</span>::ASCII.GetBytes(
+                (<span style="color:#e6db74">&#34;{0}:{1}&#34;</span> <span style="color:#f92672">-f</span> <span style="color:#e6db74">&#39;&#39;</span>, $cred.GetNetworkCredential().Password)
+            )
+        )
+
+$body = @{
+  name = <span style="color:#e6db74">&#39;test-pwsh-env&#39;</span>;
+  description = <span style="color:#e6db74">&#39;test environment from APR&#39;</span>
+} | ConvertTo-Json
+$headers = @{
+  Accept = <span style="color:#e6db74">&#39;application/json;api-version=5.0-preview.1&#39;</span>;
+  Authorization = <span style="color:#e6db74">&#34;Basic {0}&#34;</span> <span style="color:#f92672">-f</span> $encodedValue
+}
+
+Invoke-RestMethod -Method POST -Uri $url -Body $body -Headers $headers -ContentType = <span style="color:#e6db74">&#39;application/json&#39;</span>
+</code></pre></div><p>Here I go, this finally works and using the similar API endpoint I can fetch the environments as well (GET request).</p>
+<p><img src="/static/002/envsuccess.png" alt="Env created success"></p>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>

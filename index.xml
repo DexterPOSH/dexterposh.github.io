@@ -6,10 +6,22 @@
     <description>Recent content on Notes from a system engineer&#39;s desk</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 14 Apr 2020 12:20:36 +0530</lastBuildDate>
+    <lastBuildDate>Tue, 14 Apr 2020 15:06:22 +0530</lastBuildDate>
     
 	<atom:link href="https://dexterposh.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Azure DevOps Tip - Find private APIs</title>
+      <link>https://dexterposh.github.io/posts/002-azdo-tip-api/</link>
+      <pubDate>Tue, 14 Apr 2020 15:06:22 +0530</pubDate>
+      
+      <guid>https://dexterposh.github.io/posts/002-azdo-tip-api/</guid>
+      <description>Problem Often working with Azure DevOps, I hit a wall trying to automate some tasks but there are no REST APIs made public yet.
+It was one of those task of automating creation of Environments in multi-stage YAML based pipelines in AzDO.
+Quick research reveals that this has been requested in uservoice (please upvote). Let&amp;rsquo;s see one of the very simple ways to discover some of these APIs.
+Developers Tools to rescue Using your browser&amp;rsquo;s developers tools you can actually inspect the HTTP requests being made while performing an action in the web portal.</description>
+    </item>
     
     <item>
       <title>#1 Hello World</title>

@@ -3,17 +3,22 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://dexterposh.github.io/posts/001-hello-world/</loc>
-    <lastmod>2020-04-14T12:20:36+05:30</lastmod>
+    <loc>https://dexterposh.github.io/posts/002-azdo-tip-api/</loc>
+    <lastmod>2020-04-14T15:06:22+05:30</lastmod>
   </url>
   
   <url>
     <loc>https://dexterposh.github.io/</loc>
-    <lastmod>2020-04-14T12:20:36+05:30</lastmod>
+    <lastmod>2020-04-14T15:06:22+05:30</lastmod>
   </url>
   
   <url>
     <loc>https://dexterposh.github.io/posts/</loc>
+    <lastmod>2020-04-14T15:06:22+05:30</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://dexterposh.github.io/posts/001-hello-world/</loc>
     <lastmod>2020-04-14T12:20:36+05:30</lastmod>
   </url>
   
