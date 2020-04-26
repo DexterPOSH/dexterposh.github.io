@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>Azure DevOps Tip - Job re-use within a Stage // Notes from a system engineer&#39;s desk</title>
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.65.3" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Deepak Singh Dhami" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="https://dexterposh.github.io/css/main.min.6771f69a4cfbbdc6c8cfbcff2d6dfc6fe413957aa52d065a017cae25be619595.css" />
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Azure DevOps Tip - Job re-use within a Stage"/>
+<meta name="twitter:description" content="Background Azure DevOps introduced multi-stage yaml pipelines a while ago. It allows us to define our entire Build/Release landscape inside these yaml definitions.
+To re-iterate of some terms used in this post:
+ A pipeline comprises one or more stages Stage is collection of jobs Job runs on an agent/ agentless Job contains steps (task/script) Steps are the atomic unit to perform a task  Challenge Recently, working our multi-stage yaml pipelines, we hit an interesting behavior with our job template re-use."/>
+
+    <meta property="og:title" content="Azure DevOps Tip - Job re-use within a Stage" />
+<meta property="og:description" content="Background Azure DevOps introduced multi-stage yaml pipelines a while ago. It allows us to define our entire Build/Release landscape inside these yaml definitions.
+To re-iterate of some terms used in this post:
+ A pipeline comprises one or more stages Stage is collection of jobs Job runs on an agent/ agentless Job contains steps (task/script) Steps are the atomic unit to perform a task  Challenge Recently, working our multi-stage yaml pipelines, we hit an interesting behavior with our job template re-use." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://dexterposh.github.io/posts/004-azdo-tip-job/" />
+<meta property="article:published_time" content="2020-04-26T09:53:50+05:30" />
+<meta property="article:modified_time" content="2020-04-26T09:53:50+05:30" />
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://dexterposh.github.io/"><img class="app-header-avatar" src="/avatar.jpg" alt="Deepak Singh Dhami" /></a>
+      <h1>Notes from a system engineer&#39;s desk</h1>
+      <p>Dev?Ops</p>
+      <div class="app-header-social">
+        
+          <a target="_blank" href="https://github.com/dexterposh" rel="noreferrer noopener"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg></a>
+        
+          <a target="_blank" href="https://twitter.com/dexterposh" rel="noreferrer noopener"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-twitter">
+  <title>twitter</title>
+  <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+</svg></a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Azure DevOps Tip - Job re-use within a Stage</h1>
+      <div class="post-meta">
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Apr 26, 2020
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          3 min read
+        </div><div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+  <title>tag</title>
+  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line>
+</svg>
+          <a class="tag" href="https://dexterposh.github.io/tags/azdo/">azdo</a><a class="tag" href="https://dexterposh.github.io/tags/tip/">tip</a><a class="tag" href="https://dexterposh.github.io/tags/yaml/">yaml</a><a class="tag" href="https://dexterposh.github.io/tags/jobs/">jobs</a></div></div>
+    </header>
+    <div class="post-content">
+      <h2 id="background">Background</h2>
+<p>Azure DevOps introduced multi-stage yaml pipelines a while ago. It allows us
+to define our entire Build/Release landscape inside these yaml definitions.</p>
+<p>To re-iterate of some terms used in this post:</p>
+<ul>
+<li>A pipeline comprises one or more stages</li>
+<li>Stage is collection of jobs</li>
+<li>Job runs on an agent/ agentless</li>
+<li>Job contains steps (task/script)</li>
+<li>Steps are the atomic unit to perform a task</li>
+</ul>
+<h2 id="challenge">Challenge</h2>
+<p>Recently, working our multi-stage yaml pipelines, we hit an interesting
+behavior with our job template re-use.</p>
+<p>We had quite few common steps we require to take in each stage (multiple times)
+to hit an external API. So, to re-use we extracted them out as a job
+<a href="https://docs.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=azure-devops">template</a>.</p>
+<h3 id="jobtemplateyml">jobtemplate.yml</h3>
+<p>For this post, creating a sample job and taking an
+<a href="https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/utility/delay?view=azure-devops">agentless delay task</a> as an example but this job template can include
+series of steps.</p>
+<p>Below is my extracted out job template definition (indues a delay) which I want to re-use within stages in my main <strong>azure-pipelines.yml</strong> pipeline definition later.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">parameters</span>:
+  <span style="color:#66d9ef">name</span>: <span style="color:#e6db74">&#39;windows&#39;</span>
+<span style="color:#66d9ef">jobs</span>:
+  - <span style="color:#66d9ef">job</span>: commonJob
+    <span style="color:#66d9ef">displayName</span>: Common Job
+    <span style="color:#66d9ef">pool</span>: server
+    <span style="color:#66d9ef">steps</span>:
+    - <span style="color:#66d9ef">task</span>: Delay@<span style="color:#ae81ff">1</span>
+      <span style="color:#66d9ef">displayName</span>: <span style="color:#e6db74">&#39;Delay by 1 minutes for ${{ parameters.name }}&#39;</span>
+      <span style="color:#66d9ef">inputs</span>:
+        <span style="color:#66d9ef">delayForMinutes</span>: <span style="color:#ae81ff">1</span>
+</code></pre></div><h3 id="azure-pipelinesyml">azure-pipelines.yml</h3>
+<p>Now, I want to call my Job template from above inside two stages Build &amp; Deploy
+in the multi-stage yaml pipeline as below.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">stages</span>:
+- <span style="color:#66d9ef">stage</span>: Build
+  <span style="color:#66d9ef">jobs</span>:
+  - <span style="color:#66d9ef">template</span>: ./jobtemplate.yml
+  - <span style="color:#66d9ef">job</span>: Build1
+
+- <span style="color:#66d9ef">stage</span>: Deploy
+  <span style="color:#66d9ef">jobs</span>:
+    - <span style="color:#66d9ef">template</span>: ./jobtemplate.yml
+    - <span style="color:#66d9ef">job</span>: Deploy1
+</code></pre></div><p>Kick off a build for this and you would see it in the AzDO portal, that it works
+out well.</p>
+<p><img src="/static/004/jobWithinDiffStages.png" alt="Same Job template used with diffn stages"></p>
+<p>But, if I try to use the same Job template multiple times within the same stage
+that is when things get interesting. Let&rsquo;s modify our <strong>azure-pipelines.yml</strong> definition now.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">stages</span>:
+- <span style="color:#66d9ef">stage</span>: Build
+  <span style="color:#66d9ef">jobs</span>:
+  - <span style="color:#66d9ef">template</span>: ./jobtemplate.yml
+    <span style="color:#66d9ef">parameters</span>:
+        <span style="color:#66d9ef">name</span>: Deepak
+  - <span style="color:#66d9ef">template</span>: ./jobtemplate.yml
+    <span style="color:#66d9ef">parameters</span>:
+        <span style="color:#66d9ef">name</span>: Dhami
+  - <span style="color:#66d9ef">job</span>: Build1
+
+- <span style="color:#66d9ef">stage</span>: Deploy
+  <span style="color:#66d9ef">jobs</span>:
+    - <span style="color:#66d9ef">template</span>: ./jobtemplate.yml
+    - <span style="color:#66d9ef">job</span>: Deploy1
+</code></pre></div><p>Try running this new modified pipeline and you would be greeted with the below
+in the portal.</p>
+<p><img src="/static/004/nameCollision.png" alt="Job name not unique"></p>
+<p>This is quite obvious but the job names in a stage should be unique.</p>
+<h2 id="solution">Solution</h2>
+<p>To get to a solution we looked at generating a unique name for our jobs but
+it turns out there is a very simple solution to this problem.</p>
+<p>One can remove the job identifier in the job template completely while
+extracting out jobs to re-use.</p>
+<p>What this means is we had to modify our Job templates like below:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">parameters</span>:
+  <span style="color:#66d9ef">name</span>: <span style="color:#e6db74">&#39;windows&#39;</span>
+<span style="color:#66d9ef">jobs</span>:
+  - <span style="color:#66d9ef">job</span>: <span style="color:#75715e"># Identifier here is removed</span>
+    <span style="color:#66d9ef">displayName</span>: Common Job
+    <span style="color:#66d9ef">pool</span>: server
+    <span style="color:#66d9ef">steps</span>:
+    - <span style="color:#66d9ef">task</span>: Delay@<span style="color:#ae81ff">1</span>
+      <span style="color:#66d9ef">displayName</span>: <span style="color:#e6db74">&#39;Delay by 1 minutes for ${{ parameters.name }}&#39;</span>
+      <span style="color:#66d9ef">inputs</span>:
+        <span style="color:#66d9ef">delayForMinutes</span>: <span style="color:#ae81ff">1</span>
+</code></pre></div><p>Now, it works.</p>
+<p><img src="/static/004/jobReuse.png" alt="Job re-use within same stage"></p>
+<h2 id="conclusion">Conclusion</h2>
+<p>As a general practice, when I start extracting out steps as independent job
+templates I tend to not populate the Job identifier if it&rsquo;s scope is to be
+re-used multiple times in the same stage.</p>
+<p>But if there is a job which you want to ensure that it is allowed to run only
+once, you could stick with populating the field.</p>
+<p>So, as every engineer building solution says:</p>
+<blockquote>
+<p>It depends on the use-case</p>
+</blockquote>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>

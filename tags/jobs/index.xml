@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>jobs on Notes from a system engineer&#39;s desk</title>
+    <link>https://dexterposh.github.io/tags/jobs/</link>
+    <description>Recent content in jobs on Notes from a system engineer&#39;s desk</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 26 Apr 2020 09:53:50 +0530</lastBuildDate>
+    
+	<atom:link href="https://dexterposh.github.io/tags/jobs/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Azure DevOps Tip - Job re-use within a Stage</title>
+      <link>https://dexterposh.github.io/posts/004-azdo-tip-job/</link>
+      <pubDate>Sun, 26 Apr 2020 09:53:50 +0530</pubDate>
+      
+      <guid>https://dexterposh.github.io/posts/004-azdo-tip-job/</guid>
+      <description>Background Azure DevOps introduced multi-stage yaml pipelines a while ago. It allows us to define our entire Build/Release landscape inside these yaml definitions.
+To re-iterate of some terms used in this post:
+ A pipeline comprises one or more stages Stage is collection of jobs Job runs on an agent/ agentless Job contains steps (task/script) Steps are the atomic unit to perform a task  Challenge Recently, working our multi-stage yaml pipelines, we hit an interesting behavior with our job template re-use.</description>
+    </item>
+    
+  </channel>
+</rss>

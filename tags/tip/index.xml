@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Notes from a system engineer&#39;s desk</title>
-    <link>https://dexterposh.github.io/</link>
-    <description>Recent content on Notes from a system engineer&#39;s desk</description>
+    <title>tip on Notes from a system engineer&#39;s desk</title>
+    <link>https://dexterposh.github.io/tags/tip/</link>
+    <description>Recent content in tip on Notes from a system engineer&#39;s desk</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 26 Apr 2020 09:53:50 +0530</lastBuildDate>
     
-	<atom:link href="https://dexterposh.github.io/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://dexterposh.github.io/tags/tip/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -32,15 +32,6 @@ To re-iterate of some terms used in this post:
 It was one of those task of automating creation of Environments in multi-stage YAML based pipelines in AzDO.
 Quick research reveals that this has been requested in uservoice (please upvote). Let&amp;rsquo;s see one of the very simple ways to discover some of these APIs.
 Developers Tools to rescue Using your browser&amp;rsquo;s developers tools you can actually inspect the HTTP requests being made while performing an action in the web portal.</description>
-    </item>
-    
-    <item>
-      <title>#1 Hello World</title>
-      <link>https://dexterposh.github.io/posts/001-hello-world/</link>
-      <pubDate>Tue, 14 Apr 2020 12:20:36 +0530</pubDate>
-      
-      <guid>https://dexterposh.github.io/posts/001-hello-world/</guid>
-      <description>import os  def SayHello(): print(&amp;#34;Hello World!&amp;#34;)  if &amp;#39;__name__&amp;#39; == &amp;#39;main.py&amp;#39;: SayHello() Write-Host -Object &amp;#34;Hello World&amp;#34; 1  Get-Process   </description>
     </item>
     
   </channel>

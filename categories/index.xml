@@ -6,9 +6,19 @@
     <description>Recent content in Categories on Notes from a system engineer&#39;s desk</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
+    <lastBuildDate>Tue, 14 Apr 2020 15:06:22 +0530</lastBuildDate>
     
 	<atom:link href="https://dexterposh.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>azuredevops</title>
+      <link>https://dexterposh.github.io/categories/azuredevops/</link>
+      <pubDate>Tue, 14 Apr 2020 15:06:22 +0530</pubDate>
+      
+      <guid>https://dexterposh.github.io/categories/azuredevops/</guid>
+      <description></description>
+    </item>
     
   </channel>
 </rss>

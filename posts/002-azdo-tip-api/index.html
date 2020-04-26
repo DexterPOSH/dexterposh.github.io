@@ -67,7 +67,12 @@ Developers Tools to rescue Using your browser&rsquo;s developers tools you can a
   <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
 </svg>
           3 min read
-        </div></div>
+        </div><div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+  <title>tag</title>
+  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line>
+</svg>
+          <a class="tag" href="https://dexterposh.github.io/tags/azdo/">azdo</a><a class="tag" href="https://dexterposh.github.io/tags/tip/">tip</a><a class="tag" href="https://dexterposh.github.io/tags/api/">api</a></div></div>
     </header>
     <div class="post-content">
       <h2 id="problem">Problem</h2>
@@ -142,8 +147,8 @@ $body = @{
   description = <span style="color:#e6db74">&#39;test environment from APR&#39;</span>
 } | ConvertTo-Json
 $headers = @{
-  Accept = <span style="color:#e6db74">&#39;application/json;api-version=5.0-preview.1&#39;</span>;
-  Authorization = <span style="color:#e6db74">&#34;Basic {0}&#34;</span> <span style="color:#f92672">-f</span> $encodedValue
+<span style="display:block;width:100%;background-color:#3c3d38">  Accept = <span style="color:#e6db74">&#39;application/json;api-version=5.0-preview.1&#39;</span>;
+</span>  Authorization = <span style="color:#e6db74">&#34;Basic {0}&#34;</span> <span style="color:#f92672">-f</span> $encodedValue
 }
 
 Invoke-RestMethod -Method POST -Uri $url -Body $body -Headers $headers -ContentType = <span style="color:#e6db74">&#39;application/json&#39;</span>

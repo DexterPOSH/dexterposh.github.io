@@ -3,31 +3,68 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://dexterposh.github.io/tags/azdo/</loc>
+    <lastmod>2020-04-26T09:53:50+05:30</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://dexterposh.github.io/posts/004-azdo-tip-job/</loc>
+    <lastmod>2020-04-26T09:53:50+05:30</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://dexterposh.github.io/tags/jobs/</loc>
+    <lastmod>2020-04-26T09:53:50+05:30</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://dexterposh.github.io/</loc>
+    <lastmod>2020-04-26T09:53:50+05:30</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://dexterposh.github.io/posts/</loc>
+    <lastmod>2020-04-26T09:53:50+05:30</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://dexterposh.github.io/tags/</loc>
+    <lastmod>2020-04-26T09:53:50+05:30</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://dexterposh.github.io/tags/tip/</loc>
+    <lastmod>2020-04-26T09:53:50+05:30</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://dexterposh.github.io/tags/yaml/</loc>
+    <lastmod>2020-04-26T09:53:50+05:30</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://dexterposh.github.io/tags/api/</loc>
+    <lastmod>2020-04-14T15:06:22+05:30</lastmod>
+  </url>
+  
+  <url>
     <loc>https://dexterposh.github.io/posts/002-azdo-tip-api/</loc>
     <lastmod>2020-04-14T15:06:22+05:30</lastmod>
   </url>
   
   <url>
-    <loc>https://dexterposh.github.io/</loc>
+    <loc>https://dexterposh.github.io/categories/azuredevops/</loc>
     <lastmod>2020-04-14T15:06:22+05:30</lastmod>
   </url>
   
   <url>
-    <loc>https://dexterposh.github.io/posts/</loc>
+    <loc>https://dexterposh.github.io/categories/</loc>
     <lastmod>2020-04-14T15:06:22+05:30</lastmod>
   </url>
   
   <url>
     <loc>https://dexterposh.github.io/posts/001-hello-world/</loc>
     <lastmod>2020-04-14T12:20:36+05:30</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://dexterposh.github.io/categories/</loc>
-  </url>
-  
-  <url>
-    <loc>https://dexterposh.github.io/tags/</loc>
   </url>
   
 </urlset>
