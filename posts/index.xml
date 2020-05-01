@@ -40,7 +40,7 @@ Developers Tools to rescue Using your browser&amp;rsquo;s developers tools you c
       <pubDate>Tue, 14 Apr 2020 12:20:36 +0530</pubDate>
       
       <guid>https://dexterposh.github.io/posts/001-hello-world/</guid>
-      <description>import os  def SayHello(): print(&amp;#34;Hello World!&amp;#34;)  if &amp;#39;__name__&amp;#39; == &amp;#39;main.py&amp;#39;: SayHello() Write-Host -Object &amp;#34;Hello World&amp;#34; 1  Get-Process   </description>
+      <description>print(&amp;#34;Hello World!&amp;#34;) Write-Host -Object &amp;#34;Hello World&amp;#34; </description>
     </item>
     
   </channel>
