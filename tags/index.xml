@@ -6,10 +6,64 @@
     <description>Recent content in Tags on Notes from a system engineer&#39;s desk</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 26 Apr 2020 09:53:50 +0530</lastBuildDate>
+    <lastBuildDate>Fri, 01 May 2020 12:21:28 +0530</lastBuildDate>
     
 	<atom:link href="https://dexterposh.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>aks</title>
+      <link>https://dexterposh.github.io/tags/aks/</link>
+      <pubDate>Fri, 01 May 2020 12:21:28 +0530</pubDate>
+      
+      <guid>https://dexterposh.github.io/tags/aks/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>api</title>
+      <link>https://dexterposh.github.io/tags/api/</link>
+      <pubDate>Fri, 01 May 2020 12:21:28 +0530</pubDate>
+      
+      <guid>https://dexterposh.github.io/tags/api/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>azure</title>
+      <link>https://dexterposh.github.io/tags/azure/</link>
+      <pubDate>Fri, 01 May 2020 12:21:28 +0530</pubDate>
+      
+      <guid>https://dexterposh.github.io/tags/azure/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>ip</title>
+      <link>https://dexterposh.github.io/tags/ip/</link>
+      <pubDate>Fri, 01 May 2020 12:21:28 +0530</pubDate>
+      
+      <guid>https://dexterposh.github.io/tags/ip/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>powershell</title>
+      <link>https://dexterposh.github.io/tags/powershell/</link>
+      <pubDate>Fri, 01 May 2020 12:21:28 +0530</pubDate>
+      
+      <guid>https://dexterposh.github.io/tags/powershell/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>tip</title>
+      <link>https://dexterposh.github.io/tags/tip/</link>
+      <pubDate>Fri, 01 May 2020 12:21:28 +0530</pubDate>
+      
+      <guid>https://dexterposh.github.io/tags/tip/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>azdo</title>
@@ -30,29 +84,11 @@
     </item>
     
     <item>
-      <title>tip</title>
-      <link>https://dexterposh.github.io/tags/tip/</link>
-      <pubDate>Sun, 26 Apr 2020 09:53:50 +0530</pubDate>
-      
-      <guid>https://dexterposh.github.io/tags/tip/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>yaml</title>
       <link>https://dexterposh.github.io/tags/yaml/</link>
       <pubDate>Sun, 26 Apr 2020 09:53:50 +0530</pubDate>
       
       <guid>https://dexterposh.github.io/tags/yaml/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>api</title>
-      <link>https://dexterposh.github.io/tags/api/</link>
-      <pubDate>Tue, 14 Apr 2020 15:06:22 +0530</pubDate>
-      
-      <guid>https://dexterposh.github.io/tags/api/</guid>
       <description></description>
     </item>
     
