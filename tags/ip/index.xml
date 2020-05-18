@@ -17,9 +17,7 @@
       <pubDate>Fri, 01 May 2020 12:21:28 +0530</pubDate>
       
       <guid>https://dexterposh.github.io/posts/005-aks-tip-ip/</guid>
-      <description>Background 🐼 Recently, I found out that there is no sane way to perform adding a public IP address to the authorized IP address ranges using either the Az CLI or Az.Aks PowerShell (no cmdlets available yet) module.
-From the official docs it says to use something like below format with Az CLI.
-az aks update \  --resource-group myResourceGroup \  --name myAKSCluster \  --api-server-authorized-ip-ranges 73.140.245.0/24 But it doesn&amp;rsquo;t tell you how to append the IP to the range, instead you need to supply a comma separated value of public IP addresses.</description>
+      <description>Background 🐼 Recently, I found out that there is no sane way to perform adding a public IP address to the authorized IP address ranges using either the Az CLI or Az.</description>
     </item>
     
   </channel>

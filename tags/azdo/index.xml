@@ -18,8 +18,7 @@
       
       <guid>https://dexterposh.github.io/posts/004-azdo-tip-job/</guid>
       <description>Background Azure DevOps introduced multi-stage yaml pipelines a while ago. It allows us to define our entire Build/Release landscape inside these yaml definitions.
-To re-iterate of some terms used in this post:
- A pipeline comprises one or more stages Stage is collection of jobs Job runs on an agent/ agentless Job contains steps (task/script) Steps are the atomic unit to perform a task  Challenge Recently, working our multi-stage yaml pipelines, we hit an interesting behavior with our job template re-use.</description>
+To re-iterate of some terms used in this post:</description>
     </item>
     
     <item>
@@ -29,9 +28,7 @@ To re-iterate of some terms used in this post:
       
       <guid>https://dexterposh.github.io/posts/002-azdo-tip-api/</guid>
       <description>Problem Often working with Azure DevOps, I hit a wall trying to automate some tasks but there are no REST APIs made public yet.
-It was one of those task of automating creation of Environments in multi-stage YAML based pipelines in AzDO.
-Quick research reveals that this has been requested in uservoice (please upvote). Let&amp;rsquo;s see one of the very simple ways to discover some of these APIs.
-Developers Tools to rescue Using your browser&amp;rsquo;s developers tools you can actually inspect the HTTP requests being made while performing an action in the web portal.</description>
+It was one of those task of automating creation of Environments in multi-stage YAML based pipelines in AzDO.</description>
     </item>
     
   </channel>
