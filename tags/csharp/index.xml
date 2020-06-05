@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>csharp on System Engineer taking Dev?Ops notes</title>
+    <link>https://dexterposh.github.io/tags/csharp/</link>
+    <description>Recent content in csharp on System Engineer taking Dev?Ops notes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 05 Jun 2020 10:18:40 +0530</lastBuildDate>
+    
+	<atom:link href="https://dexterposh.github.io/tags/csharp/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>.NET notes - create SHA256 hash</title>
+      <link>https://dexterposh.github.io/posts/003-dotnet-sha256-hash/</link>
+      <pubDate>Fri, 05 Jun 2020 10:18:40 +0530</pubDate>
+      
+      <guid>https://dexterposh.github.io/posts/003-dotnet-sha256-hash/</guid>
+      <description>Background 🧐 Today I was looking to generate SHA256 hash for input string data. Below are my notes on how I used dotnet script (interactive scripting experience) in .NET to experiment with it.</description>
+    </item>
+    
+  </channel>
+</rss>

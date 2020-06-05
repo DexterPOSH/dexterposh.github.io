@@ -6,10 +6,19 @@
     <description>Recent content in Posts on System Engineer taking Dev?Ops notes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 01 May 2020 12:21:28 +0530</lastBuildDate>
+    <lastBuildDate>Fri, 05 Jun 2020 10:18:40 +0530</lastBuildDate>
     
 	<atom:link href="https://dexterposh.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>.NET notes - create SHA256 hash</title>
+      <link>https://dexterposh.github.io/posts/003-dotnet-sha256-hash/</link>
+      <pubDate>Fri, 05 Jun 2020 10:18:40 +0530</pubDate>
+      
+      <guid>https://dexterposh.github.io/posts/003-dotnet-sha256-hash/</guid>
+      <description>Background 🧐 Today I was looking to generate SHA256 hash for input string data. Below are my notes on how I used dotnet script (interactive scripting experience) in .NET to experiment with it.</description>
+    </item>
     
     <item>
       <title>AKS PowerShell Tip - Add Authorized Ip</title>

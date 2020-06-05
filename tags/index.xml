@@ -6,10 +6,46 @@
     <description>Recent content in Tags on System Engineer taking Dev?Ops notes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 01 May 2020 12:21:28 +0530</lastBuildDate>
+    <lastBuildDate>Fri, 05 Jun 2020 10:18:40 +0530</lastBuildDate>
     
 	<atom:link href="https://dexterposh.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>.net</title>
+      <link>https://dexterposh.github.io/tags/.net/</link>
+      <pubDate>Fri, 05 Jun 2020 10:18:40 +0530</pubDate>
+      
+      <guid>https://dexterposh.github.io/tags/.net/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>cryptography</title>
+      <link>https://dexterposh.github.io/tags/cryptography/</link>
+      <pubDate>Fri, 05 Jun 2020 10:18:40 +0530</pubDate>
+      
+      <guid>https://dexterposh.github.io/tags/cryptography/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>csharp</title>
+      <link>https://dexterposh.github.io/tags/csharp/</link>
+      <pubDate>Fri, 05 Jun 2020 10:18:40 +0530</pubDate>
+      
+      <guid>https://dexterposh.github.io/tags/csharp/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>sha256</title>
+      <link>https://dexterposh.github.io/tags/sha256/</link>
+      <pubDate>Fri, 05 Jun 2020 10:18:40 +0530</pubDate>
+      
+      <guid>https://dexterposh.github.io/tags/sha256/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>aks</title>
