@@ -256,7 +256,7 @@ Object -&gt; HashAlgorithm -&gt; SHA256</p>
 
 <span style="color:#66d9ef">string</span> text = <span style="color:#e6db74">&#34;DexterPOSH&#34;</span>; <span style="color:#75715e">// this is our text for which we will generate hash
 </span><span style="color:#75715e"></span>
-<span style="color:#66d9ef">using</span> (SHA256 hashAlgorithm = SHA256.Create(); <span style="color:#75715e">// C# 8 syntax for using statement
+<span style="color:#66d9ef">using</span> (SHA256 hashAlgorithm = SHA256.Create()); <span style="color:#75715e">// C# 8 syntax for using statement
 </span></code></pre></div><p>The docs also reveal the <code>ComputeHash()</code> method which takes <code>byte[]</code> array as argument and returns the byte array back as well.
 We need some way to convert our string input to byte array.</p>
 <h3 id="string-to-byte-conversion">string to byte[] conversion</h3>
@@ -269,7 +269,7 @@ Using that in code now leads us to this point.</p>
 
 <span style="color:#66d9ef">string</span> text = <span style="color:#e6db74">&#34;DexterPOSH&#34;</span>; <span style="color:#75715e">// this is our text for which we will generate hash
 </span><span style="color:#75715e"></span>
-<span style="color:#66d9ef">using</span> (SHA256 hashAlgorithm = SHA256.Create(); <span style="color:#75715e">// C# 8 syntax for using statement
+<span style="color:#66d9ef">using</span> (SHA256 hashAlgorithm = SHA256.Create()); <span style="color:#75715e">// C# 8 syntax for using statement
 </span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> hashedByteArray = hashAlgorithm.ComputeHash(Encoding.UTF8.GetBytes(input));
 Console.WriteLine(hashedByteArray);
 </code></pre></div><p>Output:</p>
@@ -285,7 +285,7 @@ Let&rsquo;s add that logic in our script.</p>
 
 <span style="color:#66d9ef">string</span> text = <span style="color:#e6db74">&#34;DexterPOSH&#34;</span>; <span style="color:#75715e">// this is our text for which we will generate hash
 </span><span style="color:#75715e"></span>
-<span style="color:#66d9ef">using</span> (SHA256 hashAlgorithm = SHA256.Create(); <span style="color:#75715e">// C# 8 syntax for using statement
+<span style="color:#66d9ef">using</span> (SHA256 hashAlgorithm = SHA256.Create()); <span style="color:#75715e">// C# 8 syntax for using statement
 </span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> hashedByteArray = hashAlgorithm.ComputeHash(Encoding.UTF8.GetBytes(input));
 Console.WriteLine(BitConverter.ToString(hashedByteArray));
 </code></pre></div><p>Output:</p>
