@@ -234,7 +234,7 @@ Console.WriteLine(<span style="color:#e6db74">&#34;Hello world!&#34;</span>);
 </code></pre></div><p>Output:</p>
 <pre><code class="language-output" data-lang="output">Hello world!
 </code></pre><h3 id="using-statements-in-scripts">Using statements in scripts</h3>
-<p>Now, let&rsquo;s modify this script to quickly explore creating a SHA256 hash.</p>
+<p>Now, let&rsquo;s modify this script to explore creating a SHA256 hash.</p>
 <p>First, thing is we need to place some using statements to bring in the Cryptography and Text namespace like below.</p>
 <p>So the content now looks like.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-csharp" data-lang="csharp"><span style="color:#960050;background-color:#1e0010">#</span>!/usr/bin/env dotnet-script
@@ -243,10 +243,10 @@ Console.WriteLine(<span style="color:#e6db74">&#34;Hello world!&#34;</span>);
 </span><span style="color:#75715e"></span><span style="color:#66d9ef">using</span> System.Text;
 <span style="color:#66d9ef">using</span> System.Security.Cryptography;
 </code></pre></div><h3 id="reading-the-docs">Reading the docs</h3>
-<p>Moving on, after quickly browsing the documentation of the <a href="https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.sha256.create?view=netcore-3.1#System_Security_Cryptography_SHA256_Create">SHA256 class</a> I quickly noticed a <em>Create()</em> method which creates a default instance.</p>
+<p>Moving on, after browsing the documentation of the <a href="https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.sha256.create?view=netcore-3.1#System_Security_Cryptography_SHA256_Create">SHA256 class</a> I noticed a <em>Create()</em> method which creates a default instance.</p>
 <p>Also, noticed that the inheritance chain for this class is
 Object -&gt; HashAlgorithm -&gt; SHA256</p>
-<p>HashAlgorithm is the base class with below signature, notice it in turn inherits from IDisposable interface this quickly reminded me to use the <code>using</code> statement syntax to conveniently dispose this object after re-use, rather than calling <code>Dispose()</code> method myself inside try/catch/finally statements.</p>
+<p>HashAlgorithm is the base class with below signature, notice it in turn inherits from IDisposable interface this immediately reminded me to use the <code>using</code> statement syntax to conveniently dispose this object after re-use, rather than calling <code>Dispose()</code> method myself inside try/catch/finally statements.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-csharp" data-lang="csharp"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">abstract</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">HashAlgorithm</span> : IDisposable, System.Security.Cryptography.ICryptoTransform
 </code></pre></div><p>Also, with C# 8 onwwards the using statement syntax is simplified so this means I can add the below to my .csx file.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-csharp" data-lang="csharp"><span style="color:#960050;background-color:#1e0010">#</span>!/usr/bin/env dotnet-script
