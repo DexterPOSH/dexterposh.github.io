@@ -248,16 +248,18 @@ Console.WriteLine(<span style="color:#e6db74">&#34;Hello world!&#34;</span>);
 Object -&gt; HashAlgorithm -&gt; SHA256</p>
 <p>HashAlgorithm is the base class with below signature, notice it in turn inherits from IDisposable interface this immediately reminded me to use the <code>using</code> statement syntax to conveniently dispose this object after re-use, rather than calling <code>Dispose()</code> method myself inside try/catch/finally statements.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-csharp" data-lang="csharp"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">abstract</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">HashAlgorithm</span> : IDisposable, System.Security.Cryptography.ICryptoTransform
-</code></pre></div><p>Also, with C# 8 onwwards the using statement syntax is simplified so this means I can add the below to my .csx file.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-csharp" data-lang="csharp"><span style="color:#960050;background-color:#1e0010">#</span>!/usr/bin/env dotnet-script
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-csharp" data-lang="csharp"><span style="color:#960050;background-color:#1e0010">#</span>!/usr/bin/env dotnet-script
 
 <span style="color:#66d9ef">using</span> System.Text;
 <span style="color:#66d9ef">using</span> System.Security.Cryptography;
 
 <span style="color:#66d9ef">string</span> text = <span style="color:#e6db74">&#34;DexterPOSH&#34;</span>; <span style="color:#75715e">// this is our text for which we will generate hash
 </span><span style="color:#75715e"></span>
-<span style="color:#66d9ef">using</span> (SHA256 hashAlgorithm = SHA256.Create()); <span style="color:#75715e">// C# 8 syntax for using statement
-</span></code></pre></div><p>The docs also reveal the <code>ComputeHash()</code> method which takes <code>byte[]</code> array as argument and returns the byte array back as well.
+<span style="color:#66d9ef">using</span> (SHA256 hashAlgorithm = SHA256.Create())
+{
+    <span style="color:#75715e">// place holder
+</span><span style="color:#75715e"></span>};
+</code></pre></div><p>The docs also reveal the <code>ComputeHash()</code> method which takes <code>byte[]</code> array as argument and returns the byte array back as well.
 We need some way to convert our string input to byte array.</p>
 <h3 id="string-to-byte-conversion">string to byte[] conversion</h3>
 <p>Quick search suggests to use <code>Encoding.UTF8.GetBytes()</code> static method for converting string to byte array.
@@ -269,9 +271,11 @@ Using that in code now leads us to this point.</p>
 
 <span style="color:#66d9ef">string</span> text = <span style="color:#e6db74">&#34;DexterPOSH&#34;</span>; <span style="color:#75715e">// this is our text for which we will generate hash
 </span><span style="color:#75715e"></span>
-<span style="color:#66d9ef">using</span> (SHA256 hashAlgorithm = SHA256.Create()); <span style="color:#75715e">// C# 8 syntax for using statement
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> hashedByteArray = hashAlgorithm.ComputeHash(Encoding.UTF8.GetBytes(input));
-Console.WriteLine(hashedByteArray);
+<span style="color:#66d9ef">using</span> (SHA256 hashAlgorithm = SHA256.Create())
+{
+    <span style="color:#66d9ef">var</span> hashedByteArray = hashAlgorithm.ComputeHash(Encoding.UTF8.GetBytes(input));
+    Console.WriteLine(hashedByteArray);
+}
 </code></pre></div><p>Output:</p>
 <pre><code class="language-output" data-lang="output">System.Byte[]
 </code></pre><p>Let&rsquo;s see how we can convert the byte[] to string object.</p>
