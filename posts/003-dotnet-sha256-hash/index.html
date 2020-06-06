@@ -289,9 +289,11 @@ Let&rsquo;s add that logic in our script.</p>
 
 <span style="color:#66d9ef">string</span> text = <span style="color:#e6db74">&#34;DexterPOSH&#34;</span>; <span style="color:#75715e">// this is our text for which we will generate hash
 </span><span style="color:#75715e"></span>
-<span style="color:#66d9ef">using</span> (SHA256 hashAlgorithm = SHA256.Create()); <span style="color:#75715e">// C# 8 syntax for using statement
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> hashedByteArray = hashAlgorithm.ComputeHash(Encoding.UTF8.GetBytes(input));
-Console.WriteLine(BitConverter.ToString(hashedByteArray));
+<span style="color:#66d9ef">using</span> (SHA256 hashAlgorithm = SHA256.Create())
+{
+    <span style="color:#66d9ef">var</span> hashedByteArray = hashAlgorithm.ComputeHash(Encoding.UTF8.GetBytes(input));
+    Console.WriteLine(BitConverter.ToString(hashedByteArray));
+};
 </code></pre></div><p>Output:</p>
 <pre><code class="language-output" data-lang="output">1C-29-A2-30-0A-8A-99-6F-67-60-70-7E-21-0D-BD-61-B1-C9-3A-B7-4F-86-EE-13-7B-2E-DE-B6-01-6E-87-93
 </code></pre><h3 id="remove---from-string">remove &lsquo;-&rsquo; from string</h3>
