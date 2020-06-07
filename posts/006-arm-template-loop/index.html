@@ -22,10 +22,10 @@
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="ARM templates - iterate &amp; deploy resource"/>
-<meta name="twitter:description" content="Background I like ARM templates, I use it a lot to deploy Azure cloud resources but as all things it has some pain points associated with it. In this post, let&rsquo;s see how you can iterate over based on certain logic and deploy multiple linked resources."/>
+<meta name="twitter:description" content="Background 🧐 I like ARM templates, I use it a lot to deploy Azure cloud resources but as all things it has some pain points associated with it. In this post, let&rsquo;s see how you can iterate over based on certain logic and deploy multiple linked resources."/>
 
 <meta property="og:title" content="ARM templates - iterate &amp; deploy resource" />
-<meta property="og:description" content="Background I like ARM templates, I use it a lot to deploy Azure cloud resources but as all things it has some pain points associated with it. In this post, let&rsquo;s see how you can iterate over based on certain logic and deploy multiple linked resources." />
+<meta property="og:description" content="Background 🧐 I like ARM templates, I use it a lot to deploy Azure cloud resources but as all things it has some pain points associated with it. In this post, let&rsquo;s see how you can iterate over based on certain logic and deploy multiple linked resources." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://dexterposh.github.io/posts/006-arm-template-loop/" />
 <meta property="article:published_time" content="2020-05-26T15:18:35+05:30" />
@@ -175,8 +175,8 @@
       
           <nav id="TableOfContents">
   <ul>
-    <li><a href="#background">Background</a></li>
-    <li><a href="#walkthrough">Walkthrough</a>
+    <li><a href="#background-">Background 🧐</a></li>
+    <li><a href="#walkthrough-">Walkthrough 🏃</a>
       <ul>
         <li><a href="#scenario">Scenario</a></li>
         <li><a href="#author-linked-template">Author linked template</a></li>
@@ -184,8 +184,8 @@
         <li><a href="#test-the-solution">Test the solution</a></li>
       </ul>
     </li>
-    <li><a href="#tldr-solution">TLDR; Solution</a></li>
-    <li><a href="#references">References</a></li>
+    <li><a href="#tldr-solution-">TLDR; Solution 🗞</a></li>
+    <li><a href="#references-">References 📚</a></li>
   </ul>
 </nav>
       
@@ -193,10 +193,10 @@
   
   
   <div class="post">
-    <h2 id="background">Background</h2>
+    <h2 id="background-">Background 🧐</h2>
 <p>I like ARM templates, I use it a lot to deploy Azure cloud resources but as all things it has some pain points associated with it. In this post, let&rsquo;s see how you can iterate over based on certain logic and deploy multiple linked resources.</p>
 <p>As it stands out this tripped me a lot in the beginning.</p>
-<h2 id="walkthrough">Walkthrough</h2>
+<h2 id="walkthrough-">Walkthrough 🏃</h2>
 <p>Let&rsquo;s work through the whole process of writing an ARM template which deploys multiple resources.</p>
 <p>Github Repository - <a href="https://github.com/DexterPOSH/ArmTemplateLoopExample">ArmTemplateLoopExample</a></p>
 <blockquote>
@@ -559,10 +559,10 @@ DeploymentDebugLogLevel :
 </code></pre></div><p>Deploy again, this time it should deploy multiple storage accounts.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">$rg =  <span style="color:#e6db74">&#34;test_arm_rg&#34;</span>
 New-AzResourceGroupDeployment -TemplateFile ./azuredeploy.json -TemplateParameterFile ./azuredeploy.parameters.json -ResourceGroupName $rg
-</code></pre></div><h2 id="tldr-solution">TLDR; Solution</h2>
+</code></pre></div><h2 id="tldr-solution-">TLDR; Solution 🗞</h2>
 <p>Head over to this GitHub repository to see the ARM templates.</p>
 <p><a href="https://github.com/DexterPOSH/ArmTemplateLoopExample">ArmTemplateLoopExample</a></p>
-<h2 id="references">References</h2>
+<h2 id="references-">References 📚</h2>
 <p><a href="https://marketplace.visualstudio.com/items?itemName=msazurermtools.azurerm-vscode-tools">Azure Resource Manager (ARM) Tools VSCode extension</a></p>
 <p><a href="https://github.com/Azure/azure-quickstart-templates">Azure QuickStart Templates</a></p>
 <p><a href="https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/linked-templates#linked-template">Linked Templates</a></p>
