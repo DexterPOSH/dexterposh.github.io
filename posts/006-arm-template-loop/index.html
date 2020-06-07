@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    
+    
+
+
+    <head>
+    <link href="https://gmpg.org/xfn/11" rel="profile">
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta http-equiv="Cache-Control" content="public" />
+<!-- Enable responsiveness on mobile devices -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<meta name="generator" content="Hugo 0.65.3" />
+
+    
+    
+    
+
+<title>ARM templates - iterate &amp; deploy resource • System Engineer taking Dev?Ops notes</title>
+
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="ARM templates - iterate &amp; deploy resource"/>
+<meta name="twitter:description" content="Background I like ARM templates, I use it a lot to deploy Azure cloud resources but as all things it has some pain points associated with it. In this post, let&rsquo;s see how you can iterate over based on certain logic and deploy multiple linked resources."/>
+
+<meta property="og:title" content="ARM templates - iterate &amp; deploy resource" />
+<meta property="og:description" content="Background I like ARM templates, I use it a lot to deploy Azure cloud resources but as all things it has some pain points associated with it. In this post, let&rsquo;s see how you can iterate over based on certain logic and deploy multiple linked resources." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://dexterposh.github.io/posts/006-arm-template-loop/" />
+<meta property="article:published_time" content="2020-05-26T15:18:35+05:30" />
+<meta property="article:modified_time" content="2020-05-26T15:18:35+05:30" /><meta property="og:site_name" content="DexterPOSH" />
+
+
+    
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/scss/hyde-hyde.3081c4981fb69a2783dd36ecfdd0e6ba7a158d4cbfdd290ebce8f78ba0469fc6.css" integrity="sha256-MIHEmB&#43;2mieD3Tbs/dDmunoVjUy/3SkOvOj3i6BGn8Y=">
+
+
+<link rel="stylesheet" href="/scss/print.2744dcbf8a0b2e74f8a50e4b34e5f441be7cf93cc7de27029121c6a09f9e77bc.css" integrity="sha256-J0Tcv4oLLnT4pQ5LNOX0Qb58&#43;TzH3icCkSHGoJ&#43;ed7w=" media="print">
+
+
+
+
+<link rel="stylesheet" href="/scss/hugo-toc.0873834b0f2e9fdc9e1d0301e8ebce21fc10383882a41e9373f29b90e85a9987.css" integrity="sha256-CHODSw8un9yeHQMB6OvOIfwQODiCpB6Tc/KbkOhamYc=">
+
+
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <!-- Icons -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+    <link rel="shortcut icon" href="/favicon.png">
+    
+    
+
+</head>
+
+
+    <body class=" ">
+    
+<div class="sidebar">
+  <div class="container ">
+    <div class="sidebar-about">
+      <span class="site__title">
+        <a href="https://dexterposh.github.io/">System Engineer taking Dev?Ops notes</a>
+      </span>
+      
+        
+        
+        
+        <div class="author-image">
+          <img src="https://dexterposh.github.io/avatar.jpg" alt="Author Image" class="img--circle img--headshot element--center">
+        </div>
+        
+      
+      
+      <p class="site__description">
+         Cloud, Servers &amp; Code. 
+      </p>
+    </div>
+    <div class="collapsible-menu">
+      <input type="checkbox" id="menuToggle">
+      <label for="menuToggle">System Engineer taking Dev?Ops notes</label>
+      <div class="menu-content">
+        <div>
+	<ul class="sidebar-nav">
+		 
+		 
+			 
+				<li>
+					<a href="/posts/">
+						<span>Posts</span>
+					</a>
+				</li>
+			 
+		
+	</ul>
+</div>
+
+        <section class="social">
+	
+	<a href="https://twitter.com/https://twitter.com/dexterposh" rel="me"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a>
+	
+	
+	
+	<a href="https://github.com/https://github.com/dexterposh" rel="me"><i class="fab fa-github fa-lg" aria-hidden="true"></i></a>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+</section>
+
+      </div>
+    </div>
+    
+
+
+  </div>
+</div>
+
+        <div class="content container">
+            
+    
+<article>
+  <header>
+    <h1>ARM templates - iterate &amp; deploy resource</h1>
+    
+    
+<div class="post__meta">
+    
+    
+      <i class="fas fa-calendar-alt"></i> May 26, 2020
+    
+    
+    
+    
+    
+    <br/>
+    <i class="fas fa-clock"></i> 9 min read
+</div>
+
+
+  </header>
+  
+  
+  
+    <div class="toc-wrapper">
+      <input type="checkbox" id="tocToggle">
+      <label for="tocToggle">Table of Content</label>
+      
+          <nav id="TableOfContents">
+  <ul>
+    <li><a href="#background">Background</a></li>
+    <li><a href="#walkthrough">Walkthrough</a>
+      <ul>
+        <li><a href="#scenario">Scenario</a></li>
+        <li><a href="#author-linked-template">Author linked template</a></li>
+        <li><a href="#author-the-stitching-logic">Author the stitching logic</a></li>
+        <li><a href="#test-the-solution">Test the solution</a></li>
+      </ul>
+    </li>
+    <li><a href="#tldr-solution">TLDR; Solution</a></li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</nav>
+      
+    </div>
+  
+  
+  <div class="post">
+    <h2 id="background">Background</h2>
+<p>I like ARM templates, I use it a lot to deploy Azure cloud resources but as all things it has some pain points associated with it. In this post, let&rsquo;s see how you can iterate over based on certain logic and deploy multiple linked resources.</p>
+<p>As it stands out this tripped me a lot in the beginning.</p>
+<h2 id="walkthrough">Walkthrough</h2>
+<p>Let&rsquo;s work through the whole process of writing an ARM template which deploys multiple resources.</p>
+<p>Github Repository - <a href="https://github.com/DexterPOSH/ArmTemplateLoopExample">ArmTemplateLoopExample</a></p>
+<blockquote>
+<p>This is a simple post demonstrating looping logic I often use, feel free to sprinkle your own best practices &amp; modifications on top e.g. storing templates in a private Cloud blob container, adding more parameters, names etc.</p>
+</blockquote>
+<h3 id="scenario">Scenario</h3>
+<p>Let&rsquo;s take a scenario of deploying many storage accounts based on the user input.</p>
+<p>Ideally, if you&rsquo;re in this situation you should write 2 templates and utilize ARM linked templates to deploy them because it becomes too cumbersome to maintain a single ARM template to deploy a resource and loop over user-input and deploy multiple iterations of that resource. Trust me this is coming from experience 😉</p>
+<p>So, let&rsquo;s start by creating 2 templates, I am going to use GitHub repository here for storing those but you can use a Cloud blob store account as well.</p>
+<p>Below is how my project directory layout looks like.</p>
+<pre><code class="language-output" data-lang="output">.
+├── azuredeploy.json
+└── linkedTemplate
+   └── storageaccount.json
+</code></pre><h3 id="author-linked-template">Author linked template</h3>
+<p>First thing to do when you&rsquo;re writing an ARM template is to make sure you understand that component properly, how it works, best practices while using that Azure component etc.</p>
+<p>Why? you might be wondering because ARM templates is how you deploy your Azure cloud infrastructure and it would be as good as you make your ARM templates, they&rsquo;re called blueprints for your Azure resources for this reason.</p>
+<p>But at the same time start small and head over to <a href="https://github.com/Azure/azure-quickstart-templates">azure-quickstart-templates</a> repository to get an idea of the scenarios.</p>
+<p>I found out that the template stored here in this <a href="https://github.com/Azure/azure-quickstart-templates/blob/master/101-storage-account-create/azuredeploy.json">101-storage-account-create</a> example is good enough for me. So, let me copypasta ✍ this and place the content inside my <code>linkedtemplate\storageaccount.json</code> file.</p>
+<p>So, we have a starting point which can deploy a single storage account for us, but you would notice on closer inspection that this <code>storageaccount.json</code> template doesn&rsquo;t take storageAccountName as a parameter but generates it in the variables section.</p>
+<p>Let&rsquo;s quickly modify it. Changes made:</p>
+<ul>
+<li>add parameter <code>storageAccountName</code></li>
+<li>remove variable <code>storageAccountName</code></li>
+<li>change <code>[variables('storageAccountName')]</code> references to <code>[parameters('storageAccountName')]</code></li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
+   <span style="color:#f92672">&#34;$schema&#34;</span>: <span style="color:#e6db74">&#34;https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#&#34;</span>,
+   <span style="color:#f92672">&#34;contentVersion&#34;</span>: <span style="color:#e6db74">&#34;1.0.0.0&#34;</span>,
+   <span style="color:#f92672">&#34;parameters&#34;</span>: {
+     <span style="color:#f92672">&#34;storageAccountName&#34;</span>: { <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#960050;background-color:#1e0010">added</span> <span style="color:#960050;background-color:#1e0010">the</span> <span style="color:#960050;background-color:#1e0010">storageAccountName</span> <span style="color:#960050;background-color:#1e0010">parameter</span>
+       <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;string&#34;</span>
+     },
+     <span style="color:#f92672">&#34;storageAccountType&#34;</span>: {
+       <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;string&#34;</span>,
+       <span style="color:#f92672">&#34;defaultValue&#34;</span>: <span style="color:#e6db74">&#34;Standard_LRS&#34;</span>,
+       <span style="color:#f92672">&#34;allowedValues&#34;</span>: [
+         <span style="color:#e6db74">&#34;Standard_LRS&#34;</span>,
+         <span style="color:#e6db74">&#34;Standard_GRS&#34;</span>,
+         <span style="color:#e6db74">&#34;Standard_ZRS&#34;</span>,
+         <span style="color:#e6db74">&#34;Premium_LRS&#34;</span>
+       ],
+       <span style="color:#f92672">&#34;metadata&#34;</span>: {
+         <span style="color:#f92672">&#34;description&#34;</span>: <span style="color:#e6db74">&#34;Storage Account type&#34;</span>
+       }
+     },
+     <span style="color:#f92672">&#34;location&#34;</span>: {
+       <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;string&#34;</span>,
+       <span style="color:#f92672">&#34;defaultValue&#34;</span>: <span style="color:#e6db74">&#34;[resourceGroup().location]&#34;</span>,
+       <span style="color:#f92672">&#34;metadata&#34;</span>: {
+         <span style="color:#f92672">&#34;description&#34;</span>: <span style="color:#e6db74">&#34;Location for all resources.&#34;</span>
+       }
+     }
+   },
+   <span style="color:#f92672">&#34;variables&#34;</span>: {
+     <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#960050;background-color:#1e0010">removed</span> <span style="color:#960050;background-color:#1e0010">the</span> <span style="color:#960050;background-color:#1e0010">storageAccountName</span> <span style="color:#960050;background-color:#1e0010">variable</span> <span style="color:#960050;background-color:#1e0010">from</span> <span style="color:#960050;background-color:#1e0010">here</span>
+   },
+   <span style="color:#f92672">&#34;resources&#34;</span>: [
+     {
+       <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;Microsoft.Storage/storageAccounts&#34;</span>,
+       <span style="color:#f92672">&#34;apiVersion&#34;</span>: <span style="color:#e6db74">&#34;2019-04-01&#34;</span>,
+       <span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;[parameters(&#39;storageAccountName&#39;)]&#34;</span>,
+       <span style="color:#f92672">&#34;location&#34;</span>: <span style="color:#e6db74">&#34;[parameters(&#39;location&#39;)]&#34;</span>,
+       <span style="color:#f92672">&#34;sku&#34;</span>: {
+         <span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;[parameters(&#39;storageAccountType&#39;)]&#34;</span>
+       },
+       <span style="color:#f92672">&#34;kind&#34;</span>: <span style="color:#e6db74">&#34;StorageV2&#34;</span>,
+       <span style="color:#f92672">&#34;properties&#34;</span>: {}
+     }
+   ],
+   <span style="color:#f92672">&#34;outputs&#34;</span>: {
+     <span style="color:#f92672">&#34;storageAccountName&#34;</span>: {
+       <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;string&#34;</span>,
+       <span style="color:#f92672">&#34;value&#34;</span>: <span style="color:#e6db74">&#34;[parameters(&#39;storageAccountName&#39;)]&#34;</span>
+     }
+   }
+ }
+</code></pre></div><h3 id="author-the-stitching-logic">Author the stitching logic</h3>
+<p>Moving on to the logic of consolidating user input and then looping over and deploying a storage account multiple times.</p>
+<p>The gist is that we have to do below:</p>
+<ul>
+<li>
+<p>Use variable iteration to create an array of objects based on our <code>numberofStorageAccounts</code> prameter value</p>
+</li>
+<li>
+<p>Use resource iteration later with a linked template deployment and index into the array created above for parameter values.</p>
+</li>
+</ul>
+<blockquote>
+<p>Don&rsquo;t worry if this is a bit daunting. It was for me the first time.</p>
+</blockquote>
+<h4 id="adding-barebone-template">Adding barebone template</h4>
+<p>Let&rsquo;s start by creating a blank ARM template. Open the <code>azuredeploy.json</code> in VSCode. Key in <code>arm</code> and it would give you a snippet dropdown, select the first one for targeting a Resource group deployment.</p>
+<p><img src="/static/006/arm_snippets.png" alt="alt"></p>
+<p>So, we get this.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
+ <span style="color:#f92672">&#34;$schema&#34;</span>: <span style="color:#e6db74">&#34;https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#&#34;</span>,
+ <span style="color:#f92672">&#34;contentVersion&#34;</span>: <span style="color:#e6db74">&#34;1.0.0.0&#34;</span>,
+ <span style="color:#f92672">&#34;parameters&#34;</span>: {},
+ <span style="color:#f92672">&#34;functions&#34;</span>: [],
+ <span style="color:#f92672">&#34;variables&#34;</span>: {},
+ <span style="color:#f92672">&#34;resources&#34;</span>: [],
+ <span style="color:#f92672">&#34;outputs&#34;</span>: {}
+}
+</code></pre></div><h5 id="add-parameters">Add parameters</h5>
+<p>Time to add in some parameters to our <code>azuredeploy.json</code> which is end-user facing. So you need to take input in this one from the user (which could be yourself as well) and then pass those over to the linkedtemplate.</p>
+<ul>
+<li>storageAccountNamePrefix - prefix for the storage accounts to be deployed. Length 5-10.</li>
+<li>numberofStorageAccounts - integer representing how many storage accounts to deploy. [Default - 1, Min 1, Max 10.</li>
+<li>storageAccountType - Type of the storage accounts, predefined allowed values. Default - Standard_GRS.</li>
+<li>location - location for the storage accounts. Default is RG location.</li>
+</ul>
+<p>Below is how the <code>parameters</code> object looks now.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#e6db74">&#34;parameters&#34;</span><span style="color:#960050;background-color:#1e0010">:</span> {
+  <span style="color:#f92672">&#34;storageAccountNamePrefix&#34;</span>: {
+    <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;string&#34;</span>,
+    <span style="color:#f92672">&#34;minLength&#34;</span>: <span style="color:#e6db74">&#34;5&#34;</span>,
+    <span style="color:#f92672">&#34;maxLength&#34;</span>: <span style="color:#e6db74">&#34;10&#34;</span>
+  },
+  <span style="color:#f92672">&#34;numberofStorageAccounts&#34;</span>: {
+    <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;int&#34;</span>,
+    <span style="color:#f92672">&#34;defaultValue&#34;</span>: <span style="color:#ae81ff">1</span>,
+    <span style="color:#f92672">&#34;minValue&#34;</span>: <span style="color:#e6db74">&#34;1&#34;</span>,
+    <span style="color:#f92672">&#34;maxValue&#34;</span>: <span style="color:#e6db74">&#34;10&#34;</span>
+  },
+  <span style="color:#f92672">&#34;storageAccountType&#34;</span>: {
+    <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;string&#34;</span>,
+    <span style="color:#f92672">&#34;defaultValue&#34;</span>: <span style="color:#e6db74">&#34;Standard_GRS&#34;</span>,
+    <span style="color:#f92672">&#34;allowedValues&#34;</span>: [
+      <span style="color:#e6db74">&#34;Standard_LRS&#34;</span>,
+      <span style="color:#e6db74">&#34;Standard_GRS&#34;</span>,
+      <span style="color:#e6db74">&#34;Standard_ZRS&#34;</span>,
+      <span style="color:#e6db74">&#34;Premium_LRS&#34;</span>
+    ]
+  },
+  <span style="color:#f92672">&#34;location&#34;</span>: {
+    <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;string&#34;</span>,
+    <span style="color:#f92672">&#34;defaultValue&#34;</span>: <span style="color:#e6db74">&#34;[resourceGroup().location]&#34;</span>,
+    <span style="color:#f92672">&#34;metadata&#34;</span>: {
+      <span style="color:#f92672">&#34;description&#34;</span>: <span style="color:#e6db74">&#34;Location for all resources.&#34;</span>
+    }
+  }
+}
+</code></pre></div><h5 id="add-the-variables-iteration-logic">Add the variables (iteration logic)</h5>
+<p>I typically like to use variables a lot for transforming the input parameters and then using these variables later in the resources because it makes it easier in future to just modify these variables at once place.</p>
+<p>Use the concept of <a href="https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/copy-variables">variable iteration</a> in ARM templates.</p>
+<p>We use the above concept to do the below</p>
+<ul>
+<li>Create a variable named <code>_deployMultipleStorageAccounts</code> (sort of a convention I follow to name these variables used later in deployment to preceed with <code>_deploy</code>)</li>
+<li>Use the parameter <code>numberofStorageAccounts</code> to loop over that many times</li>
+<li>Use the <code>input</code> property in the copy loop object to generate an object containing properties which will be mapped one to one with the linked template storage.</li>
+</ul>
+<p>I prefer one to one mapping between the properties inside the <code>input</code> in the copy loop to the parameters of the linked template. It makes it easier to index into them and specify them (you&rsquo;ll see later).</p>
+<p>Below is a gist of what I added in the variables property.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#e6db74">&#34;variables&#34;</span><span style="color:#960050;background-color:#1e0010">:</span> {
+  <span style="color:#f92672">&#34;copy&#34;</span>: [
+    {
+      <span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;_deployMultipleStorageAccounts&#34;</span>, <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#960050;background-color:#1e0010">variable</span> <span style="color:#960050;background-color:#1e0010">name</span> <span style="color:#960050;background-color:#1e0010">used</span> <span style="color:#960050;background-color:#1e0010">later</span> <span style="color:#960050;background-color:#1e0010">with</span> <span style="color:#960050;background-color:#1e0010">resources</span>
+      <span style="color:#f92672">&#34;count&#34;</span>: <span style="color:#e6db74">&#34;[parameters(&#39;numberofStorageAccounts&#39;)]&#34;</span>, <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#960050;background-color:#1e0010">loop</span> <span style="color:#960050;background-color:#1e0010">over</span> <span style="color:#960050;background-color:#1e0010">numberofStorageAccounts</span> <span style="color:#960050;background-color:#1e0010">time</span>
+      <span style="color:#f92672">&#34;input&#34;</span>: { <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#960050;background-color:#1e0010">input</span> <span style="color:#960050;background-color:#1e0010">object</span> <span style="color:#960050;background-color:#1e0010">con</span>
+        <span style="color:#f92672">&#34;storageAccountType&#34;</span>: <span style="color:#e6db74">&#34;[parameters(&#39;storageAccountType&#39;)]&#34;</span>,
+        <span style="color:#f92672">&#34;location&#34;</span>: <span style="color:#e6db74">&#34;[parameters(&#39;location&#39;)]&#34;</span>,
+        <span style="color:#f92672">&#34;storageAccountName&#34;</span>: <span style="color:#e6db74">&#34;[
+</span><span style="color:#e6db74">          concat(
+</span><span style="color:#e6db74">            parameters(&#39;storageAccountNamePrefix&#39;),
+</span><span style="color:#e6db74">            uniqueString(resourceGroup().id),
+</span><span style="color:#e6db74">            copyIndex(&#39;_deployMultipleStorageAccounts&#39;)
+</span><span style="color:#e6db74">          )
+</span><span style="color:#e6db74">        ]&#34;</span>
+      }
+    }
+  ]
+}
+</code></pre></div><p>In the outputs section we added a <code>variables</code> property which essentially displays the value for the variable <code>_deployMultipleStorageAccounts</code>. This can be used later with a trick to see what values go inside this variable.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#e6db74">&#34;outputs&#34;</span><span style="color:#960050;background-color:#1e0010">:</span> {
+  <span style="color:#f92672">&#34;variables&#34;</span>: {
+    <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;object&#34;</span>,
+    <span style="color:#f92672">&#34;value&#34;</span>: {
+      <span style="color:#f92672">&#34;_deployMultipleStorageAccounts&#34;</span>: <span style="color:#e6db74">&#34;[variables(&#39;_deployMultipleStorageAccounts&#39;)]&#34;</span>
+    }
+  }
+}
+</code></pre></div><p>Also, I added a <code>variables</code> property in the output which is used to display what goes inside this variable once it is run by ARM API.</p>
+<p><img src="/static/006/transformParams.png" alt="alt"></p>
+<p>From a data-view point above creates a variable named <code>_deployMultipleStorageAccounts</code> which is an array of Json objects.</p>
+<p>If we assume the <code>parameters('numberofStorageAccounts')</code> is 2, <code>parameters('storageAccountType')</code> is <em>Standard_GRS</em> and <code>parameters('storageAccountType')</code> is <em>SouthEastAsia</em>, then it creates an array like below:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">[
+  {
+    <span style="color:#f92672">&#34;storageAccountName&#34;</span>: <span style="color:#e6db74">&#34;&lt;generatedValuebyARM&gt;&#34;</span>,
+    <span style="color:#f92672">&#34;storageAccountType&#34;</span>: <span style="color:#e6db74">&#34;Standard_GRS&#34;</span>,
+    <span style="color:#f92672">&#34;loation&#34;</span>: <span style="color:#e6db74">&#34;SouthEastAsia&#34;</span>,
+  },
+  {
+    <span style="color:#f92672">&#34;storageAccountName&#34;</span>: <span style="color:#e6db74">&#34;&lt;generatedValuebyARM&gt;&#34;</span>,
+    <span style="color:#f92672">&#34;storageAccountType&#34;</span>: <span style="color:#e6db74">&#34;Standard_GRS&#34;</span>,
+    <span style="color:#f92672">&#34;loation&#34;</span>: <span style="color:#e6db74">&#34;SouthEastAsia&#34;</span>,
+  }
+]
+</code></pre></div><h4 id="add-the-deployment-resource">Add the deployment resource</h4>
+<p>Now, you already know we have the linked template to deploy a single storage account. So, we just need to invoke/call that template multiple times and pass in paramters.</p>
+<p>This is done by an ARM template technique called as ARM template linked templates. Read about it more <a href="https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/linked-templates#linked-template">here</a></p>
+<blockquote>
+<p>Follow a <a href="https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/deployment-tutorial-linked-template?tabs=azure-powershell#create-a-linked-template">Tutorial</a> to deploy a linked template, if this is the firs time you&rsquo;re hearing about this.</p>
+</blockquote>
+<p>In short, within our <code>azuredeploy.json</code> template we need to use a resource of type <code>Microsoft.Resources/deployments</code> to link to our <code>storageaccount.json</code> template and inside this resource we need to use another concept termed as <a href="https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/copy-resources"><em>Resource iteration</em></a></p>
+<p>Let&rsquo;s add it.</p>
+<p>This is how my resources array property looks like.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#e6db74">&#34;resources&#34;</span><span style="color:#960050;background-color:#1e0010">:</span> [
+  {
+    <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;Microsoft.Resources/deployments&#34;</span>,
+    <span style="color:#f92672">&#34;apiVersion&#34;</span>: <span style="color:#e6db74">&#34;2019-10-01&#34;</span>,
+    <span style="color:#f92672">&#34;condition&#34;</span>: <span style="color:#66d9ef">false</span>,
+    <span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;[concat(&#39;deploy-linkedStorageTemplate&#39;, copyIndex())]&#34;</span>,
+    <span style="color:#f92672">&#34;copy&#34;</span>: {
+      <span style="color:#f92672">&#34;count&#34;</span>: <span style="color:#e6db74">&#34;[parameters(&#39;numberofStorageAccounts&#39;)]&#34;</span>,
+      <span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;_loopToDeployStorageAccounts&#34;</span>,
+      <span style="color:#f92672">&#34;mode&#34;</span>: <span style="color:#e6db74">&#34;Parallel&#34;</span>
+    },
+    <span style="color:#f92672">&#34;properties&#34;</span>: {
+      <span style="color:#f92672">&#34;mode&#34;</span>: <span style="color:#e6db74">&#34;Incremental&#34;</span>,
+      <span style="color:#f92672">&#34;templateLink&#34;</span>: {
+        <span style="color:#f92672">&#34;contentVersion&#34;</span>: <span style="color:#e6db74">&#34;1.0.0.0&#34;</span>,
+        <span style="color:#f92672">&#34;uri&#34;</span>: <span style="color:#e6db74">&#34;https://raw.githubusercontent.com/DexterPOSH/ArmTemplateLoopExample/master/linkedtemplate/storageaccount.json&#34;</span>
+      },
+      <span style="color:#f92672">&#34;parameters&#34;</span>: {
+        <span style="color:#f92672">&#34;storageAccountName&#34;</span>: {
+          <span style="color:#f92672">&#34;value&#34;</span>: <span style="color:#e6db74">&#34;[variables(&#39;_deployMultipleStorageAccounts&#39;)[copyIndex()].storageAccountName]&#34;</span>
+        },
+        <span style="color:#f92672">&#34;storageAccountType&#34;</span>: {
+          <span style="color:#f92672">&#34;value&#34;</span>: <span style="color:#e6db74">&#34;[variables(&#39;_deployMultipleStorageAccounts&#39;)[copyIndex()].storageAccountType]&#34;</span>
+        },
+        <span style="color:#f92672">&#34;location&#34;</span>: {
+          <span style="color:#f92672">&#34;value&#34;</span>: <span style="color:#e6db74">&#34;[variables(&#39;_deployMultipleStorageAccounts&#39;)[copyIndex()].location]&#34;</span>
+        }
+      }
+    }
+  }
+]
+</code></pre></div><p>I know it&rsquo;s a handful but below is a breakdown of major things it does.</p>
+<ul>
+<li>Uses <code>Microsoft.Resources/deployments</code> resource type to deploy another template.</li>
+</ul>
+<blockquote>
+<p>Note we generate a unique name for the deployment by concating the <code>copyIndex()</code>
+The <code>condition</code> property is set to <code>false</code></p>
+</blockquote>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
+  <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;Microsoft.Resources/deployments&#34;</span>,
+  <span style="color:#f92672">&#34;apiVersion&#34;</span>: <span style="color:#e6db74">&#34;2019-10-01&#34;</span>,
+  <span style="color:#f92672">&#34;condition&#34;</span>: <span style="color:#66d9ef">false</span>,
+  <span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;[concat(&#39;deploy-linkedStorageTemplate&#39;, copyIndex())]&#34;</span>
+  <span style="color:#960050;background-color:#1e0010">//&lt;--</span> <span style="color:#960050;background-color:#1e0010">skipped</span> <span style="color:#960050;background-color:#1e0010">below</span> <span style="color:#960050;background-color:#1e0010">properties</span> <span style="color:#960050;background-color:#1e0010">--&gt;</span>
+}
+</code></pre></div><ul>
+<li>Uses the <code>uri</code> of the raw template link for the <code>storageaccount.json</code> in the GitHub repository.</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#e6db74">&#34;templateLink&#34;</span><span style="color:#960050;background-color:#1e0010">:</span> {
+  <span style="color:#f92672">&#34;contentVersion&#34;</span>: <span style="color:#e6db74">&#34;1.0.0.0&#34;</span>,
+  <span style="color:#f92672">&#34;uri&#34;</span>: <span style="color:#e6db74">&#34;https://raw.githubusercontent.com/DexterPOSH/ArmTemplateLoopExample/master/linkedtemplate/storageaccount.json&#34;</span>
+}
+</code></pre></div><ul>
+<li>Uses resource iteration by using <code>copy</code> property and using the <code>parameters('numberofStorageAccounts')</code> as the value for count, which means it loops over this resource this many times. Also, gives this copy loop a friendly name <code>_loopToDeployStorageAccounts</code>.</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#e6db74">&#34;copy&#34;</span><span style="color:#960050;background-color:#1e0010">:</span> {
+  <span style="color:#f92672">&#34;count&#34;</span>: <span style="color:#e6db74">&#34;[parameters(&#39;numberofStorageAccounts&#39;)]&#34;</span>,
+  <span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;_loopToDeployStorageAccounts&#34;</span>
+}
+</code></pre></div><ul>
+<li>Passes on the parameters to this linked template by indexing into the variable <code>_deployMultipleStorageAccounts</code></li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#e6db74">&#34;storageAccountName&#34;</span><span style="color:#960050;background-color:#1e0010">:</span> {
+  <span style="color:#f92672">&#34;value&#34;</span>: <span style="color:#e6db74">&#34;[variables(&#39;_deployMultipleStorageAccounts&#39;)[copyIndex()].storageAccountName]&#34;</span>
+}
+</code></pre></div><h4 id="dry-run---verify-variable-iteration-logic">Dry run - Verify Variable iteration logic</h4>
+<p>Based on my experience with this approach of looping over, we can most of the time validate what is inside the variable created for looping to verify it will work.</p>
+<p>Remember the <code>condition</code> is set to <code>false</code> for our linked template deployment resource, which means when we submit this ARM template for deployment it won&rsquo;t trigger it but however the <code>azuredeploy.json</code> will be processed and we will get the output back which contains the <code>variables</code> property.</p>
+<p>Let&rsquo;s create an ARM template parameters file, with the new release of the ARM tools VSCode extension, it is natively possible to generate these parameters file. Read more in the release notes <a href="https://marketplace.visualstudio.com/items?itemName=msazurermtools.azurerm-vscode-tools">here</a>.</p>
+<p>Click on <em>Select Parameter File&hellip;</em> (at the bottom) &gt; <em>New</em> &gt; <em>All parameters</em> &gt; Save it. Open it and fill the values.</p>
+<p><img src="/static/006/generateParam.png" alt="Generate ARM parameters file"></p>
+<p>This is how it looks after adding values.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
+  <span style="color:#f92672">&#34;$schema&#34;</span>: <span style="color:#e6db74">&#34;https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#&#34;</span>,
+  <span style="color:#f92672">&#34;contentVersion&#34;</span>: <span style="color:#e6db74">&#34;1.0.0.0&#34;</span>,
+  <span style="color:#f92672">&#34;parameters&#34;</span>: {
+    <span style="color:#f92672">&#34;storageAccountNamePrefix&#34;</span>: {
+      <span style="color:#f92672">&#34;value&#34;</span>: <span style="color:#e6db74">&#34;azurearm6754&#34;</span>
+    },
+    <span style="color:#f92672">&#34;numberofStorageAccounts&#34;</span>: {
+      <span style="color:#f92672">&#34;value&#34;</span>: <span style="color:#ae81ff">2</span>
+    },
+    <span style="color:#f92672">&#34;storageAccountType&#34;</span>: {
+      <span style="color:#f92672">&#34;value&#34;</span>: <span style="color:#e6db74">&#34;Standard_GRS&#34;</span>
+    },
+    <span style="color:#f92672">&#34;location&#34;</span>: {
+      <span style="color:#f92672">&#34;value&#34;</span>: <span style="color:#e6db74">&#34;southindia&#34;</span>
+    }
+  }
+}
+</code></pre></div><p>Deploy it using Az PowerShell module cmdelt</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">$rg =  <span style="color:#e6db74">&#34;test_arm_rg&#34;</span>
+New-AzResourceGroupDeployment -TemplateFile ./azuredeploy.json -TemplateParameterFile ./azuredeploy.parameters.json -ResourceGroupName $rg
+</code></pre></div><pre><code class="language-output" data-lang="output">DeploymentName          : azuredeploy
+ResourceGroupName       : test_arm_rg
+ProvisioningState       : Succeeded
+Timestamp               : 06/07/2020 14:24:21
+Mode                    : Incremental
+TemplateLink            :
+Parameters              :
+                          Name                        Type                       Value
+                          ==========================  =========================  ==========
+                          storageAccountNamePrefix    String                     azurearm6754
+                          numberofStorageAccounts     Int                        2
+                          storageAccountType          String                     Standard_GRS
+                          location                    String                     southindia
+
+Outputs                 :
+                          Name             Type                       Value
+                          ===============  =========================  ==========
+                          variables        Object                     {
+                            &quot;_deployMultipleStorageAccounts&quot;: [
+                              {
+                                &quot;storageAccountType&quot;: &quot;Standard_GRS&quot;,
+                                &quot;location&quot;: &quot;southindia&quot;,
+                                &quot;storageAccountName&quot;: &quot;azurearm67543ub5zsu77klvq0&quot;
+                              },
+                              {
+                                &quot;storageAccountType&quot;: &quot;Standard_GRS&quot;,
+                                &quot;location&quot;: &quot;southindia&quot;,
+                                &quot;storageAccountName&quot;: &quot;azurearm67543ub5zsu77klvq1&quot;
+                              }
+                            ]
+                          }
+
+DeploymentDebugLogLevel :
+</code></pre><p>Look at the outputs section, it clearly lists out the variable we generated and upon which our whole logic of depolying multiple resources existed.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#e6db74">&#34;_deployMultipleStorageAccounts&#34;</span><span style="color:#960050;background-color:#1e0010">:</span> [
+  {
+    <span style="color:#f92672">&#34;storageAccountType&#34;</span>: <span style="color:#e6db74">&#34;Standard_GRS&#34;</span>,
+    <span style="color:#f92672">&#34;location&#34;</span>: <span style="color:#e6db74">&#34;southindia&#34;</span>,
+    <span style="color:#f92672">&#34;storageAccountName&#34;</span>: <span style="color:#e6db74">&#34;azurearm67543ub5zsu77klvq0&#34;</span>
+  },
+  {
+    <span style="color:#f92672">&#34;storageAccountType&#34;</span>: <span style="color:#e6db74">&#34;Standard_GRS&#34;</span>,
+    <span style="color:#f92672">&#34;location&#34;</span>: <span style="color:#e6db74">&#34;southindia&#34;</span>,
+    <span style="color:#f92672">&#34;storageAccountName&#34;</span>: <span style="color:#e6db74">&#34;azurearm67543ub5zsu77klvq1&#34;</span>
+  }
+]
+</code></pre></div><h3 id="test-the-solution">Test the solution</h3>
+<p>Once the variable iteration logic is verified, it is time to deploy the tempalte to see that it actually creates.</p>
+<p>Wait! before you jump into testing it you need to make a minor change. Can you guess what? Set <code>condition</code> to <code>true</code> inside the linked template deployment resource.</p>
+<p>Below is a snippet of where that change goes inside the template.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#e6db74">&#34;resources&#34;</span><span style="color:#960050;background-color:#1e0010">:</span> [
+  {
+    <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;Microsoft.Resources/deployments&#34;</span>,
+    <span style="color:#f92672">&#34;apiVersion&#34;</span>: <span style="color:#e6db74">&#34;2019-10-01&#34;</span>,
+    <span style="color:#f92672">&#34;condition&#34;</span>: <span style="color:#66d9ef">true</span> <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#960050;background-color:#1e0010">set</span> <span style="color:#960050;background-color:#1e0010">this</span> <span style="color:#960050;background-color:#1e0010">to</span> <span style="color:#66d9ef">true</span> <span style="color:#960050;background-color:#1e0010">to</span> <span style="color:#960050;background-color:#1e0010">actually</span> <span style="color:#960050;background-color:#1e0010">deploy</span> <span style="color:#960050;background-color:#1e0010">the</span> <span style="color:#960050;background-color:#1e0010">linked</span> <span style="color:#960050;background-color:#1e0010">template</span>,
+    <span style="color:#960050;background-color:#1e0010">//&lt;--</span> <span style="color:#960050;background-color:#1e0010">skipped</span> <span style="color:#960050;background-color:#1e0010">below</span> <span style="color:#960050;background-color:#1e0010">properties</span> <span style="color:#960050;background-color:#1e0010">--&gt;</span>
+  }
+]
+</code></pre></div><p>Deploy again, this time it should deploy multiple storage accounts.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">$rg =  <span style="color:#e6db74">&#34;test_arm_rg&#34;</span>
+New-AzResourceGroupDeployment -TemplateFile ./azuredeploy.json -TemplateParameterFile ./azuredeploy.parameters.json -ResourceGroupName $rg
+</code></pre></div><h2 id="tldr-solution">TLDR; Solution</h2>
+<p>Head over to this GitHub repository to see the ARM templates.</p>
+<p><a href="https://github.com/DexterPOSH/ArmTemplateLoopExample">ArmTemplateLoopExample</a></p>
+<h2 id="references">References</h2>
+<p><a href="https://marketplace.visualstudio.com/items?itemName=msazurermtools.azurerm-vscode-tools">Azure Resource Manager (ARM) Tools VSCode extension</a></p>
+<p><a href="https://github.com/Azure/azure-quickstart-templates">Azure QuickStart Templates</a></p>
+<p><a href="https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/linked-templates#linked-template">Linked Templates</a></p>
+<p><a href="https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/deployment-tutorial-linked-template?tabs=azure-powershell#create-a-linked-template">Deploy a linked template tutorial</a></p>
+<p><a href="https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/copy-resources">Resource-Ieration</a></p>
+
+  </div>
+  
+
+<div class="navigation navigation-single">
+    
+    <a href="/posts/005-aks-tip-ip/" class="navigation-prev">
+      <i aria-hidden="true" class="fa fa-chevron-left"></i>
+      <span class="navigation-tittle">AKS PowerShell Tip - Add Authorized Ip</span>
+    </a>
+    
+    
+    <a href="/posts/003-dotnet-sha256-hash/" class="navigation-next">
+      <span class="navigation-tittle">.NET notes - create SHA256 hash</span>
+      <i aria-hidden="true" class="fa fa-chevron-right"></i>
+    </a>
+    
+</div>
+
+
+  
+
+  
+    
+
+
+</article>
+
+
+        </div>
+        
+    
+
+  
+  
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-165270256-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+<script defer src="https://use.fontawesome.com/releases/v5.11.2/js/all.js" integrity="sha384-b3ua1l97aVGAPEIe48b4TC60WUQbQaGi2jqAWM90y0OZXZeyaTCWtBTKtjW2GXG1" crossorigin="anonymous"></script>
+
+
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+        
+            
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/languages/json.min.js"></script>
+            
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/languages/powershell.min.js"></script>
+            
+        
+    <script type="text/javascript">
+        
+        hljs.configure({languages: ["json, powershell"]});
+        
+        hljs.initHighlightingOnLoad();
+    </script>
+    
+
+
+
+
+
+    
+
+
+
+    </body>
+</html>

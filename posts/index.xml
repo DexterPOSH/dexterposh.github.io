@@ -21,6 +21,15 @@
     </item>
     
     <item>
+      <title>ARM templates - iterate &amp; deploy resource</title>
+      <link>https://dexterposh.github.io/posts/006-arm-template-loop/</link>
+      <pubDate>Tue, 26 May 2020 15:18:35 +0530</pubDate>
+      
+      <guid>https://dexterposh.github.io/posts/006-arm-template-loop/</guid>
+      <description>Background I like ARM templates, I use it a lot to deploy Azure cloud resources but as all things it has some pain points associated with it. In this post, let&amp;rsquo;s see how you can iterate over based on certain logic and deploy multiple linked resources.</description>
+    </item>
+    
+    <item>
       <title>AKS PowerShell Tip - Add Authorized Ip</title>
       <link>https://dexterposh.github.io/posts/005-aks-tip-ip/</link>
       <pubDate>Fri, 01 May 2020 12:21:28 +0530</pubDate>
