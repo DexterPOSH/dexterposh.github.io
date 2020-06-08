@@ -209,9 +209,8 @@
 └── linkedTemplate
    └── storageaccount.json
 </code></pre><h3 id="author-linked-template">Author linked template</h3>
-<p>First thing to do when you&rsquo;re writing an ARM template is to make sure you understand that component properly, how it works, best practices while using that Azure component etc.</p>
-<p>Why? you might be wondering because ARM templates is how you deploy your Azure cloud infrastructure and it would be as good as you make your ARM templates, they&rsquo;re called blueprints for your Azure resources for this reason.</p>
-<p>But at the same time start small and head over to <a href="https://github.com/Azure/azure-quickstart-templates">azure-quickstart-templates</a> repository to get an idea of the scenarios.</p>
+<p>First thing to do when you&rsquo;re writing an ARM template is to make sure you understand that component properly, how it works, best practices while using that Azure component etc. Why? you might be wondering because ARM templates is how you deploy your Azure cloud infrastructure and it would be as good as you make your ARM templates, they&rsquo;re called blueprints for your Azure resources for this reason.</p>
+<p>But at the same time start small and head over to <a href="https://github.com/Azure/azure-quickstart-templates">azure-quickstart-templates</a> repository to get some samples.</p>
 <p>I found out that the template stored here in this <a href="https://github.com/Azure/azure-quickstart-templates/blob/master/101-storage-account-create/azuredeploy.json">101-storage-account-create</a> example is good enough for me. So, let me copypasta ✍ this and place the content inside my <code>linkedtemplate\storageaccount.json</code> file.</p>
 <p>So, we have a starting point which can deploy a single storage account for us, but you would notice on closer inspection that this <code>storageaccount.json</code> template doesn&rsquo;t take storageAccountName as a parameter but generates it in the variables section.</p>
 <p>Let&rsquo;s quickly modify it. Changes made:</p>
