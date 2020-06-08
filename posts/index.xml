@@ -26,7 +26,7 @@
       <pubDate>Tue, 26 May 2020 15:18:35 +0530</pubDate>
       
       <guid>https://dexterposh.github.io/posts/006-arm-template-loop/</guid>
-      <description>Background 🧐 I like ARM templates, I use it a lot to deploy Azure cloud resources but as all things it has some pain points associated with it. In this post, let&amp;rsquo;s see how you can iterate over based on certain logic and deploy multiple linked resources.</description>
+      <description>Background 🧐 I like ARM templates, I use it a lot to deploy Azure cloud resources but as all things it has some pain points associated with it. In this post, let&amp;rsquo;s see how you can iterate over based on certain logic and deploy multiple resources using linked templates.</description>
     </item>
     
     <item>
