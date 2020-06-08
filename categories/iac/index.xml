@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>iac on System Engineer taking Dev?Ops notes</title>
+    <link>https://dexterposh.github.io/categories/iac/</link>
+    <description>Recent content in iac on System Engineer taking Dev?Ops notes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 26 May 2020 15:18:35 +0530</lastBuildDate>
+    
+	<atom:link href="https://dexterposh.github.io/categories/iac/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>ARM templates - iterate &amp; deploy resource</title>
+      <link>https://dexterposh.github.io/posts/006-arm-template-loop/</link>
+      <pubDate>Tue, 26 May 2020 15:18:35 +0530</pubDate>
+      
+      <guid>https://dexterposh.github.io/posts/006-arm-template-loop/</guid>
+      <description>Background 🧐 I like ARM templates, I use it a lot to deploy Azure cloud resources but as all things it has some pain points associated with it. In this post, let&amp;rsquo;s see how you can iterate over based on certain logic and deploy multiple resources using linked templates.</description>
+    </item>
+    
+  </channel>
+</rss>
