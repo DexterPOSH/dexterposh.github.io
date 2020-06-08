@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>azure on System Engineer taking Dev?Ops notes</title>
-    <link>https://dexterposh.github.io/tags/azure/</link>
-    <description>Recent content in azure on System Engineer taking Dev?Ops notes</description>
+    <title>iac on System Engineer taking Dev?Ops notes</title>
+    <link>https://dexterposh.github.io/tags/iac/</link>
+    <description>Recent content in iac on System Engineer taking Dev?Ops notes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Tue, 26 May 2020 15:18:35 +0530</lastBuildDate>
     
-	<atom:link href="https://dexterposh.github.io/tags/azure/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://dexterposh.github.io/tags/iac/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -18,15 +18,6 @@
       
       <guid>https://dexterposh.github.io/posts/006-arm-template-loop/</guid>
       <description>Background 🧐 I like ARM templates, I use it a lot to deploy Azure cloud resources but as all things it has some pain points associated with it. In this post, let&amp;rsquo;s see how you can iterate over based on certain logic and deploy multiple resources using linked templates.</description>
-    </item>
-    
-    <item>
-      <title>AKS PowerShell Tip - Add Authorized Ip</title>
-      <link>https://dexterposh.github.io/posts/005-aks-tip-ip/</link>
-      <pubDate>Fri, 01 May 2020 12:21:28 +0530</pubDate>
-      
-      <guid>https://dexterposh.github.io/posts/005-aks-tip-ip/</guid>
-      <description>Background 🐼 Recently, I found out that there is no sane way to perform adding a public IP address to the authorized IP address ranges using either the Az CLI or Az.</description>
     </item>
     
   </channel>

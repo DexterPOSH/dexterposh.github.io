@@ -43,7 +43,7 @@
   </url>
   
   <url>
-    <loc>https://dexterposh.github.io/categories/arm/</loc>
+    <loc>https://dexterposh.github.io/tags/arm/</loc>
     <lastmod>2020-05-26T15:18:35+05:30</lastmod>
   </url>
   
@@ -58,17 +58,22 @@
   </url>
   
   <url>
+    <loc>https://dexterposh.github.io/tags/azure/</loc>
+    <lastmod>2020-05-26T15:18:35+05:30</lastmod>
+  </url>
+  
+  <url>
     <loc>https://dexterposh.github.io/categories/</loc>
     <lastmod>2020-05-26T15:18:35+05:30</lastmod>
   </url>
   
   <url>
-    <loc>https://dexterposh.github.io/categories/cloud/</loc>
+    <loc>https://dexterposh.github.io/tags/cloud/</loc>
     <lastmod>2020-05-26T15:18:35+05:30</lastmod>
   </url>
   
   <url>
-    <loc>https://dexterposh.github.io/categories/iac/</loc>
+    <loc>https://dexterposh.github.io/tags/iac/</loc>
     <lastmod>2020-05-26T15:18:35+05:30</lastmod>
   </url>
   
@@ -84,11 +89,6 @@
   
   <url>
     <loc>https://dexterposh.github.io/tags/api/</loc>
-    <lastmod>2020-05-01T12:21:28+05:30</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://dexterposh.github.io/tags/azure/</loc>
     <lastmod>2020-05-01T12:21:28+05:30</lastmod>
   </url>
   
