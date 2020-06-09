@@ -407,7 +407,7 @@
 </code></pre></div><p>Also, I added a <code>variables</code> property in the output which is used to display what goes inside this variable once it is run by ARM API.</p>
 <p><img src="/static/006/transformParams.png" alt="alt"></p>
 <p>From a data-view point above creates a variable named <code>_deployMultipleStorageAccounts</code> which is an array of Json objects.</p>
-<p>If we assume the <code>parameters('numberofStorageAccounts')</code> is 2, <code>parameters('storageAccountType')</code> is <em>Standard_GRS</em> and <code>parameters('storageAccountType')</code> is <em>SouthEastAsia</em>, then it creates an array like below:</p>
+<p>If we assume the <code>parameters('numberofStorageAccounts')</code> is 2, <code>parameters('storageAccountType')</code> is <em>Standard_GRS</em> and <code>parameters('location')</code> is <em>SouthEastAsia</em>, then it creates an array like below:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">[
   {
     <span style="color:#f92672">&#34;storageAccountName&#34;</span>: <span style="color:#e6db74">&#34;&lt;generatedValuebyARM&gt;&#34;</span>,
@@ -417,7 +417,7 @@
   {
     <span style="color:#f92672">&#34;storageAccountName&#34;</span>: <span style="color:#e6db74">&#34;&lt;generatedValuebyARM&gt;&#34;</span>,
     <span style="color:#f92672">&#34;storageAccountType&#34;</span>: <span style="color:#e6db74">&#34;Standard_GRS&#34;</span>,
-    <span style="color:#f92672">&#34;loation&#34;</span>: <span style="color:#e6db74">&#34;SouthEastAsia&#34;</span>,
+    <span style="color:#f92672">&#34;location&#34;</span>: <span style="color:#e6db74">&#34;SouthEastAsia&#34;</span>,
   }
 ]
 </code></pre></div><h4 id="add-the-deployment-resource">Add the deployment resource</h4>
