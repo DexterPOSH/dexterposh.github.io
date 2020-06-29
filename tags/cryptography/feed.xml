@@ -57,7 +57,7 @@ Well, I suggested to write Pester tests to check the input being passed and perf
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;convert-json-to-class-&#34;&gt;Convert Json to Class ☯&lt;/h3&gt;
 &lt;p&gt;Let&amp;rsquo;s run the &lt;code&gt;ConverTo-Class&lt;/code&gt; function in the ConvertToClass module against this &lt;code&gt;azuredeploy.parameters.json&lt;/code&gt; file.&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;ConvertTo-Class -Target (Get-Content ./azuredeploy.parameters.json -Raw)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://dexterposh.github.io/static/007/class1.png&#34; alt=&#34;Auto generate PowerShell class definition&#34;&gt;&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://dexterposh.github.io/static/007/class1.png&#34; alt=&#34;alt&#34;&gt;&lt;/p&gt;
 &lt;p&gt;Above command generates below content:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;class RootObject1 {
     &lt;span style=&#34;color:#66d9ef&#34;&gt;[string]&lt;/span&gt;$$schema
