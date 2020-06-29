@@ -207,7 +207,7 @@ Recently, I was discussing with my colleague about this new book I am co-authori
     <li><a href="#brain-storming-">Brain-storming 🤔</a></li>
     <li><a href="#solution-">Solution ✅</a>
       <ul>
-        <li><a href="#convert-json-to-class-ß">Convert Json to Class ☯ß</a></li>
+        <li><a href="#convert-json-to-class-">Convert Json to Class ☯</a></li>
         <li><a href="#add-validation-attributes-">Add validation attributes ⌚</a></li>
         <li><a href="#add-logic-inside-empty-constructor-">Add logic inside Empty Constructor ⌛</a></li>
         <li><a href="#secret-sauce--cast-initialization-">Secret-Sauce : Cast-Initialization 🍲</a></li>
@@ -249,7 +249,7 @@ Well, I suggested to write Pester tests to check the input being passed and perf
     }
   }
 }
-</code></pre></div><h3 id="convert-json-to-class-ß">Convert Json to Class ☯ß</h3>
+</code></pre></div><h3 id="convert-json-to-class-">Convert Json to Class ☯</h3>
 <p>Let&rsquo;s run the <code>ConverTo-Class</code> function in the ConvertToClass module against this <code>azuredeploy.parameters.json</code> file.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">ConvertTo-Class -Target (Get-Content ./azuredeploy.parameters.json -Raw)
 </code></pre></div><p><img src="/static/007/class1.png" alt="Auto generate PowerShell class definition"></p>
