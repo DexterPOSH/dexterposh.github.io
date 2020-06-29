@@ -27,7 +27,7 @@
       
       <guid>https://dexterposh.github.io/posts/007-pwsh-class-usecase/</guid>
       <description>&lt;h2 id=&#34;origin&#34;&gt;Origin❓&lt;/h2&gt;
-&lt;p&gt;(shameless plug, alert!)&lt;/p&gt;
+&lt;p&gt;(shameless plug, alert!) 🙃&lt;/p&gt;
 &lt;p&gt;Recently, I was discussing with my colleague about this new &lt;a href=&#34;https://leanpub.com/powershell-to-csharp&#34;&gt;book&lt;/a&gt; I am co-authoring (with &lt;a href=&#34;https://twitter.com/singhprateik&#34;&gt;Prateek&lt;/a&gt;) about why to learn .NET to be a better PowerShell programmer and upon further discussion we pondered some interesting ways to use PowerShell classes.&lt;/p&gt;
 &lt;h2 id=&#34;brain-storming-&#34;&gt;Brain-storming 🤔&lt;/h2&gt;
 &lt;p&gt;All was lost, until we had another quick conversation about how to validate ARM templates.
