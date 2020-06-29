@@ -187,7 +187,7 @@ class Location {
 The answer is that we will be a using a trick with how we create an instance of the class in next section&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;h3 id=&#34;secret-sauce--cast-initialization-&#34;&gt;Secret-Sauce : Cast-Initialization 🍲&lt;/h3&gt;
-&lt;p&gt;I read Buce Payette&amp;rsquo;s &lt;a href=&#34;https://livebook.manning.com/book/windows-powershell-in-action-third-edition/chapter-19/311&#34;&gt;Windows PowerShell in Action 3rd&lt;/a&gt; edition which talks a bit about this technique in a brief.&lt;/p&gt;
+&lt;p&gt;Credit goes to Buce Payette&amp;rsquo;s &lt;a href=&#34;https://livebook.manning.com/book/windows-powershell-in-action-third-edition/chapter-19/311&#34;&gt;Windows PowerShell in Action 3rd&lt;/a&gt; edition which talks a bit about this technique in a brief.&lt;/p&gt;
 &lt;p&gt;In short, you can take schemaless data in two forms e.g. hashTable or PSObjects and convert them to strongly typed object instances.&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;For cast-initalization technique to work an empty constructor needs to be present in the Class definition.&lt;/p&gt;
@@ -218,6 +218,7 @@ The answer is that we will be a using a trick with how we create an instance of 
 &lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;resource-links-&#34;&gt;Resource links 📚&lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;https://leanpub.com/powershell-to-csharp&#34;&gt;PowerShell to C# and back&lt;/a&gt; - Disclaimer: co-author on this one.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://ridicurious.com/2020/06/29/powershell-to-csharp-and-back-classes/&#34;&gt;PowerShell to C# and Back – Introduction to Classes&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://livebook.manning.com/book/windows-powershell-in-action-third-edition&#34;&gt;Windows PowerShell in Action, 3rd Edition&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://github.com/dfinke/ConvertToClass&#34;&gt;Doug Finke&amp;rsquo;s ConverToClass module&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://github.com/Stephanevg/PSClassUtils&#34;&gt;PSClassUtils&lt;/a&gt;&lt;/li&gt;
