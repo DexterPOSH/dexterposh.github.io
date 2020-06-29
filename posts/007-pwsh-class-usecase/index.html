@@ -22,10 +22,12 @@
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="PowerShell Classes - Validating input data"/>
-<meta name="twitter:description" content="Problem/ Use-case One of these fine days, I was discussing with my colleague about this new book I am writing (shameless plug, alert!) about why to learn .NET to be a better PowerShell programmer and he asked me that dreaded question."/>
+<meta name="twitter:description" content="Origin❓ (shameless plug, alert!)
+Recently, I was discussing with my colleague about this new book I am co-authoring (with Prateek) about why to learn .NET to be a better PowerShell programmer and upon further discussion we pondered some interesting ways to use PowerShell classes."/>
 
 <meta property="og:title" content="PowerShell Classes - Validating input data" />
-<meta property="og:description" content="Problem/ Use-case One of these fine days, I was discussing with my colleague about this new book I am writing (shameless plug, alert!) about why to learn .NET to be a better PowerShell programmer and he asked me that dreaded question." />
+<meta property="og:description" content="Origin❓ (shameless plug, alert!)
+Recently, I was discussing with my colleague about this new book I am co-authoring (with Prateek) about why to learn .NET to be a better PowerShell programmer and upon further discussion we pondered some interesting ways to use PowerShell classes." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://dexterposh.github.io/posts/007-pwsh-class-usecase/" />
 <meta property="article:published_time" content="2020-06-29T19:42:59+05:30" />
@@ -158,6 +160,16 @@
     
     
     
+      
+      
+          in
+          
+          
+              <a class="badge badge-category" href="/categories/powershell">POWERSHELL</a>
+              
+          
+      
+    
     
     
       
@@ -177,7 +189,7 @@
     
     
     <br/>
-    <i class="fas fa-clock"></i> 1 min read
+    <i class="fas fa-clock"></i> 4 min read
 </div>
 
 
@@ -191,9 +203,17 @@
       
           <nav id="TableOfContents">
   <ul>
-    <li><a href="#problem-use-case">Problem/ Use-case</a></li>
-    <li><a href="#brain-storming">Brain-storming</a></li>
-    <li><a href="#solution">Solution</a></li>
+    <li><a href="#origin">Origin❓</a></li>
+    <li><a href="#brain-storming-">Brain-storming 🤔</a></li>
+    <li><a href="#solution-">Solution ✅</a>
+      <ul>
+        <li><a href="#convert-json-to-class-ß">Convert Json to Class ☯ß</a></li>
+        <li><a href="#add-validation-attributes-">Add validation attributes ⌚</a></li>
+        <li><a href="#add-logic-inside-empty-constructor-">Add logic inside Empty Constructor ⌛</a></li>
+        <li><a href="#secret-sauce--cast-initialization-">Secret-Sauce : Cast-Initialization 🍲</a></li>
+      </ul>
+    </li>
+    <li><a href="#resource-links-">Resource links 📚</a></li>
   </ul>
 </nav>
       
@@ -201,19 +221,202 @@
   
   
   <div class="post">
-    <h2 id="problem-use-case">Problem/ Use-case</h2>
-<p>One of these fine days, I was discussing with my colleague about this new book I am writing (shameless plug, alert!)
-about why to learn .NET to be a better PowerShell programmer and he asked me that dreaded question.</p>
-<blockquote>
-<p>Why should I use it? Give me a use-case to move away from Functions.</p>
-</blockquote>
-<p>Well, I gave plenty but it doesn&rsquo;t really hit home unless they see the light.</p>
-<h2 id="brain-storming">Brain-storming</h2>
-<p>I couldn&rsquo;t persuade him and few days later, we had another quick conversation about how to validate ARM templates.
+    <h2 id="origin">Origin❓</h2>
+<p>(shameless plug, alert!)</p>
+<p>Recently, I was discussing with my colleague about this new <a href="https://leanpub.com/powershell-to-csharp">book</a> I am co-authoring (with <a href="https://twitter.com/singhprateik">Prateek</a>) about why to learn .NET to be a better PowerShell programmer and upon further discussion we pondered some interesting ways to use PowerShell classes.</p>
+<h2 id="brain-storming-">Brain-storming 🤔</h2>
+<p>All was lost, until we had another quick conversation about how to validate ARM templates.
 Well, I suggested to write Pester tests to check the input being passed and perform <code>Test-AzDeployment</code> for ARM templates.</p>
-<p>Another idea popped up in my mind was what if we write a PowerShell class to model the ARM parameters file.</p>
-<h2 id="solution">Solution</h2>
-<p>There exists the</p>
+<p>Another idea that popped up in my mind was what if we write a PowerShell class to model the ARM parameters file and use that to validate the ARM template parameter inputs.</p>
+<h2 id="solution-">Solution ✅</h2>
+<p>There exists the <a href="https://github.com/dfinke/ConvertToClass">ConvertToClass</a> module by Doug Finke, whic comes to the rescue to automatically convert a JSON object to a PowerShell class. It even has VSCode integration, check it out.</p>
+<p>Let&rsquo;s start by taking a sample <code>azuredeploy.parameters.json</code> file.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
+  <span style="color:#f92672">&#34;$schema&#34;</span>: <span style="color:#e6db74">&#34;https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#&#34;</span>,
+  <span style="color:#f92672">&#34;contentVersion&#34;</span>: <span style="color:#e6db74">&#34;1.0.0.0&#34;</span>,
+  <span style="color:#f92672">&#34;parameters&#34;</span>: {
+    <span style="color:#f92672">&#34;storageAccountNamePrefix&#34;</span>: {
+      <span style="color:#f92672">&#34;value&#34;</span>: <span style="color:#e6db74">&#34;Azurearm6754&#34;</span>
+    },
+    <span style="color:#f92672">&#34;numberofStorageAccounts&#34;</span>: {
+      <span style="color:#f92672">&#34;value&#34;</span>: <span style="color:#ae81ff">2</span>
+    },
+    <span style="color:#f92672">&#34;storageAccountType&#34;</span>: {
+      <span style="color:#f92672">&#34;value&#34;</span>: <span style="color:#e6db74">&#34;Standard_LRS&#34;</span>
+    },
+    <span style="color:#f92672">&#34;location&#34;</span>: {
+      <span style="color:#f92672">&#34;value&#34;</span>: <span style="color:#e6db74">&#34;westus2&#34;</span>
+    }
+  }
+}
+</code></pre></div><h3 id="convert-json-to-class-ß">Convert Json to Class ☯ß</h3>
+<p>Let&rsquo;s run the <code>ConverTo-Class</code> function in the ConvertToClass module against this <code>azuredeploy.parameters.json</code> file.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">ConvertTo-Class -Target (Get-Content ./azuredeploy.parameters.json -Raw)
+</code></pre></div><p><img src="/static/007/class1.png" alt="Auto generate PowerShell class definition"></p>
+<p>Above command generates below content:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">class RootObject1 {
+    <span style="color:#66d9ef">[string]</span>$$schema
+    <span style="color:#66d9ef">[string]</span>$contentVersion
+    <span style="color:#66d9ef">[parameters]</span>$parameters
+}
+
+class parameters1 {
+    <span style="color:#66d9ef">[storageAccountNamePrefix]</span>$storageAccountNamePrefix
+    <span style="color:#66d9ef">[numberofStorageAccounts]</span>$numberofStorageAccounts
+    <span style="color:#66d9ef">[storageAccountType]</span>$storageAccountType
+    <span style="color:#66d9ef">[location]</span>$location
+}
+
+class storageAccountNamePrefix1 {
+    <span style="color:#66d9ef">[string]</span>$value
+}
+
+class numberofStorageAccounts1 {
+    <span style="color:#66d9ef">[int]</span>$value
+}
+
+class storageAccountType1 {
+    <span style="color:#66d9ef">[string]</span>$value
+}
+
+class location1 {
+    <span style="color:#66d9ef">[string]</span>$value
+}
+</code></pre></div><p>Let&rsquo;s rename the above classes like below:</p>
+<ul>
+<li><code>$$schema</code> property on <code>RootObject1</code> to <code>${$schema}</code>, done to escape <code>$</code> char in property name</li>
+<li><code>RootObject1</code> to <code>AzureParameters</code></li>
+<li><code>parameters1</code> to <code>Parameters</code></li>
+<li><code>storageAccountNamePrefix1</code> to <code>StorageAccountType</code></li>
+<li><code>numberofStorageAccounts1</code> to <code>StorageAccountType</code></li>
+<li><code>storageAccountType1</code> to <code>StorageAccountType</code></li>
+<li><code>location1</code> to <code>Location</code></li>
+</ul>
+<h3 id="add-validation-attributes-">Add validation attributes ⌚</h3>
+<p>We can add validation attributes to the <code>$value</code> inside the auto-generated class to add some quick validation rules to the properties present on the class.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">class AzureParameters {
+    <span style="color:#66d9ef">[string]</span>${$schema}
+    <span style="color:#66d9ef">[string]</span>$contentVersion
+    <span style="color:#66d9ef">[Parameters]</span>$parameters
+}
+
+class Parameters {
+    <span style="color:#66d9ef">[StorageAccountNamePrefix]</span>$storageAccountNamePrefix
+    <span style="color:#66d9ef">[NumberofStorageAccounts]</span>$numberofStorageAccounts
+    <span style="color:#66d9ef">[StorageAccountType]</span>$storageAccountType
+    <span style="color:#66d9ef">[Location]</span>$location
+}
+
+class StorageAccountNamePrefix {
+    <span style="color:#75715e"># use the regex to validate lowercase letters and number in the name</span>
+    [<span style="color:#66d9ef">ValidatePattern</span>(<span style="color:#e6db74">&#34;^([a-z]|[0-9])+$&#34;</span>)]
+    [<span style="color:#66d9ef">ValidateLength</span>(3,24)]
+    <span style="color:#66d9ef">[string]</span>$value
+}
+
+class StorageAccountNamePrefix {
+    <span style="color:#75715e"># restricting the min=1 and max=10 storage accounts that one can request</span>
+    [<span style="color:#66d9ef">ValidateRange</span>(1,10)]
+    <span style="color:#66d9ef">[int]</span>$value
+}
+
+class StorageAccountType {
+    <span style="color:#75715e"># Restricting the StorageAccount SKUs</span>
+    [<span style="color:#66d9ef">ValidateSet</span>(<span style="color:#e6db74">&#39;Standard_LRS&#39;</span>, <span style="color:#e6db74">&#39;Standard_GRS&#39;</span>, <span style="color:#e6db74">&#39;Standard_ZRS&#39;</span>)]
+    <span style="color:#66d9ef">[string]</span>$value
+}
+
+class Location {
+    <span style="color:#75715e"># Restricting the locations</span>
+    [<span style="color:#66d9ef">ValidateSet</span>(<span style="color:#e6db74">&#39;westus2&#39;</span>, <span style="color:#e6db74">&#39;northcentralus&#39;</span>)]
+    <span style="color:#66d9ef">[string]</span>$value
+}
+</code></pre></div><h3 id="add-logic-inside-empty-constructor-">Add logic inside Empty Constructor ⌛</h3>
+<p>We can add one more trick to the bag to add an empty constructor explicitly (this is present when no constructor exists) and put some more validation logic if the current validate attributes doesn&rsquo; suit the needs.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">class AzureParameters {
+    <span style="color:#66d9ef">[string]</span>${$schema}
+    <span style="color:#66d9ef">[string]</span>$contentVersion
+    <span style="color:#66d9ef">[Parameters]</span>$parameters
+}
+
+class Parameters {
+    <span style="color:#66d9ef">[StorageAccountNamePrefix]</span>$storageAccountNamePrefix
+    <span style="color:#66d9ef">[NumberofStorageAccounts]</span>$numberofStorageAccounts
+    <span style="color:#66d9ef">[StorageAccountType]</span>$storageAccountType
+    <span style="color:#66d9ef">[Location]</span>$location
+}
+
+class StorageAccountNamePrefix {
+    <span style="color:#75715e"># use the regex to validate lowercase letters and number in the name</span>
+    [<span style="color:#66d9ef">ValidateLength</span>(3,24)]
+    <span style="color:#66d9ef">[string]</span>$value
+}
+
+class NumberofStorageAccounts {
+    <span style="color:#75715e"># restricting the min=1 and max=10 storage accounts that one can request</span>
+    [<span style="color:#66d9ef">ValidateRange</span>(1,10)]
+    <span style="color:#66d9ef">[int]</span>$value
+}
+
+class StorageAccountType {
+    <span style="color:#75715e"># Restricting the StorageAccount SKUs</span>
+    [<span style="color:#66d9ef">ValidateSet</span>(<span style="color:#e6db74">&#39;Standard_LRS&#39;</span>, <span style="color:#e6db74">&#39;Standard_GRS&#39;</span>, <span style="color:#e6db74">&#39;Standard_ZRS&#39;</span>)]
+    <span style="color:#66d9ef">[string]</span>$value
+
+    <span style="color:#75715e"># Add some more validation logic inside the empty constructor</span>
+    storageAccountType() {
+        <span style="color:#75715e"># Perform some validation on the property</span>
+        <span style="color:#66d9ef">if</span> ($this.value <span style="color:#f92672">-ne</span> <span style="color:#e6db74">&#39;Standard_ZRS&#39;</span>) {
+            Write-Warning -Message <span style="color:#e6db74">&#34;No zone redundancy&#34;</span>
+        }
+    }
+}
+
+class Location {
+    <span style="color:#75715e"># Restricting the locations</span>
+    [<span style="color:#66d9ef">ValidateSet</span>(<span style="color:#e6db74">&#39;westus2&#39;</span>, <span style="color:#e6db74">&#39;northcentralus&#39;</span>)]
+    <span style="color:#66d9ef">[string]</span>$value
+}
+</code></pre></div><blockquote>
+<p>Why does this has to be an empty constructor?
+The answer is that we will be a using a trick with how we create an instance of the class in next section</p>
+</blockquote>
+<h3 id="secret-sauce--cast-initialization-">Secret-Sauce : Cast-Initialization 🍲</h3>
+<p>I read Buce Payette&rsquo;s <a href="https://livebook.manning.com/book/windows-powershell-in-action-third-edition/chapter-19/311">Windows PowerShell in Action 3rd</a> edition which talks a bit about this technique in a brief.</p>
+<p>In short, you can take schemaless data in two forms e.g. hashTable or PSObjects and convert them to strongly typed object instances.</p>
+<blockquote>
+<p>For cast-initalization technique to work an empty constructor needs to be present in the Class definition.</p>
+</blockquote>
+<p>Modify some value in the <code>azuredeploy.parameters.json</code> file to not-follow some validation logic we added like below:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
+  <span style="color:#f92672">&#34;$schema&#34;</span>: <span style="color:#e6db74">&#34;https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#&#34;</span>,
+  <span style="color:#f92672">&#34;contentVersion&#34;</span>: <span style="color:#e6db74">&#34;1.0.0.0&#34;</span>,
+  <span style="color:#f92672">&#34;parameters&#34;</span>: {
+    <span style="color:#f92672">&#34;storageAccountNamePrefix&#34;</span>: {
+      <span style="color:#f92672">&#34;value&#34;</span>: <span style="color:#e6db74">&#34;azurearm6754&#34;</span>
+    },
+    <span style="color:#f92672">&#34;numberofStorageAccounts&#34;</span>: {
+      <span style="color:#f92672">&#34;value&#34;</span>: <span style="color:#ae81ff">20</span>
+    },
+    <span style="color:#f92672">&#34;storageAccountType&#34;</span>: {
+      <span style="color:#f92672">&#34;value&#34;</span>: <span style="color:#e6db74">&#34;Standard_LRS&#34;</span>
+    },
+    <span style="color:#f92672">&#34;location&#34;</span>: {
+      <span style="color:#f92672">&#34;value&#34;</span>: <span style="color:#e6db74">&#34;westus2&#34;</span>
+    }
+  }
+}
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell"><span style="color:#66d9ef">[azureparameters]</span> (Get-Content -Path $PSScriptRoot/azuredeploy.parameters.json | ConvertFrom-Json)
+</code></pre></div><p><img src="/static/007/validation.png" alt="Validation in Action"></p>
+<p>Now, see the result when casting this as our <code>ArmParameters</code> class.</p>
+<pre><code class="language-error" data-lang="error">InvalidArgument: Cannot convert value &quot;@{$schema=https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#; contentVersion=1.0.0.0; parameters=}&quot; to type &quot;AzureParameters&quot;. Error: &quot;Cannot convert value &quot;@{storageAccountNamePrefix=; numberofStorageAccounts=; storageAccountType=; location=}&quot; to type &quot;Parameters&quot;. Error: &quot;Cannot create object of type &quot;NumberofStorageAccounts&quot;. The 20 argument is greater than the maximum allowed range of 10. Supply an argument that is less than or equal to 10 and then try the command again.&quot;&quot;
+</code></pre><h2 id="resource-links-">Resource links 📚</h2>
+<ul>
+<li><a href="https://leanpub.com/powershell-to-csharp">PowerShell to C# and back</a> - Disclaimer: co-author on this one.</li>
+<li><a href="https://livebook.manning.com/book/windows-powershell-in-action-third-edition">Windows PowerShell in Action, 3rd Edition</a></li>
+<li><a href="https://github.com/dfinke/ConvertToClass">Doug Finke&rsquo;s ConverToClass module</a></li>
+<li><a href="https://github.com/Stephanevg/PSClassUtils">PSClassUtils</a></li>
+</ul>
 
   </div>
   
