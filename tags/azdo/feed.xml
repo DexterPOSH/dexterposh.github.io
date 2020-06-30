@@ -33,7 +33,7 @@
 &lt;p&gt;All was lost, until we had another quick conversation about how to validate ARM templates.
 Well, I suggested to write Pester tests to check the input being passed and perform &lt;code&gt;Test-AzDeployment&lt;/code&gt; for ARM templates.&lt;/p&gt;
 &lt;p&gt;Another idea that popped up in my mind was what if we write a PowerShell class to model the ARM parameters file and use that to validate the ARM template parameter inputs.&lt;/p&gt;
-&lt;h2 id=&#34;solution-&#34;&gt;Solution ✅&lt;/h2&gt;
+&lt;h2 id=&#34;solution-&#34;&gt;Solution 🚀&lt;/h2&gt;
 &lt;p&gt;There exists the &lt;a href=&#34;https://github.com/dfinke/ConvertToClass&#34;&gt;ConvertToClass&lt;/a&gt; module by Doug Finke, whic comes to the rescue to automatically convert a JSON object to a PowerShell class. It even has VSCode integration, check it out.&lt;/p&gt;
 &lt;p&gt;Let&amp;rsquo;s start by taking a sample &lt;code&gt;azuredeploy.parameters.json&lt;/code&gt; file.&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;{
@@ -211,11 +211,37 @@ The answer is that we will be a using a trick with how we create an instance of 
     }
   }
 }
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;[azureparameters]&lt;/span&gt; (Get-Content -Path $PSScriptRoot/azuredeploy.parameters.json | ConvertFrom-Json)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Now, see the result when casting this as our &lt;code&gt;ArmParameters&lt;/code&gt; class.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;[azureparameters]&lt;/span&gt; (Get-Content -Path $PSScriptRoot/azuredeploy.parameters.json | ConvertFrom-Json)
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://dexterposh.github.io/static/007/validation.png&#34; alt=&#34;Validation in Action&#34;&gt;&lt;/p&gt;
-&lt;p&gt;Now, see the result when casting this as our &lt;code&gt;ArmParameters&lt;/code&gt; class.&lt;/p&gt;
+&lt;p&gt;Throws below error:&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-error&#34; data-lang=&#34;error&#34;&gt;InvalidArgument: Cannot convert value &amp;quot;@{$schema=https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#; contentVersion=1.0.0.0; parameters=}&amp;quot; to type &amp;quot;AzureParameters&amp;quot;. Error: &amp;quot;Cannot convert value &amp;quot;@{storageAccountNamePrefix=; numberofStorageAccounts=; storageAccountType=; location=}&amp;quot; to type &amp;quot;Parameters&amp;quot;. Error: &amp;quot;Cannot create object of type &amp;quot;NumberofStorageAccounts&amp;quot;. The 20 argument is greater than the maximum allowed range of 10. Supply an argument that is less than or equal to 10 and then try the command again.&amp;quot;&amp;quot;
-&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;resource-links-&#34;&gt;Resource links 📚&lt;/h2&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Fix the value for the &lt;code&gt;numberofStorageAccounts&lt;/code&gt; parameter.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;{
+  &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;$schema&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#&amp;#34;&lt;/span&gt;,
+  &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;contentVersion&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;1.0.0.0&amp;#34;&lt;/span&gt;,
+  &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;parameters&amp;#34;&lt;/span&gt;: {
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;storageAccountNamePrefix&amp;#34;&lt;/span&gt;: {
+      &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;value&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;azurearm6754&amp;#34;&lt;/span&gt;
+    },
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;numberofStorageAccounts&amp;#34;&lt;/span&gt;: {
+      &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;value&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;
+    },
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;storageAccountType&amp;#34;&lt;/span&gt;: {
+      &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;value&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Standard_LRS&amp;#34;&lt;/span&gt;
+    },
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;location&amp;#34;&lt;/span&gt;: {
+      &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;value&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;westus2&amp;#34;&lt;/span&gt;
+    }
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Run the below again:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;[azureparameters]&lt;/span&gt; (Get-Content -Path $PSScriptRoot/azuredeploy.parameters.json | ConvertFrom-Json)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://dexterposh.github.io/static/007/valid.png&#34; alt=&#34;Validation passes&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;conclusion-&#34;&gt;Conclusion ✅&lt;/h2&gt;
+&lt;p&gt;This is maybe a very naive way of solving this but I read about a topic and used it to solve a problem in a unique way, which is a win for me 😎.&lt;/p&gt;
+&lt;p&gt;I think slowly embracing more Object-Oriented programming using PowerShell classes (or C#) can open up some interesting ways to solve problems in my tooling.&lt;/p&gt;
+&lt;h2 id=&#34;resource-links-&#34;&gt;Resource links 📚&lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;https://leanpub.com/powershell-to-csharp&#34;&gt;PowerShell to C# and back&lt;/a&gt; - Disclaimer: co-author on this one.&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://ridicurious.com/2020/06/29/powershell-to-csharp-and-back-classes/&#34;&gt;PowerShell to C# and Back – Introduction to Classes&lt;/a&gt;&lt;/li&gt;

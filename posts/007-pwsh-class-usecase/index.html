@@ -189,7 +189,7 @@ Recently, I was discussing with my colleague about this new book I am co-authori
     
     
     <br/>
-    <i class="fas fa-clock"></i> 4 min read
+    <i class="fas fa-clock"></i> 5 min read
 </div>
 
 
@@ -205,7 +205,7 @@ Recently, I was discussing with my colleague about this new book I am co-authori
   <ul>
     <li><a href="#origin">Origin❓</a></li>
     <li><a href="#brain-storming-">Brain-storming 🤔</a></li>
-    <li><a href="#solution-">Solution ✅</a>
+    <li><a href="#solution-">Solution 🚀</a>
       <ul>
         <li><a href="#convert-json-to-class-">Convert Json to Class ☯</a></li>
         <li><a href="#add-validation-attributes-">Add validation attributes ⌚</a></li>
@@ -213,6 +213,7 @@ Recently, I was discussing with my colleague about this new book I am co-authori
         <li><a href="#secret-sauce--cast-initialization-">Secret-Sauce : Cast-Initialization 🍲</a></li>
       </ul>
     </li>
+    <li><a href="#conclusion-">Conclusion ✅</a></li>
     <li><a href="#resource-links-">Resource links 📚</a></li>
   </ul>
 </nav>
@@ -228,7 +229,7 @@ Recently, I was discussing with my colleague about this new book I am co-authori
 <p>All was lost, until we had another quick conversation about how to validate ARM templates.
 Well, I suggested to write Pester tests to check the input being passed and perform <code>Test-AzDeployment</code> for ARM templates.</p>
 <p>Another idea that popped up in my mind was what if we write a PowerShell class to model the ARM parameters file and use that to validate the ARM template parameter inputs.</p>
-<h2 id="solution-">Solution ✅</h2>
+<h2 id="solution-">Solution 🚀</h2>
 <p>There exists the <a href="https://github.com/dfinke/ConvertToClass">ConvertToClass</a> module by Doug Finke, whic comes to the rescue to automatically convert a JSON object to a PowerShell class. It even has VSCode integration, check it out.</p>
 <p>Let&rsquo;s start by taking a sample <code>azuredeploy.parameters.json</code> file.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
@@ -406,11 +407,37 @@ The answer is that we will be a using a trick with how we create an instance of 
     }
   }
 }
-</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell"><span style="color:#66d9ef">[azureparameters]</span> (Get-Content -Path $PSScriptRoot/azuredeploy.parameters.json | ConvertFrom-Json)
+</code></pre></div><p>Now, see the result when casting this as our <code>ArmParameters</code> class.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell"><span style="color:#66d9ef">[azureparameters]</span> (Get-Content -Path $PSScriptRoot/azuredeploy.parameters.json | ConvertFrom-Json)
 </code></pre></div><p><img src="/static/007/validation.png" alt="Validation in Action"></p>
-<p>Now, see the result when casting this as our <code>ArmParameters</code> class.</p>
+<p>Throws below error:</p>
 <pre><code class="language-error" data-lang="error">InvalidArgument: Cannot convert value &quot;@{$schema=https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#; contentVersion=1.0.0.0; parameters=}&quot; to type &quot;AzureParameters&quot;. Error: &quot;Cannot convert value &quot;@{storageAccountNamePrefix=; numberofStorageAccounts=; storageAccountType=; location=}&quot; to type &quot;Parameters&quot;. Error: &quot;Cannot create object of type &quot;NumberofStorageAccounts&quot;. The 20 argument is greater than the maximum allowed range of 10. Supply an argument that is less than or equal to 10 and then try the command again.&quot;&quot;
-</code></pre><h2 id="resource-links-">Resource links 📚</h2>
+</code></pre><p>Fix the value for the <code>numberofStorageAccounts</code> parameter.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
+  <span style="color:#f92672">&#34;$schema&#34;</span>: <span style="color:#e6db74">&#34;https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#&#34;</span>,
+  <span style="color:#f92672">&#34;contentVersion&#34;</span>: <span style="color:#e6db74">&#34;1.0.0.0&#34;</span>,
+  <span style="color:#f92672">&#34;parameters&#34;</span>: {
+    <span style="color:#f92672">&#34;storageAccountNamePrefix&#34;</span>: {
+      <span style="color:#f92672">&#34;value&#34;</span>: <span style="color:#e6db74">&#34;azurearm6754&#34;</span>
+    },
+    <span style="color:#f92672">&#34;numberofStorageAccounts&#34;</span>: {
+      <span style="color:#f92672">&#34;value&#34;</span>: <span style="color:#ae81ff">2</span>
+    },
+    <span style="color:#f92672">&#34;storageAccountType&#34;</span>: {
+      <span style="color:#f92672">&#34;value&#34;</span>: <span style="color:#e6db74">&#34;Standard_LRS&#34;</span>
+    },
+    <span style="color:#f92672">&#34;location&#34;</span>: {
+      <span style="color:#f92672">&#34;value&#34;</span>: <span style="color:#e6db74">&#34;westus2&#34;</span>
+    }
+  }
+}
+</code></pre></div><p>Run the below again:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell"><span style="color:#66d9ef">[azureparameters]</span> (Get-Content -Path $PSScriptRoot/azuredeploy.parameters.json | ConvertFrom-Json)
+</code></pre></div><p><img src="/static/007/valid.png" alt="Validation passes"></p>
+<h2 id="conclusion-">Conclusion ✅</h2>
+<p>This is maybe a very naive way of solving this but I read about a topic and used it to solve a problem in a unique way, which is a win for me 😎.</p>
+<p>I think slowly embracing more Object-Oriented programming using PowerShell classes (or C#) can open up some interesting ways to solve problems in my tooling.</p>
+<h2 id="resource-links-">Resource links 📚</h2>
 <ul>
 <li><a href="https://leanpub.com/powershell-to-csharp">PowerShell to C# and back</a> - Disclaimer: co-author on this one.</li>
 <li><a href="https://ridicurious.com/2020/06/29/powershell-to-csharp-and-back-classes/">PowerShell to C# and Back – Introduction to Classes</a></li>
