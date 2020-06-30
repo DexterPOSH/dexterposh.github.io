@@ -249,7 +249,7 @@ The answer is that we will be a using a trick with how we create an instance of 
 &lt;li&gt;&lt;a href=&#34;https://leanpub.com/powershell-to-csharp&#34;&gt;PowerShell to C# and back&lt;/a&gt; - Disclaimer: co-author on this one.&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://ridicurious.com/2020/06/29/powershell-to-csharp-and-back-classes/&#34;&gt;PowerShell to C# and Back – Introduction to Classes&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://livebook.manning.com/book/windows-powershell-in-action-third-edition&#34;&gt;Windows PowerShell in Action, 3rd Edition&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/dfinke/ConvertToClass&#34;&gt;Doug Finke&amp;rsquo;s ConverToClass module&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/dfinke/ConvertToClass&#34;&gt;Doug Finke&amp;rsquo;s ConvertToClass module&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://github.com/Stephanevg/PSClassUtils&#34;&gt;PSClassUtils&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
