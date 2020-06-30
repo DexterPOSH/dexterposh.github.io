@@ -190,7 +190,7 @@ class Location {
 The answer is that we will be a using a trick with how we create an instance of the class in next section&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;h3 id=&#34;secret-sauce--cast-initialization-&#34;&gt;Secret-Sauce : Cast-Initialization 🍲&lt;/h3&gt;
-&lt;p&gt;Credit goes to Buce Payette&amp;rsquo;s &lt;a href=&#34;https://livebook.manning.com/book/windows-powershell-in-action-third-edition/chapter-19/311&#34;&gt;Windows PowerShell in Action 3rd&lt;/a&gt; edition which talks a bit about this technique in brief.&lt;/p&gt;
+&lt;p&gt;Credit goes to Bruce Payette&amp;rsquo;s &lt;a href=&#34;https://livebook.manning.com/book/windows-powershell-in-action-third-edition/chapter-19/311&#34;&gt;Windows PowerShell in Action 3rd&lt;/a&gt; edition which talks a bit about this technique in brief.&lt;/p&gt;
 &lt;p&gt;In short, you can take a hashtable or PSObjects and cast them as strongly type object instance. This will become more clear when we perform this casting a bit later.&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;For cast-initalization technique to work an empty constructor needs to be present in the Class definition. It is present by default if there is no constructor on the class present or you can add one explicitly.&lt;/p&gt;
