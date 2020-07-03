@@ -3,6 +3,26 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://dexterposh.github.io/about/</loc>
+    <lastmod>2020-07-03T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://dexterposh.github.io/subscribe/</loc>
+    <lastmod>2020-07-03T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://dexterposh.github.io/fixed/</loc>
+    <lastmod>2020-07-03T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://dexterposh.github.io/</loc>
+    <lastmod>2020-07-03T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://dexterposh.github.io/tags/azure/</loc>
     <lastmod>2020-06-29T19:42:59+05:30</lastmod>
   </url>
@@ -29,11 +49,6 @@
   
   <url>
     <loc>https://dexterposh.github.io/posts/007-pwsh-class-usecase/</loc>
-    <lastmod>2020-06-29T19:42:59+05:30</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://dexterposh.github.io/</loc>
     <lastmod>2020-06-29T19:42:59+05:30</lastmod>
   </url>
   
