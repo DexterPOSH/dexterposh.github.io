@@ -12,9 +12,70 @@
     
     
     <item>
+      <title>Azure DevOps Pipeline as a Service - Part 1</title>
+      <link>https://dexterposh.github.io/posts/008-azdo-central/</link>
+      <pubDate>Sat, 04 Jul 2020 15:18:35 +0530</pubDate>
+      
+      <guid>https://dexterposh.github.io/posts/008-azdo-central/</guid>
+      <description>&lt;p&gt;&lt;img src=&#34;https://dexterposh.github.io/static/008/AzDOPaaS.png&#34; alt=&#34;Pipeline as a Service Cover&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;problem-statement-&#34;&gt;Problem Statement 🤔&lt;/h2&gt;
+&lt;p&gt;If you are working in a team supporting Application/ Infrastructure and authoring or supporting build/release pipelines in Azure DevOps, you&amp;rsquo;d have faced some of the below pain points.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Rolling out updates to different build/release pipelines e.g. task extension version update etc.&lt;/li&gt;
+&lt;li&gt;Governance around pipelines e.g. allowing changes via a Pull request and review.&lt;/li&gt;
+&lt;li&gt;Time to deliver pipeline to a new application.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;research-&#34;&gt;Research 🤖&lt;/h2&gt;
+&lt;p&gt;Azure devops has this hidden gem of a feature which a teamcan leverage to maintain a centralized repository of build/release templates under and Azure DevOps tenant.&lt;/p&gt;
+&lt;p&gt;It is called &lt;a href=&#34;https://docs.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=azure-devops#use-other-repositories&#34;&gt;&lt;strong&gt;Use other repositories&lt;/strong&gt;&lt;/a&gt; in the official docs for templates.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Thanks to &lt;a href=&#34;https://twitter.com/markekraus&#34;&gt;Mark Kraus&lt;/a&gt; for pointing out the more marketed term for this feature &lt;strong&gt;Pipeline as a Service&lt;/strong&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;What this allows to do is:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Maintain a single repository housing all the multi-stage yaml based templates under an Azure DevOps tenant.&lt;/li&gt;
+&lt;li&gt;Developers can create a repository and choose which remote template to use.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Limitations:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Centralized build templates repository can only contain yaml files, no other file type is supported. This means you can&amp;rsquo;t place your helper scripts side by side in the repository.&lt;/li&gt;
+&lt;li&gt;No marketplace/feed or gallery to advice the supported pipeline templates, at most this can be documented on a wiki.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;solution---pipeline-as-a-service-&#34;&gt;Solution - Pipeline as a Service ⚛&lt;/h2&gt;
+&lt;p&gt;For the sake of showing this feature, I am going to keep it a very simple scenario.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Create a centralized repository&lt;/li&gt;
+&lt;li&gt;Author a minimalistic pipeline to perform ARM template deployment.&lt;/li&gt;
+&lt;li&gt;Create an end-user repository and consume above pipeline template.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;centralize-repository&#34;&gt;Centralize Repository&lt;/h3&gt;
+&lt;p&gt;Let&amp;rsquo;s start by creating 2 projects in Azure DevOps to show that this works very well within the Azure DevOps tenant boundary.&lt;/p&gt;
+&lt;p&gt;Two projects &amp;amp; repositories created:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Build&lt;/strong&gt; project
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;templates&lt;/strong&gt; repository&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;AppDev&lt;/strong&gt; project
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;ARMTemplates&lt;/strong&gt; repository&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;author-arm-template-pipeline&#34;&gt;Author ARM template pipeline&lt;/h3&gt;
+&lt;p&gt;Let&amp;rsquo;s keep this pipeline simple and take something already out there.
+Idea is to add this centralized&lt;/p&gt;
+&lt;h3 id=&#34;consume-the-pipeline-service&#34;&gt;Consume the Pipeline Service&lt;/h3&gt;
+&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
+&lt;h2 id=&#34;resources&#34;&gt;Resources&lt;/h2&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Posts</title>
       <link>https://dexterposh.github.io/posts/</link>
-      <pubDate>Mon, 29 Jun 2020 19:42:59 +0530</pubDate>
+      <pubDate>Sat, 04 Jul 2020 15:18:35 +0530</pubDate>
       
       <guid>https://dexterposh.github.io/posts/</guid>
       <description></description>
