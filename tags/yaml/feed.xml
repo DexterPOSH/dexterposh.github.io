@@ -28,7 +28,7 @@
       <guid>https://dexterposh.github.io/posts/009-dotnet-pwsh-json/</guid>
       <description>&lt;h2 id=&#34;background&#34;&gt;Background&lt;/h2&gt;
 &lt;p&gt;Coming from PowerShell background, while learning ASP.NET Core based development. I wanted to wrap my head around how to handle JSON, so ended up taking notes on how to do this in C# and convert those into PowerShell for my reference as well.&lt;/p&gt;
-&lt;p&gt;In my explorations I like using the dotnet-script global tool for interactive user experince with C# and PowerShell core (which is already an interactive shell). Giving the credit where it&amp;rsquo;s due, I followed this &lt;a href=&#34;http://zetcode.com/csharp/json/&#34;&gt;tutorial&lt;/a&gt;) to learn JSON handling in C# and made these notes of my own.&lt;/p&gt;
+&lt;p&gt;In my explorations I like using the dotnet-script global tool for interactive user experince with C# and PowerShell core (which is already an interactive shell). Giving the credit where it&amp;rsquo;s due, I followed this &lt;a href=&#34;http://zetcode.com/csharp/json/&#34;&gt;tutorial&lt;/a&gt; to learn JSON handling in C# and made these notes of my own.&lt;/p&gt;
 &lt;p&gt;In this post the topics covered are:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Parsing JSON&lt;/li&gt;
