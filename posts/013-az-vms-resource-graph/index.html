@@ -229,7 +229,7 @@
       <ul>
         <li><a href="#find-virtual-machine-with-name">Find Virtual Machine with Name</a></li>
         <li><a href="#find-virtual-machines-with-name-regex-matching">Find Virtual machines with name regex matching</a></li>
-        <li><a href="#find-virtual-machines-for-a-specific-tag">Find Virtual machines for a specific tag</a></li>
+        <li><a href="#find-virtual-machines-with-a-specific-tag">Find Virtual machines with a specific tag</a></li>
         <li><a href="#find-virtual-machines-deployed-using-marketplace-images">Find Virtual machines deployed using MarketPlace images</a></li>
         <li><a href="#find-virtual-machines-deployed-using-custom-images">Find Virtual machines deployed using custom Images</a></li>
         <li><a href="#find-virtual-machines-which-do-not-have-a-tag-populated">Find Virtual machines which do not have a Tag populated</a></li>
@@ -277,8 +277,8 @@ az graph query -q &quot;where type =~ 'Microsoft.Compute/VirtualMachines' and Na
 </code></pre><h3 id="find-virtual-machines-with-name-regex-matching">Find Virtual machines with name regex matching</h3>
 <p>Note - This regex matching can be applied to any resource or any property defined in the Resource schema as well.</p>
 <pre><code class="language-pwsh" data-lang="pwsh">Search-AzGraph -Query &quot;where type =~ 'Microsoft.Compute/VirtualMachines' and name matches regex 'test-[0-9].*'&quot;
-</code></pre><h3 id="find-virtual-machines-for-a-specific-tag">Find Virtual machines for a specific tag</h3>
-<p>Gist is Kusto allows for filtering at all the level, so we can filter based on a specific tag or can chain multiple tags to filter.</p>
+</code></pre><h3 id="find-virtual-machines-with-a-specific-tag">Find Virtual machines with a specific tag</h3>
+<p>Gist is Kusto allows for filtering at all the levels, so we can filter based on a specific tag or can chain multiple tags to filter.</p>
 <pre><code class="language-pwsh" data-lang="pwsh"># Filter based on a tag called the department
 # Note that tags are case-sensitive
 Search-AzGraph -Query &quot;where type =~ 'Microsoft.Compute/VirtualMachines' and tags.department =~ 'ITDepartment'&quot;
