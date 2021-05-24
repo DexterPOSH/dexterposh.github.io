@@ -11,7 +11,7 @@
 <meta http-equiv="Cache-Control" content="public" />
 <!-- Enable responsiveness on mobile devices -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<meta name="generator" content="Hugo 0.65.3" />
+<meta name="generator" content="Hugo 0.80.0" />
 
     
     
@@ -46,7 +46,7 @@ To re-iterate of some terms used in this post:" />
 
 
 
-<link rel="stylesheet" href="/scss/hyde-hyde.3081c4981fb69a2783dd36ecfdd0e6ba7a158d4cbfdd290ebce8f78ba0469fc6.css" integrity="sha256-MIHEmB&#43;2mieD3Tbs/dDmunoVjUy/3SkOvOj3i6BGn8Y=">
+<link rel="stylesheet" href="/scss/hyde-hyde.71157e768c4e111a23c3531b95e0cbb59bbef3c9e6901d36247cb53d6b6be258.css" integrity="sha256-cRV&#43;doxOERojw1MbleDLtZu&#43;88nmkB02JHy1PWtr4lg=">
 
 
 <link rel="stylesheet" href="/scss/print.2744dcbf8a0b2e74f8a50e4b34e5f441be7cf93cc7de27029121c6a09f9e77bc.css" integrity="sha256-J0Tcv4oLLnT4pQ5LNOX0Qb58&#43;TzH3icCkSHGoJ&#43;ed7w=" media="print">
@@ -250,50 +250,50 @@ to hit an external API. So, to re-use we extracted them out as a job
 <a href="https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/utility/delay?view=azure-devops">agentless delay task</a> as an example but this job template can include
 series of steps.</p>
 <p>Below is my extracted out job template definition (indues a delay) which I want to re-use within stages in my main <strong>azure-pipelines.yml</strong> pipeline definition later.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">parameters</span>:
-  <span style="color:#66d9ef">name</span>: <span style="color:#e6db74">&#39;windows&#39;</span>
-<span style="color:#66d9ef">jobs</span>:
-  - <span style="color:#66d9ef">job</span>: commonJob
-    <span style="color:#66d9ef">displayName</span>: Common Job
-    <span style="color:#66d9ef">pool</span>: server
-    <span style="color:#66d9ef">steps</span>:
-    - <span style="color:#66d9ef">task</span>: Delay@<span style="color:#ae81ff">1</span>
-      <span style="color:#66d9ef">displayName</span>: <span style="color:#e6db74">&#39;Delay by 1 minutes for ${{ parameters.name }}&#39;</span>
-      <span style="color:#66d9ef">inputs</span>:
-        <span style="color:#66d9ef">delayForMinutes</span>: <span style="color:#ae81ff">1</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">parameters</span>:
+  <span style="color:#f92672">name</span>: <span style="color:#e6db74">&#39;windows&#39;</span>
+<span style="color:#f92672">jobs</span>:
+  - <span style="color:#f92672">job</span>: <span style="color:#ae81ff">commonJob</span>
+    <span style="color:#f92672">displayName</span>: <span style="color:#ae81ff">Common Job</span>
+    <span style="color:#f92672">pool</span>: <span style="color:#ae81ff">server</span>
+    <span style="color:#f92672">steps</span>:
+    - <span style="color:#f92672">task</span>: <span style="color:#ae81ff">Delay@1</span>
+      <span style="color:#f92672">displayName</span>: <span style="color:#e6db74">&#39;Delay by 1 minutes for ${{ parameters.name }}&#39;</span>
+      <span style="color:#f92672">inputs</span>:
+        <span style="color:#f92672">delayForMinutes</span>: <span style="color:#ae81ff">1</span>
 </code></pre></div><h3 id="azure-pipelinesyml">azure-pipelines.yml</h3>
 <p>Now, I want to call my Job template from above inside two stages Build &amp; Deploy
 in the multi-stage yaml pipeline as below.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">stages</span>:
-- <span style="color:#66d9ef">stage</span>: Build
-  <span style="color:#66d9ef">jobs</span>:
-  - <span style="color:#66d9ef">template</span>: ./jobtemplate.yml
-  - <span style="color:#66d9ef">job</span>: Build1
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">stages</span>:
+- <span style="color:#f92672">stage</span>: <span style="color:#ae81ff">Build</span>
+  <span style="color:#f92672">jobs</span>:
+  - <span style="color:#f92672">template</span>: <span style="color:#ae81ff">./jobtemplate.yml</span>
+  - <span style="color:#f92672">job</span>: <span style="color:#ae81ff">Build1</span>
 
-- <span style="color:#66d9ef">stage</span>: Deploy
-  <span style="color:#66d9ef">jobs</span>:
-    - <span style="color:#66d9ef">template</span>: ./jobtemplate.yml
-    - <span style="color:#66d9ef">job</span>: Deploy1
+- <span style="color:#f92672">stage</span>: <span style="color:#ae81ff">Deploy</span>
+  <span style="color:#f92672">jobs</span>:
+    - <span style="color:#f92672">template</span>: <span style="color:#ae81ff">./jobtemplate.yml</span>
+    - <span style="color:#f92672">job</span>: <span style="color:#ae81ff">Deploy1</span>
 </code></pre></div><p>Kick off a build for this and you would see it in the AzDO portal, that it works
 out well.</p>
 <p><img src="/static/004/jobWithinDiffStages.png" alt="Same Job template used with diffn stages"></p>
 <p>But, if I try to use the same Job template multiple times within the same stage
 that is when things get interesting. Let&rsquo;s modify our <strong>azure-pipelines.yml</strong> definition now.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">stages</span>:
-- <span style="color:#66d9ef">stage</span>: Build
-  <span style="color:#66d9ef">jobs</span>:
-  - <span style="color:#66d9ef">template</span>: ./jobtemplate.yml
-    <span style="color:#66d9ef">parameters</span>:
-        <span style="color:#66d9ef">name</span>: Deepak
-  - <span style="color:#66d9ef">template</span>: ./jobtemplate.yml
-    <span style="color:#66d9ef">parameters</span>:
-        <span style="color:#66d9ef">name</span>: Dhami
-  - <span style="color:#66d9ef">job</span>: Build1
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">stages</span>:
+- <span style="color:#f92672">stage</span>: <span style="color:#ae81ff">Build</span>
+  <span style="color:#f92672">jobs</span>:
+  - <span style="color:#f92672">template</span>: <span style="color:#ae81ff">./jobtemplate.yml</span>
+    <span style="color:#f92672">parameters</span>:
+        <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Deepak</span>
+  - <span style="color:#f92672">template</span>: <span style="color:#ae81ff">./jobtemplate.yml</span>
+    <span style="color:#f92672">parameters</span>:
+        <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Dhami</span>
+  - <span style="color:#f92672">job</span>: <span style="color:#ae81ff">Build1</span>
 
-- <span style="color:#66d9ef">stage</span>: Deploy
-  <span style="color:#66d9ef">jobs</span>:
-    - <span style="color:#66d9ef">template</span>: ./jobtemplate.yml
-    - <span style="color:#66d9ef">job</span>: Deploy1
+- <span style="color:#f92672">stage</span>: <span style="color:#ae81ff">Deploy</span>
+  <span style="color:#f92672">jobs</span>:
+    - <span style="color:#f92672">template</span>: <span style="color:#ae81ff">./jobtemplate.yml</span>
+    - <span style="color:#f92672">job</span>: <span style="color:#ae81ff">Deploy1</span>
 </code></pre></div><p>Try running this new modified pipeline and you would be greeted with the below
 in the portal.</p>
 <p><img src="/static/004/nameCollision.png" alt="Job name not unique"></p>
@@ -304,17 +304,17 @@ it turns out there is a very simple solution to this problem.</p>
 <p>One can remove the job identifier in the job template completely while
 extracting out jobs to re-use.</p>
 <p>What this means is we had to modify our Job templates like below:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">parameters</span>:
-  <span style="color:#66d9ef">name</span>: <span style="color:#e6db74">&#39;windows&#39;</span>
-<span style="color:#66d9ef">jobs</span>:
-  - <span style="color:#66d9ef">job</span>: <span style="color:#75715e"># Identifier here is removed</span>
-    <span style="color:#66d9ef">displayName</span>: Common Job
-    <span style="color:#66d9ef">pool</span>: server
-    <span style="color:#66d9ef">steps</span>:
-    - <span style="color:#66d9ef">task</span>: Delay@<span style="color:#ae81ff">1</span>
-      <span style="color:#66d9ef">displayName</span>: <span style="color:#e6db74">&#39;Delay by 1 minutes for ${{ parameters.name }}&#39;</span>
-      <span style="color:#66d9ef">inputs</span>:
-        <span style="color:#66d9ef">delayForMinutes</span>: <span style="color:#ae81ff">1</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">parameters</span>:
+  <span style="color:#f92672">name</span>: <span style="color:#e6db74">&#39;windows&#39;</span>
+<span style="color:#f92672">jobs</span>:
+  - <span style="color:#f92672">job</span>: <span style="color:#75715e"># Identifier here is removed</span>
+    <span style="color:#f92672">displayName</span>: <span style="color:#ae81ff">Common Job</span>
+    <span style="color:#f92672">pool</span>: <span style="color:#ae81ff">server</span>
+    <span style="color:#f92672">steps</span>:
+    - <span style="color:#f92672">task</span>: <span style="color:#ae81ff">Delay@1</span>
+      <span style="color:#f92672">displayName</span>: <span style="color:#e6db74">&#39;Delay by 1 minutes for ${{ parameters.name }}&#39;</span>
+      <span style="color:#f92672">inputs</span>:
+        <span style="color:#f92672">delayForMinutes</span>: <span style="color:#ae81ff">1</span>
 </code></pre></div><p>Now, it works.</p>
 <p><img src="/static/004/jobReuse.png" alt="Job re-use within same stage"></p>
 <h2 id="conclusion">Conclusion</h2>
