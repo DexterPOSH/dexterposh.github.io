@@ -13,17 +13,67 @@
   </url>
   
   <url>
+    <loc>https://dexterposh.github.io/tags/azure/</loc>
+    <lastmod>2021-05-24T10:47:38+05:30</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://dexterposh.github.io/posts/013-az-vms-resource-graph/</loc>
+    <lastmod>2021-05-24T10:47:38+05:30</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://dexterposh.github.io/categories/</loc>
+    <lastmod>2021-05-24T10:47:38+05:30</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://dexterposh.github.io/tags/devops/</loc>
+    <lastmod>2021-05-24T10:47:38+05:30</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://dexterposh.github.io/categories/devops/</loc>
+    <lastmod>2021-05-24T10:47:38+05:30</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://dexterposh.github.io/posts/</loc>
+    <lastmod>2021-05-24T10:47:38+05:30</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://dexterposh.github.io/tags/powershell/</loc>
+    <lastmod>2021-05-24T10:47:38+05:30</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://dexterposh.github.io/tags/resourcegraph/</loc>
+    <lastmod>2021-05-24T10:47:38+05:30</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://dexterposh.github.io/</loc>
+    <lastmod>2021-05-24T10:47:38+05:30</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://dexterposh.github.io/tags/</loc>
+    <lastmod>2021-05-24T10:47:38+05:30</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://dexterposh.github.io/tags/vms/</loc>
+    <lastmod>2021-05-24T10:47:38+05:30</lastmod>
+  </url>
+  
+  <url>
     <loc>https://dexterposh.github.io/categories/.net/</loc>
     <lastmod>2020-10-05T09:07:45+05:30</lastmod>
   </url>
   
   <url>
     <loc>https://dexterposh.github.io/tags/.net/</loc>
-    <lastmod>2020-10-05T09:07:45+05:30</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://dexterposh.github.io/categories/</loc>
     <lastmod>2020-10-05T09:07:45+05:30</lastmod>
   </url>
   
@@ -38,32 +88,12 @@
   </url>
   
   <url>
-    <loc>https://dexterposh.github.io/posts/</loc>
-    <lastmod>2020-10-05T09:07:45+05:30</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://dexterposh.github.io/tags/powershell/</loc>
-    <lastmod>2020-10-05T09:07:45+05:30</lastmod>
-  </url>
-  
-  <url>
     <loc>https://dexterposh.github.io/posts/011-dotnet-pwsh-json/</loc>
     <lastmod>2020-10-05T09:07:45+05:30</lastmod>
   </url>
   
   <url>
     <loc>https://dexterposh.github.io/tags/pwshtocsharpandback/</loc>
-    <lastmod>2020-10-05T09:07:45+05:30</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://dexterposh.github.io/</loc>
-    <lastmod>2020-10-05T09:07:45+05:30</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://dexterposh.github.io/tags/</loc>
     <lastmod>2020-10-05T09:07:45+05:30</lastmod>
   </url>
   
@@ -80,11 +110,6 @@
   <url>
     <loc>https://dexterposh.github.io/fixed/</loc>
     <lastmod>2020-07-03T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://dexterposh.github.io/tags/azure/</loc>
-    <lastmod>2020-06-29T19:42:59+05:30</lastmod>
   </url>
   
   <url>

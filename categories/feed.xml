@@ -6,7 +6,16 @@
     <description>Recent content in Categories on System Engineer taking Dev?Ops notes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 05 Oct 2020 09:07:45 +0530</lastBuildDate><atom:link href="https://dexterposh.github.io/categories/feed.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 24 May 2021 10:47:38 +0530</lastBuildDate><atom:link href="https://dexterposh.github.io/categories/feed.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>DevOps</title>
+      <link>https://dexterposh.github.io/categories/devops/</link>
+      <pubDate>Mon, 24 May 2021 10:47:38 +0530</pubDate>
+      
+      <guid>https://dexterposh.github.io/categories/devops/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>.NET</title>
       <link>https://dexterposh.github.io/categories/.net/</link>

@@ -6,13 +6,13 @@
     <description>Recent content in DevOps on System Engineer taking Dev?Ops notes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 05 Mar 2021 20:10:33 +0530</lastBuildDate><atom:link href="https://dexterposh.github.io/categories/devops/feed.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 24 May 2021 10:47:38 +0530</lastBuildDate><atom:link href="https://dexterposh.github.io/categories/devops/feed.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Azure Resource Graph Queries collection</title>
-      <link>https://dexterposh.github.io/posts/012-az-resurce-graph-vms/</link>
-      <pubDate>Fri, 05 Mar 2021 20:10:33 +0530</pubDate>
+      <title>Azure Vms Resource Graph Queries</title>
+      <link>https://dexterposh.github.io/posts/013-az-vms-resource-graph/</link>
+      <pubDate>Mon, 24 May 2021 10:47:38 +0530</pubDate>
       
-      <guid>https://dexterposh.github.io/posts/012-az-resurce-graph-vms/</guid>
+      <guid>https://dexterposh.github.io/posts/013-az-vms-resource-graph/</guid>
       <description>Why use Resource Graph instead Az CLI/ PowerShell? If we want to search for resources meeting certain criteria across all our subscriptions, we can&amp;rsquo;t use Az CLI or Az PowerShell to do this type of queries since it would require a lot of overhead to filter and switch between subscription contexts.</description>
     </item>
     
