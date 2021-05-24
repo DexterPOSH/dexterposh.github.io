@@ -268,13 +268,10 @@ az extension add --name resource-graph
 <p>If you want to find out if a virtual machine is present across all the subscriptions you have access to, you can use the below Resource graph query with Az CLI.</p>
 <pre><code class="language-pwsh" data-lang="pwsh"># Using Az.ResourceGraph Module
 Search-AzGraph -Query &quot;where type =~ 'Microsoft.Compute/VirtualMachines' and name == 'testvm01'&quot;
-
-Now for most of the queries in this post, you can do one to one translation to Az CLI commands by extracting the query and using it, I prefer to use PowerShell and that will be used in the rest of the examples.
-
-```shell
-# Using AZ CLI
-az graph query -q &quot;where type =~ 'Microsoft.Compute/VirtualMachines' and Name == 'testvm01'&quot;
-</code></pre><h3 id="find-virtual-machines-with-name-regex-matching">Find Virtual machines with name regex matching</h3>
+</code></pre><p>Now for most of the queries in this post, you can do one to one translation to Az CLI commands by extracting the query and using it, I prefer to use PowerShell and that will be used in the rest of the examples.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="color:#75715e"># Using AZ CLI</span>
+az graph query -q <span style="color:#e6db74">&#34;where type =~ &#39;Microsoft.Compute/VirtualMachines&#39; and Name == &#39;testvm01&#39;&#34;</span>
+</code></pre></div><h3 id="find-virtual-machines-with-name-regex-matching">Find Virtual machines with name regex matching</h3>
 <p>Note - This regex matching can be applied to any resource or any property defined in the Resource schema as well.</p>
 <pre><code class="language-pwsh" data-lang="pwsh">Search-AzGraph -Query &quot;where type =~ 'Microsoft.Compute/VirtualMachines' and name matches regex 'test-[0-9].*'&quot;
 </code></pre><h3 id="find-virtual-machines-with-a-specific-tag">Find Virtual machines with a specific tag</h3>
