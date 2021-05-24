@@ -17,14 +17,14 @@
     
     
 
-<title>PowerShell to C# &amp; back - JSON wrangling notes - Part I • System Engineer taking Dev?Ops notes</title>
+<title>PowerShell to C# &amp; back - JSON parse &amp; enumerate • System Engineer taking Dev?Ops notes</title>
 
 
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="PowerShell to C# &amp; back - JSON wrangling notes - Part I"/>
+<meta name="twitter:title" content="PowerShell to C# &amp; back - JSON parse &amp; enumerate"/>
 <meta name="twitter:description" content="Background Coming from PowerShell background, while learning ASP.NET Core based development I wanted to wrap my head around how to handle JSON, so ended up taking notes on how to do this in C# and as an exercise convert those into PowerShell code snippets for my reference."/>
 
-<meta property="og:title" content="PowerShell to C# &amp; back - JSON wrangling notes - Part I" />
+<meta property="og:title" content="PowerShell to C# &amp; back - JSON parse &amp; enumerate" />
 <meta property="og:description" content="Background Coming from PowerShell background, while learning ASP.NET Core based development I wanted to wrap my head around how to handle JSON, so ended up taking notes on how to do this in C# and as an exercise convert those into PowerShell code snippets for my reference." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://dexterposh.github.io/posts/009-dotnet-pwsh-json/" />
@@ -164,7 +164,7 @@
     
 <article>
   <header>
-    <h1>PowerShell to C# &amp; back - JSON wrangling notes - Part I</h1>
+    <h1>PowerShell to C# &amp; back - JSON parse &amp; enumerate</h1>
     
     
 <div class="post__meta">
@@ -282,8 +282,8 @@ an exercise convert those into PowerShell code snippets for my reference.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell"><span style="color:#75715e">#!/usr/bin/env pwsh</span>
 using namespace System.Text.Json
 
-$data = <span style="color:#e6db74">&#34;[ {</span><span style="color:#ae81ff">`&#34;</span><span style="color:#e6db74">name</span><span style="color:#ae81ff">`&#34;</span><span style="color:#e6db74">: </span><span style="color:#ae81ff">`&#34;</span><span style="color:#e6db74">John Doe</span><span style="color:#ae81ff">`&#34;</span><span style="color:#e6db74">, </span><span style="color:#ae81ff">`&#34;</span><span style="color:#e6db74">occupation</span><span style="color:#ae81ff">`&#34;</span><span style="color:#e6db74">: </span><span style="color:#ae81ff">`&#34;</span><span style="color:#e6db74">gardener</span><span style="color:#ae81ff">`&#34;</span><span style="color:#e6db74">}, &#34;</span> +
-                <span style="color:#e6db74">&#34;{</span><span style="color:#ae81ff">`&#34;</span><span style="color:#e6db74">name</span><span style="color:#ae81ff">`&#34;</span><span style="color:#e6db74">: </span><span style="color:#ae81ff">`&#34;</span><span style="color:#e6db74">Peter Novak</span><span style="color:#ae81ff">`&#34;</span><span style="color:#e6db74">, </span><span style="color:#ae81ff">`&#34;</span><span style="color:#e6db74">occupation</span><span style="color:#ae81ff">`&#34;</span><span style="color:#e6db74">: </span><span style="color:#ae81ff">`&#34;</span><span style="color:#e6db74">driver</span><span style="color:#ae81ff">`&#34;</span><span style="color:#e6db74">} ]&#34;</span>;
+$data = <span style="color:#e6db74">&#39;[{&#34;name&#34;: &#34;John Doe&#34;, &#34;occupation&#34;: &#34;gardener&#34;},&#39;</span> +
+                <span style="color:#e6db74">&#39;{&#34;name&#34;: &#34;Peter Novak&#34;, &#34;occupation&#34;: &#34;driver&#34;} ]&#39;</span>;
 
 $doc = <span style="color:#66d9ef">[JsonDocument]</span>::Parse($data)
 $root = $doc.RootElement
@@ -361,6 +361,11 @@ $root = $doc.RootElement
       <span class="navigation-tittle">PowerShell Classes - Validating ARM parameters</span>
     </a>
     
+    
+    <a href="/posts/010-dotnet-pwsh-json/" class="navigation-next">
+      <span class="navigation-tittle">PowerShell to C# &amp; back - JSON Seriazlie &amp; Deserialize</span>
+      <i aria-hidden="true" class="fa fa-chevron-right"></i>
+    </a>
     
 </div>
 
