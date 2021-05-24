@@ -27,8 +27,13 @@
       
       <guid>https://dexterposh.github.io/posts/009-dotnet-pwsh-json/</guid>
       <description>&lt;h2 id=&#34;background&#34;&gt;Background&lt;/h2&gt;
-&lt;p&gt;Coming from PowerShell background, while learning ASP.NET Core based development. I wanted to wrap my head around how to handle JSON, so ended up taking notes on how to do this in C# and convert those into PowerShell for my reference as well.&lt;/p&gt;
-&lt;p&gt;In my explorations I like using the dotnet-script global tool for interactive user experince with C# and PowerShell core (which is already an interactive shell). Giving the credit where it&amp;rsquo;s due, I followed this &lt;a href=&#34;http://zetcode.com/csharp/json/&#34;&gt;tutorial&lt;/a&gt; to learn JSON handling in C# and made these notes of my own.&lt;/p&gt;
+&lt;p&gt;Coming from PowerShell background, while learning ASP.NET Core based development
+I wanted to wrap my head around how to handle JSON, so ended up taking notes on how to do this in C# and as
+an exercise convert those into PowerShell code snippets for my reference.&lt;/p&gt;
+&lt;p&gt;In my explorations I like using the dotnet-script global tool for interactive user experience with C# and PowerShell core (which is already an interactive shell). So, you will see that I mostly use C# script files (.csx) and PowerShell script files (.ps1).&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Giving the credit where it&amp;rsquo;s due, I followed this &lt;a href=&#34;http://zetcode.com/csharp/json/&#34;&gt;tutorial&lt;/a&gt; to learn JSON handling in C# and made these notes of my own.&lt;/p&gt;
+&lt;/blockquote&gt;
 &lt;p&gt;In this post the topics covered are:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Parsing JSON&lt;/li&gt;
@@ -39,7 +44,7 @@
 &lt;p&gt;This is the new namespace in .NET core which provides the API to work with JSON.&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;h2 id=&#34;json-parsing&#34;&gt;JSON parsing&lt;/h2&gt;
-&lt;p&gt;JSON parsing is basically reading the JSON data and converting it into a typed object &lt;code&gt;JsonDocument&lt;/code&gt; in C#.&lt;/p&gt;
+&lt;p&gt;JSON parsing is basically reading the JSON data and converting it into a &lt;code&gt;JsonDocument&lt;/code&gt; typed object in C#.&lt;/p&gt;
 &lt;p&gt;Long story short:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Use the static method &lt;code&gt;Parse&lt;/code&gt; on the &lt;code&gt;JsonDocument&lt;/code&gt; class to consume a JSON string and get an object back.&lt;/li&gt;
@@ -83,6 +88,7 @@ Write-Host $User1.GetProperty(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34
 Write-Host $User2.GetProperty(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;name&amp;#34;&lt;/span&gt;)
 
 &lt;span style=&#34;color:#75715e&#34;&gt;# dispose the JsonDocument once done&lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;# We don&amp;#39;t do this in C# coz of the using statement automatically doing this&lt;/span&gt;
 $doc.Dispose()
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;json-enumerate&#34;&gt;JSON Enumerate&lt;/h2&gt;
 &lt;p&gt;In the above example we indexed into the elements of the array directly and then used &lt;code&gt;GetProperty()&lt;/code&gt; this only works if you know the number of elements in advance along with property names, but there are better ways to iterate and enumerate.&lt;/p&gt;

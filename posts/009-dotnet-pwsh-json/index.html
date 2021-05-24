@@ -22,10 +22,10 @@
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="PowerShell to C# &amp; back - JSON wrangling notes - Part I"/>
-<meta name="twitter:description" content="Background Coming from PowerShell background, while learning ASP.NET Core based development. I wanted to wrap my head around how to handle JSON, so ended up taking notes on how to do this in C# and convert those into PowerShell for my reference as well."/>
+<meta name="twitter:description" content="Background Coming from PowerShell background, while learning ASP.NET Core based development I wanted to wrap my head around how to handle JSON, so ended up taking notes on how to do this in C# and as an exercise convert those into PowerShell code snippets for my reference."/>
 
 <meta property="og:title" content="PowerShell to C# &amp; back - JSON wrangling notes - Part I" />
-<meta property="og:description" content="Background Coming from PowerShell background, while learning ASP.NET Core based development. I wanted to wrap my head around how to handle JSON, so ended up taking notes on how to do this in C# and convert those into PowerShell for my reference as well." />
+<meta property="og:description" content="Background Coming from PowerShell background, while learning ASP.NET Core based development I wanted to wrap my head around how to handle JSON, so ended up taking notes on how to do this in C# and as an exercise convert those into PowerShell code snippets for my reference." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://dexterposh.github.io/posts/009-dotnet-pwsh-json/" />
 <meta property="article:published_time" content="2020-09-16T11:12:33+05:30" />
@@ -233,8 +233,13 @@
   
   <div class="post">
     <h2 id="background">Background</h2>
-<p>Coming from PowerShell background, while learning ASP.NET Core based development. I wanted to wrap my head around how to handle JSON, so ended up taking notes on how to do this in C# and convert those into PowerShell for my reference as well.</p>
-<p>In my explorations I like using the dotnet-script global tool for interactive user experince with C# and PowerShell core (which is already an interactive shell). Giving the credit where it&rsquo;s due, I followed this <a href="http://zetcode.com/csharp/json/">tutorial</a> to learn JSON handling in C# and made these notes of my own.</p>
+<p>Coming from PowerShell background, while learning ASP.NET Core based development
+I wanted to wrap my head around how to handle JSON, so ended up taking notes on how to do this in C# and as
+an exercise convert those into PowerShell code snippets for my reference.</p>
+<p>In my explorations I like using the dotnet-script global tool for interactive user experience with C# and PowerShell core (which is already an interactive shell). So, you will see that I mostly use C# script files (.csx) and PowerShell script files (.ps1).</p>
+<blockquote>
+<p>Giving the credit where it&rsquo;s due, I followed this <a href="http://zetcode.com/csharp/json/">tutorial</a> to learn JSON handling in C# and made these notes of my own.</p>
+</blockquote>
 <p>In this post the topics covered are:</p>
 <ul>
 <li>Parsing JSON</li>
@@ -245,7 +250,7 @@
 <p>This is the new namespace in .NET core which provides the API to work with JSON.</p>
 </blockquote>
 <h2 id="json-parsing">JSON parsing</h2>
-<p>JSON parsing is basically reading the JSON data and converting it into a typed object <code>JsonDocument</code> in C#.</p>
+<p>JSON parsing is basically reading the JSON data and converting it into a <code>JsonDocument</code> typed object in C#.</p>
 <p>Long story short:</p>
 <ul>
 <li>Use the static method <code>Parse</code> on the <code>JsonDocument</code> class to consume a JSON string and get an object back.</li>
@@ -289,6 +294,7 @@ Write-Host $User1.GetProperty(<span style="color:#e6db74">&#34;name&#34;</span>)
 Write-Host $User2.GetProperty(<span style="color:#e6db74">&#34;name&#34;</span>)
 
 <span style="color:#75715e"># dispose the JsonDocument once done</span>
+<span style="color:#75715e"># We don&#39;t do this in C# coz of the using statement automatically doing this</span>
 $doc.Dispose()
 </code></pre></div><h2 id="json-enumerate">JSON Enumerate</h2>
 <p>In the above example we indexed into the elements of the array directly and then used <code>GetProperty()</code> this only works if you know the number of elements in advance along with property names, but there are better ways to iterate and enumerate.</p>
