@@ -1,20 +1,150 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>cryptography on System Engineer taking Dev?Ops notes</title>
+    <title>cryptography on Engineer taking Dev?Ops notes</title>
     <link>https://dexterposh.github.io/tags/cryptography/</link>
-    <description>Recent content in cryptography on System Engineer taking Dev?Ops notes</description>
+    <description>Recent content in cryptography on Engineer taking Dev?Ops notes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 05 Jun 2020 10:18:40 +0530</lastBuildDate><atom:link href="https://dexterposh.github.io/tags/cryptography/feed.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 05 Jun 2020 10:18:40 +0530</lastBuildDate>
+    
+	<atom:link href="https://dexterposh.github.io/tags/cryptography/feed.xml" rel="self" type="application/rss+xml" />
+    
+    
     <item>
       <title>.NET notes - create SHA256 hash</title>
       <link>https://dexterposh.github.io/posts/003-dotnet-sha256-hash/</link>
       <pubDate>Fri, 05 Jun 2020 10:18:40 +0530</pubDate>
       
       <guid>https://dexterposh.github.io/posts/003-dotnet-sha256-hash/</guid>
-      <description>Background 🧐 Today I was looking to generate SHA256 hash for input string data. Below are my notes on how I used dotnet script (interactive scripting experience) in .NET to experiment with it.</description>
+      <description>&lt;h2 id=&#34;background-&#34;&gt;Background 🧐&lt;/h2&gt;
+&lt;p&gt;Today I was looking to generate SHA256 hash for input string data.
+Below are my notes on how I used dotnet script (interactive scripting experience) in .NET to experiment with it.&lt;/p&gt;
+&lt;p&gt;P.S. - Writing these small .NET recipes helps me in absorbing more.&lt;/p&gt;
+&lt;h2 id=&#34;walkthrough-&#34;&gt;Walkthrough ⚡&lt;/h2&gt;
+&lt;h3 id=&#34;using-dotnet-script&#34;&gt;Using dotnet script&lt;/h3&gt;
+&lt;p&gt;To quickly test features in .NET core, I use the &lt;a href=&#34;https://www.nuget.org/packages/dotnet-script/&#34;&gt;&lt;em&gt;dotnet script&lt;/em&gt;&lt;/a&gt; global tool.&lt;/p&gt;
+&lt;p&gt;Begin with creating a dotnet script file (.csx extension).&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;mkdir hashing
+cd hashing
+dotnet script init sha256hash
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Above dotnet command creates an executable file with below content.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-csharp&#34; data-lang=&#34;csharp&#34;&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;#&lt;/span&gt;!/usr/bin/env dotnet-script
+
+Console.WriteLine(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Hello world!&amp;#34;&lt;/span&gt;);
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Since this is an executable script, we can run it like this as well.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;./sha256hash.csx
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Output:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-output&#34; data-lang=&#34;output&#34;&gt;Hello world!
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;using-statements-in-scripts&#34;&gt;Using statements in scripts&lt;/h3&gt;
+&lt;p&gt;Now, let&amp;rsquo;s modify this script to explore creating a SHA256 hash.&lt;/p&gt;
+&lt;p&gt;First, thing is we need to place some using statements to bring in the Cryptography and Text namespace like below.&lt;/p&gt;
+&lt;p&gt;So the content now looks like.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-csharp&#34; data-lang=&#34;csharp&#34;&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;#&lt;/span&gt;!/usr/bin/env dotnet-script
+
+&lt;span style=&#34;color:#75715e&#34;&gt;// Add the using statements
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;using&lt;/span&gt; System.Text;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;using&lt;/span&gt; System.Security.Cryptography;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;reading-the-docs&#34;&gt;Reading the docs&lt;/h3&gt;
+&lt;p&gt;Moving on, after browsing the documentation of the &lt;a href=&#34;https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.sha256.create?view=netcore-3.1#System_Security_Cryptography_SHA256_Create&#34;&gt;SHA256 class&lt;/a&gt; I noticed a &lt;em&gt;Create()&lt;/em&gt; method which creates a default instance.&lt;/p&gt;
+&lt;p&gt;Also, noticed that the inheritance chain for this class is
+Object -&amp;gt; HashAlgorithm -&amp;gt; SHA256&lt;/p&gt;
+&lt;p&gt;HashAlgorithm is the base class with below signature, notice it in turn inherits from IDisposable interface this immediately reminded me to use the &lt;code&gt;using&lt;/code&gt; statement syntax to conveniently dispose this object after re-use, rather than calling &lt;code&gt;Dispose()&lt;/code&gt; method myself inside try/catch/finally statements.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-csharp&#34; data-lang=&#34;csharp&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;abstract&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;HashAlgorithm&lt;/span&gt; : IDisposable, System.Security.Cryptography.ICryptoTransform
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-csharp&#34; data-lang=&#34;csharp&#34;&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;#&lt;/span&gt;!/usr/bin/env dotnet-script
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;using&lt;/span&gt; System.Text;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;using&lt;/span&gt; System.Security.Cryptography;
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;string&lt;/span&gt; text = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;DexterPOSH&amp;#34;&lt;/span&gt;; &lt;span style=&#34;color:#75715e&#34;&gt;// this is our text for which we will generate hash
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;using&lt;/span&gt; (SHA256 hashAlgorithm = SHA256.Create())
+{
+    &lt;span style=&#34;color:#75715e&#34;&gt;// place holder
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;};
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The docs also reveal the &lt;code&gt;ComputeHash()&lt;/code&gt; method which takes &lt;code&gt;byte[]&lt;/code&gt; array as argument and returns the byte array back as well.
+We need some way to convert our string input to byte array.&lt;/p&gt;
+&lt;h3 id=&#34;string-to-byte-conversion&#34;&gt;string to byte[] conversion&lt;/h3&gt;
+&lt;p&gt;Quick search suggests to use &lt;code&gt;Encoding.UTF8.GetBytes()&lt;/code&gt; static method for converting string to byte array.
+Using that in code now leads us to this point.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-csharp&#34; data-lang=&#34;csharp&#34;&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;#&lt;/span&gt;!/usr/bin/env dotnet-script
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;using&lt;/span&gt; System.Text;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;using&lt;/span&gt; System.Security.Cryptography;
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;string&lt;/span&gt; text = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;DexterPOSH&amp;#34;&lt;/span&gt;; &lt;span style=&#34;color:#75715e&#34;&gt;// this is our text for which we will generate hash
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;using&lt;/span&gt; (SHA256 hashAlgorithm = SHA256.Create())
+{
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;var&lt;/span&gt; hashedByteArray = hashAlgorithm.ComputeHash(Encoding.UTF8.GetBytes(input));
+    Console.WriteLine(hashedByteArray);
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Output:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-output&#34; data-lang=&#34;output&#34;&gt;System.Byte[]
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Let&amp;rsquo;s see how we can convert the byte[] to string object.&lt;/p&gt;
+&lt;h3 id=&#34;byte-to-string-conversion&#34;&gt;byte[] to string conversion&lt;/h3&gt;
+&lt;p&gt;Again search and got a hint of using the &lt;code&gt;BitConverter.ToString()&lt;/code&gt; static method.
+Let&amp;rsquo;s add that logic in our script.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-csharp&#34; data-lang=&#34;csharp&#34;&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;#&lt;/span&gt;!/usr/bin/env dotnet-script
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;using&lt;/span&gt; System.Text;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;using&lt;/span&gt; System.Security.Cryptography;
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;string&lt;/span&gt; text = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;DexterPOSH&amp;#34;&lt;/span&gt;; &lt;span style=&#34;color:#75715e&#34;&gt;// this is our text for which we will generate hash
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;using&lt;/span&gt; (SHA256 hashAlgorithm = SHA256.Create())
+{
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;var&lt;/span&gt; hashedByteArray = hashAlgorithm.ComputeHash(Encoding.UTF8.GetBytes(input));
+    Console.WriteLine(BitConverter.ToString(hashedByteArray));
+};
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Output:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-output&#34; data-lang=&#34;output&#34;&gt;1C-29-A2-30-0A-8A-99-6F-67-60-70-7E-21-0D-BD-61-B1-C9-3A-B7-4F-86-EE-13-7B-2E-DE-B6-01-6E-87-93
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;remove---from-string&#34;&gt;remove &amp;lsquo;-&amp;rsquo; from string&lt;/h3&gt;
+&lt;p&gt;As the last step let&amp;rsquo;s replace the char &lt;code&gt;-&lt;/code&gt; from the output string.
+&lt;code&gt;String&lt;/code&gt; class has replace method which invoke.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-csharp&#34; data-lang=&#34;csharp&#34;&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;#&lt;/span&gt;!/usr/bin/env dotnet-script
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;using&lt;/span&gt; System.Text;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;using&lt;/span&gt; System.Security.Cryptography;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;using&lt;/span&gt; (SHA256 hashAlgorithm = SHA256.Create())
+{
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;string&lt;/span&gt; input = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;DexterPOSH&amp;#34;&lt;/span&gt;;
+
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;byte&lt;/span&gt;[] data = hashAlgorithm.ComputeHash(
+        Encoding.UTF8.GetBytes(input)
+    );
+    Console.WriteLine(BitConverter.ToString(data).Replace(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;-&amp;#34;&lt;/span&gt;, String.Empty));
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Output:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-output&#34; data-lang=&#34;output&#34;&gt;1C29A2300A8A996F6760707E210DBD61B1C93AB74F86EE137B2EDEB6016E8793
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;solution-&#34;&gt;Solution 😎&lt;/h2&gt;
+&lt;p&gt;Content of the sha256hash.csx file.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-csharp&#34; data-lang=&#34;csharp&#34;&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;#&lt;/span&gt;!/usr/bin/env dotnet-script
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;using&lt;/span&gt; System.Text;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;using&lt;/span&gt; System.Security.Cryptography;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;using&lt;/span&gt; (SHA256 hashAlgorithm = SHA256.Create())
+{
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;string&lt;/span&gt; input = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;DexterPOSH&amp;#34;&lt;/span&gt;;
+
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;byte&lt;/span&gt;[] data = hashAlgorithm.ComputeHash(
+        Encoding.UTF8.GetBytes(input)
+    );
+    Console.WriteLine(BitConverter.ToString(data).Replace(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;-&amp;#34;&lt;/span&gt;, String.Empty));
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Run the above file&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;dotnet script run ./sha256hash.csx &lt;span style=&#34;color:#75715e&#34;&gt;# or simply ./sha256hash.csx&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Output:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-output&#34; data-lang=&#34;output&#34;&gt;1C29A2300A8A996F6760707E210DBD61B1C93AB74F86EE137B2EDEB6016E8793
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;reference-links-&#34;&gt;Reference links 📖&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.sha256?view=netcore-3.1#constructors&#34;&gt;System.Security.CryptoGraphy Class&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.hashalgorithm?view=netcore-3.1&#34;&gt;HashAlgorithm Base Class&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/using-statement&#34;&gt;using statement reference in C#&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.c-sharpcorner.com/article/c-sharp-string-to-byte-array/&#34;&gt;C# String To Byte Array&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.c-sharpcorner.com/article/how-to-convert-a-byte-array-to-a-string/&#34;&gt;Convert Byte Array To String In C#&lt;/a&gt;&lt;/p&gt;
+</description> 
     </item>
     
   </channel>
 </rss>
+

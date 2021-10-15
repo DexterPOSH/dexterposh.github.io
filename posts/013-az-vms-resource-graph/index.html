@@ -11,13 +11,13 @@
 <meta http-equiv="Cache-Control" content="public" />
 <!-- Enable responsiveness on mobile devices -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<meta name="generator" content="Hugo 0.80.0" />
+<meta name="generator" content="Hugo 0.88.1" />
 
     
     
     
 
-<title>Azure Vms Resource Graph Queries • System Engineer taking Dev?Ops notes</title>
+<title>Azure Vms Resource Graph Queries • Engineer taking Dev?Ops notes</title>
 
 
 <meta name="twitter:card" content="summary"/>
@@ -27,9 +27,10 @@
 <meta property="og:title" content="Azure Vms Resource Graph Queries" />
 <meta property="og:description" content="Why use Resource Graph instead Az CLI/ PowerShell? If we want to search for resources meeting certain criteria across all our subscriptions, we can&rsquo;t use Az CLI or Az PowerShell to do this type of queries since it would require a lot of overhead to filter and switch between subscription contexts." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://dexterposh.github.io/posts/013-az-vms-resource-graph/" />
+<meta property="og:url" content="https://dexterposh.github.io/posts/013-az-vms-resource-graph/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2021-05-24T10:47:38+05:30" />
 <meta property="article:modified_time" content="2021-05-24T10:47:38+05:30" /><meta property="og:site_name" content="DexterPOSH" />
+
 
 
     
@@ -44,7 +45,7 @@
 
 
 
-<link rel="stylesheet" href="/scss/hyde-hyde.71157e768c4e111a23c3531b95e0cbb59bbef3c9e6901d36247cb53d6b6be258.css" integrity="sha256-cRV&#43;doxOERojw1MbleDLtZu&#43;88nmkB02JHy1PWtr4lg=">
+<link rel="stylesheet" href="/scss/hyde-hyde.3081c4981fb69a2783dd36ecfdd0e6ba7a158d4cbfdd290ebce8f78ba0469fc6.css" integrity="sha256-MIHEmB&#43;2mieD3Tbs/dDmunoVjUy/3SkOvOj3i6BGn8Y=">
 
 
 <link rel="stylesheet" href="/scss/print.2744dcbf8a0b2e74f8a50e4b34e5f441be7cf93cc7de27029121c6a09f9e77bc.css" integrity="sha256-J0Tcv4oLLnT4pQ5LNOX0Qb58&#43;TzH3icCkSHGoJ&#43;ed7w=" media="print">
@@ -76,7 +77,7 @@
   <div class="container ">
     <div class="sidebar-about">
       <span class="site__title">
-        <a href="https://dexterposh.github.io/">System Engineer taking Dev?Ops notes</a>
+        <a href="https://dexterposh.github.io/">Engineer taking Dev?Ops notes</a>
       </span>
       
         
@@ -89,12 +90,12 @@
       
       
       <p class="site__description">
-         Cloud, Servers &amp; Code. 
+         Cloud, Containers &amp; Code. 
       </p>
     </div>
     <div class="collapsible-menu">
       <input type="checkbox" id="menuToggle">
-      <label for="menuToggle">System Engineer taking Dev?Ops notes</label>
+      <label for="menuToggle">Engineer taking Dev?Ops notes</label>
       <div class="menu-content">
         <div>
 	<ul class="sidebar-nav">
@@ -248,35 +249,35 @@
     <h2 id="why-use-resource-graph-instead-az-cli-powershell">Why use Resource Graph instead Az CLI/ PowerShell?</h2>
 <p>If we want to search for resources meeting certain criteria across all our subscriptions, we can&rsquo;t use Az CLI or Az PowerShell to do this type of queries since it would require a lot of overhead to filter and switch between subscription contexts.</p>
 <p>Pesudo-Code (not so performant)</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-txt" data-lang="txt">Foreach subscription in subscriptions:
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-txt" data-lang="txt">Foreach subscription in subscriptions:
     set Az Context
     Get the VMs, Filter based on criteria
 </code></pre></div><p>Resource Graph queries can help here, as they can be used to fetch metadata about the resource and then after their presence is validated, maybe perform some operation on it. With PowerShell we can even group these resources together based on SubscriptionID and then iterate over each subscription (set the right context) and perform actions.</p>
 <p>Pesudo-Code (single query and performant)</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-txt" data-lang="txt">Query Azure Graph for resources based on criteria across all the subscriptions
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-txt" data-lang="txt">Query Azure Graph for resources based on criteria across all the subscriptions
 </code></pre></div><p>In this post, I share some of the Resource Graph Queries I have found useful while working with Virtual Machines.</p>
 <h2 id="prerequisite">Prerequisite</h2>
 <p>Prerequisite is the Az CLI (with graph extension) or Az.ResourceGraph PowerShell module which supports this.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell"><span style="color:#75715e"># Install the Resource Graph module from PowerShell Gallery</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell"><span style="color:#75715e"># Install the Resource Graph module from PowerShell Gallery</span>
 Install-Module -Name Az.ResourceGraph
 </code></pre></div><p>For Az CLI run the below to install the extension:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># Add the Resource Graph extension to the Azure CLI environment</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># Add the Resource Graph extension to the Azure CLI environment</span>
 az extension add --name resource-graph
 </code></pre></div><h2 id="virtual-machine-queries">Virtual Machine Queries</h2>
 <p>Below are list of queries for Virtual machines.</p>
 <h3 id="find-virtual-machine-with-name">Find Virtual Machine with Name</h3>
 <p>If you want to find out if a virtual machine is present across all the subscriptions you have access to, you can use the below Resource graph query with Az CLI.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell"><span style="color:#75715e"># Using Az.ResourceGraph Module</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell"><span style="color:#75715e"># Using Az.ResourceGraph Module</span>
 Search-AzGraph -Query <span style="color:#e6db74">&#34;where type =~ &#39;Microsoft.Compute/VirtualMachines&#39; and name == &#39;testvm01&#39;&#34;</span>
 </code></pre></div><p>Now for most of the queries in this post, you can do one to one translation to Az CLI commands by extracting the query and using it, I prefer to use PowerShell and that will be used in the rest of the examples.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="color:#75715e"># Using AZ CLI</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="color:#75715e"># Using AZ CLI</span>
 az graph query -q <span style="color:#e6db74">&#34;where type =~ &#39;Microsoft.Compute/VirtualMachines&#39; and Name == &#39;testvm01&#39;&#34;</span>
 </code></pre></div><h3 id="find-virtual-machines-with-name-regex-matching">Find Virtual machines with name regex matching</h3>
 <p>Note - This regex matching can be applied to any resource or any property defined in the Resource schema as well.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">Search-AzGraph -Query <span style="color:#e6db74">&#34;where type =~ &#39;Microsoft.Compute/VirtualMachines&#39; and name matches regex &#39;test-[0-9].*&#39;&#34;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">Search-AzGraph -Query <span style="color:#e6db74">&#34;where type =~ &#39;Microsoft.Compute/VirtualMachines&#39; and name matches regex &#39;test-[0-9].*&#39;&#34;</span>
 </code></pre></div><h3 id="find-virtual-machines-with-a-specific-tag">Find Virtual machines with a specific tag</h3>
 <p>Gist is Kusto allows for filtering at all the levels, so we can filter based on a specific tag or can chain multiple tags to filter.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell"><span style="color:#75715e"># Filter based on a tag called the department</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell"><span style="color:#75715e"># Filter based on a tag called the department</span>
 <span style="color:#75715e"># Note that tags are case-sensitive</span>
 Search-AzGraph -Query <span style="color:#e6db74">&#34;where type =~ &#39;Microsoft.Compute/VirtualMachines&#39; and tags.department =~ &#39;ITDepartment&#39;&#34;</span>
  
@@ -289,21 +290,21 @@ Search-AzGraph -Query <span style="color:#e6db74">&#34;where type =~ &#39;Micros
 </code></pre></div><h3 id="find-virtual-machines-deployed-using-marketplace-images">Find Virtual machines deployed using MarketPlace images</h3>
 <p>This query utilizes the fact that the publisher field for a market place will not be empty.</p>
 <p>Note - Remove the end &lsquo;limit&rsquo; command expression at the end of query if you need the exhaustive list.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">Search-AzGraph -Query <span style="color:#e6db74">&#34;where type =~ &#39;Microsoft.Compute/VirtualMachines&#39; and isnotempty(properties.storageProfile.imageReference.publisher)|  limit 1&#34;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">Search-AzGraph -Query <span style="color:#e6db74">&#34;where type =~ &#39;Microsoft.Compute/VirtualMachines&#39; and isnotempty(properties.storageProfile.imageReference.publisher)|  limit 1&#34;</span>
 </code></pre></div><h3 id="find-virtual-machines-deployed-using-custom-images">Find Virtual machines deployed using custom Images</h3>
 <p>This query utilizes the fact that the publisher field does not exist for a VM deployed using a generalized image.</p>
 <p><strong>Note</strong> - Remove the end &lsquo;limit&rsquo; command expression at the end of query if you need the exhaustive list.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">Search-AzGraph -Query <span style="color:#e6db74">&#34;where type =~ &#39;Microsoft.Compute/VirtualMachines&#39; and isempty(properties.storageProfile.imageReference.publisher)| limit 1&#34;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">Search-AzGraph -Query <span style="color:#e6db74">&#34;where type =~ &#39;Microsoft.Compute/VirtualMachines&#39; and isempty(properties.storageProfile.imageReference.publisher)| limit 1&#34;</span>
 </code></pre></div><h3 id="find-virtual-machines-which-do-not-have-a-tag-populated">Find Virtual machines which do not have a Tag populated</h3>
 <p>In this example the query checks for VMs which do not have a specific tag named Department created but not populated.</p>
 <p>Note - Remove the end &lsquo;limit&rsquo; command expression at the end of query if you need the exhaustive list.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">Search-AzGraph -Query <span style="color:#e6db74">&#34;where type =~ &#39;Microsoft.Compute/VirtualMachines&#39; and isempty(tags.group)
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">Search-AzGraph -Query <span style="color:#e6db74">&#34;where type =~ &#39;Microsoft.Compute/VirtualMachines&#39; and isempty(tags.group)
 </span><span style="color:#e6db74">| project name, location, resourceGroup, subscriptionId, Group=tags.group
 </span><span style="color:#e6db74">| limit 5&#34;</span>
 </code></pre></div><h3 id="find-virtual-machine-with-an-ipaddress">Find Virtual machine with an IPAddress</h3>
 <p>This can simply be done by doing a reverse lookup of the IPaddress but in some cases where the machines did not have these DNS records created it was a pain.</p>
 <p>We start by looking for network interfaces which have this IP address</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">$nic = Search-AzGraph -Query <span style="color:#e6db74">&#34;where type =~ &#39;Microsoft.Network/networkInterfaces&#39; |
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">$nic = Search-AzGraph -Query <span style="color:#e6db74">&#34;where type =~ &#39;Microsoft.Network/networkInterfaces&#39; |
 </span><span style="color:#e6db74">where properties.ipConfigurations[0].properties.privateIPAddress == &#39;10.10.10.6&#39;&#34;</span>
  
 $nic.properties.virtualMachine.id <span style="color:#75715e"># this is the resource ID of the VM</span>
@@ -313,7 +314,7 @@ Search-AzGraph -Query <span style="color:#e6db74">&#34;where type =~ &#39;Micros
 </code></pre></div><h3 id="gather-extra-virtual-machine-information">Gather extra Virtual Machine information</h3>
 <p>To gather the relevant information for different VM resources e.g. network, storage, subscription etc, one can use PowerShell to extend the object returned from the resource graph query.</p>
 <p>Below I show usage of a crude way of using PowerShell to do this e.g. using a filter.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell"><span style="color:#66d9ef">Filter</span> GetVMInfo {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell"><span style="color:#66d9ef">Filter</span> GetVMInfo {
     $networkQuery = <span style="color:#e6db74">&#34;where type =~ &#39;Microsoft.Network/networkInterfaces&#39; and id == </span><span style="color:#ae81ff">`&#39;</span>$($PSItem.properties.networkProfile.networkInterfaces[0].id)<span style="color:#ae81ff">`&#39;</span><span style="color:#e6db74">&#34;</span>
     $network = Search-AzGraph -Query $networkQuery
   
@@ -338,7 +339,7 @@ Search-AzGraph -Query <span style="color:#e6db74">&#34;where type =~ &#39;Micros
     }
 }
 </code></pre></div><p>Use the above filter like below:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell"><span style="color:#75715e"># Search for the VM first using the Az Resurce Graph</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell"><span style="color:#75715e"># Search for the VM first using the Az Resurce Graph</span>
 $VM = Search-AzGraph -Query <span style="color:#e6db74">&#34;where type =~ &#39;Microsoft.Compute/VirtualMachines&#39; and name == &#39;testvm01&#39;&#34;</span>
 
 <span style="color:#75715e"># Pipe the object(s) found to the filter we defined</span>
@@ -356,6 +357,11 @@ $VM | GetVMInfo
       <span class="navigation-tittle">PowerShell to C# &amp; back - JSON Create, Beautify</span>
     </a>
     
+    
+    <a href="/posts/012-k8s-api-terms/" class="navigation-next">
+      <span class="navigation-tittle">Kubernetes API Terms</span>
+      <i aria-hidden="true" class="fa fa-chevron-right"></i>
+    </a>
     
 </div>
 

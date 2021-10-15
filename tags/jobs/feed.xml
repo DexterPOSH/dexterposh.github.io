@@ -1,21 +1,124 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>jobs on System Engineer taking Dev?Ops notes</title>
+    <title>jobs on Engineer taking Dev?Ops notes</title>
     <link>https://dexterposh.github.io/tags/jobs/</link>
-    <description>Recent content in jobs on System Engineer taking Dev?Ops notes</description>
+    <description>Recent content in jobs on Engineer taking Dev?Ops notes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 26 Apr 2020 09:53:50 +0530</lastBuildDate><atom:link href="https://dexterposh.github.io/tags/jobs/feed.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 26 Apr 2020 09:53:50 +0530</lastBuildDate>
+    
+	<atom:link href="https://dexterposh.github.io/tags/jobs/feed.xml" rel="self" type="application/rss+xml" />
+    
+    
     <item>
       <title>Azure DevOps Tip - Job re-use within a Stage</title>
       <link>https://dexterposh.github.io/posts/004-azdo-tip-job/</link>
       <pubDate>Sun, 26 Apr 2020 09:53:50 +0530</pubDate>
       
       <guid>https://dexterposh.github.io/posts/004-azdo-tip-job/</guid>
-      <description>Background Azure DevOps introduced multi-stage yaml pipelines a while ago. It allows us to define our entire Build/Release landscape inside these yaml definitions.
-To re-iterate of some terms used in this post:</description>
+      <description>&lt;h2 id=&#34;background&#34;&gt;Background&lt;/h2&gt;
+&lt;p&gt;Azure DevOps introduced multi-stage yaml pipelines a while ago. It allows us
+to define our entire Build/Release landscape inside these yaml definitions.&lt;/p&gt;
+&lt;p&gt;To re-iterate of some terms used in this post:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;A pipeline comprises one or more stages&lt;/li&gt;
+&lt;li&gt;Stage is collection of jobs&lt;/li&gt;
+&lt;li&gt;Job runs on an agent/ agentless&lt;/li&gt;
+&lt;li&gt;Job contains steps (task/script)&lt;/li&gt;
+&lt;li&gt;Steps are the atomic unit to perform a task&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;challenge&#34;&gt;Challenge&lt;/h2&gt;
+&lt;p&gt;Recently, working our multi-stage yaml pipelines, we hit an interesting
+behavior with our job template re-use.&lt;/p&gt;
+&lt;p&gt;We had quite few common steps we require to take in each stage (multiple times)
+to hit an external API. So, to re-use we extracted them out as a job
+&lt;a href=&#34;https://docs.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=azure-devops&#34;&gt;template&lt;/a&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;jobtemplateyml&#34;&gt;jobtemplate.yml&lt;/h3&gt;
+&lt;p&gt;For this post, creating a sample job and taking an
+&lt;a href=&#34;https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/utility/delay?view=azure-devops&#34;&gt;agentless delay task&lt;/a&gt; as an example but this job template can include
+series of steps.&lt;/p&gt;
+&lt;p&gt;Below is my extracted out job template definition (indues a delay) which I want to re-use within stages in my main &lt;strong&gt;azure-pipelines.yml&lt;/strong&gt; pipeline definition later.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;parameters&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;windows&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;jobs&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;job&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;commonJob&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;displayName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Common Job&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;pool&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;server&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;steps&lt;/span&gt;:
+    - &lt;span style=&#34;color:#f92672&#34;&gt;task&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Delay@1&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;displayName&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Delay by 1 minutes for ${{ parameters.name }}&amp;#39;&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;inputs&lt;/span&gt;:
+        &lt;span style=&#34;color:#f92672&#34;&gt;delayForMinutes&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;azure-pipelinesyml&#34;&gt;azure-pipelines.yml&lt;/h3&gt;
+&lt;p&gt;Now, I want to call my Job template from above inside two stages Build &amp;amp; Deploy
+in the multi-stage yaml pipeline as below.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;stages&lt;/span&gt;:
+- &lt;span style=&#34;color:#f92672&#34;&gt;stage&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Build&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;jobs&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;template&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;./jobtemplate.yml&lt;/span&gt;
+  - &lt;span style=&#34;color:#f92672&#34;&gt;job&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Build1&lt;/span&gt;
+
+- &lt;span style=&#34;color:#f92672&#34;&gt;stage&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Deploy&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;jobs&lt;/span&gt;:
+    - &lt;span style=&#34;color:#f92672&#34;&gt;template&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;./jobtemplate.yml&lt;/span&gt;
+    - &lt;span style=&#34;color:#f92672&#34;&gt;job&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Deploy1&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Kick off a build for this and you would see it in the AzDO portal, that it works
+out well.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://dexterposh.github.io/static/004/jobWithinDiffStages.png&#34; alt=&#34;Same Job template used with diffn stages&#34;&gt;&lt;/p&gt;
+&lt;p&gt;But, if I try to use the same Job template multiple times within the same stage
+that is when things get interesting. Let&amp;rsquo;s modify our &lt;strong&gt;azure-pipelines.yml&lt;/strong&gt; definition now.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;stages&lt;/span&gt;:
+- &lt;span style=&#34;color:#f92672&#34;&gt;stage&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Build&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;jobs&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;template&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;./jobtemplate.yml&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;parameters&lt;/span&gt;:
+        &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Deepak&lt;/span&gt;
+  - &lt;span style=&#34;color:#f92672&#34;&gt;template&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;./jobtemplate.yml&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;parameters&lt;/span&gt;:
+        &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Dhami&lt;/span&gt;
+  - &lt;span style=&#34;color:#f92672&#34;&gt;job&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Build1&lt;/span&gt;
+
+- &lt;span style=&#34;color:#f92672&#34;&gt;stage&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Deploy&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;jobs&lt;/span&gt;:
+    - &lt;span style=&#34;color:#f92672&#34;&gt;template&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;./jobtemplate.yml&lt;/span&gt;
+    - &lt;span style=&#34;color:#f92672&#34;&gt;job&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Deploy1&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Try running this new modified pipeline and you would be greeted with the below
+in the portal.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://dexterposh.github.io/static/004/nameCollision.png&#34; alt=&#34;Job name not unique&#34;&gt;&lt;/p&gt;
+&lt;p&gt;This is quite obvious but the job names in a stage should be unique.&lt;/p&gt;
+&lt;h2 id=&#34;solution&#34;&gt;Solution&lt;/h2&gt;
+&lt;p&gt;To get to a solution we looked at generating a unique name for our jobs but
+it turns out there is a very simple solution to this problem.&lt;/p&gt;
+&lt;p&gt;One can remove the job identifier in the job template completely while
+extracting out jobs to re-use.&lt;/p&gt;
+&lt;p&gt;What this means is we had to modify our Job templates like below:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;parameters&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;windows&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;jobs&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;job&lt;/span&gt;: &lt;span style=&#34;color:#75715e&#34;&gt;# Identifier here is removed&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;displayName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Common Job&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;pool&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;server&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;steps&lt;/span&gt;:
+    - &lt;span style=&#34;color:#f92672&#34;&gt;task&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Delay@1&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;displayName&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Delay by 1 minutes for ${{ parameters.name }}&amp;#39;&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;inputs&lt;/span&gt;:
+        &lt;span style=&#34;color:#f92672&#34;&gt;delayForMinutes&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Now, it works.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://dexterposh.github.io/static/004/jobReuse.png&#34; alt=&#34;Job re-use within same stage&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;As a general practice, when I start extracting out steps as independent job
+templates I tend to not populate the Job identifier if it&amp;rsquo;s scope is to be
+re-used multiple times in the same stage.&lt;/p&gt;
+&lt;p&gt;But if there is a job which you want to ensure that it is allowed to run only
+once, you could stick with populating the field.&lt;/p&gt;
+&lt;p&gt;So, as every engineer building solution says:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;It depends on the use-case&lt;/p&gt;
+&lt;/blockquote&gt;
+</description> 
     </item>
     
   </channel>
 </rss>
+

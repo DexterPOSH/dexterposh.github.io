@@ -1,20 +1,66 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>aks on System Engineer taking Dev?Ops notes</title>
+    <title>aks on Engineer taking Dev?Ops notes</title>
     <link>https://dexterposh.github.io/tags/aks/</link>
-    <description>Recent content in aks on System Engineer taking Dev?Ops notes</description>
+    <description>Recent content in aks on Engineer taking Dev?Ops notes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 01 May 2020 12:21:28 +0530</lastBuildDate><atom:link href="https://dexterposh.github.io/tags/aks/feed.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 01 May 2020 12:21:28 +0530</lastBuildDate>
+    
+	<atom:link href="https://dexterposh.github.io/tags/aks/feed.xml" rel="self" type="application/rss+xml" />
+    
+    
     <item>
       <title>AKS PowerShell Tip - Add Authorized Ip</title>
       <link>https://dexterposh.github.io/posts/005-aks-tip-ip/</link>
       <pubDate>Fri, 01 May 2020 12:21:28 +0530</pubDate>
       
       <guid>https://dexterposh.github.io/posts/005-aks-tip-ip/</guid>
-      <description>Background 🐼 Recently, I found out that there is no sane way to perform adding a public IP address to the authorized IP address ranges using either the Az CLI or Az.</description>
+      <description>&lt;h2 id=&#34;background-&#34;&gt;Background 🐼&lt;/h2&gt;
+&lt;p&gt;Recently, I found out that there is no sane way to perform adding a public IP address to
+the authorized IP address ranges using either the
+&lt;a href=&#34;https://docs.microsoft.com/en-us/azure/aks/api-server-authorized-ip-ranges#update-a-clusters-api-server-authorized-ip-ranges&#34;&gt;Az CLI&lt;/a&gt;
+or &lt;a href=&#34;https://docs.microsoft.com/en-us/powershell/module/az.aks/?view=azps-3.8.0&#34;&gt;Az.Aks&lt;/a&gt; PowerShell (no cmdlets available yet) module.&lt;/p&gt;
+&lt;p&gt;From the official docs it says to use  something like below format with Az CLI.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;az aks update &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    --resource-group myResourceGroup &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    --name myAKSCluster &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    --api-server-authorized-ip-ranges 73.140.245.0/24
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;But it doesn&amp;rsquo;t tell you how to append the IP to the range, instead you need to
+supply a comma separated value of public IP addresses.&lt;/p&gt;
+&lt;h2 id=&#34;challenge-&#34;&gt;Challenge ☁️&lt;/h2&gt;
+&lt;p&gt;Well, this is can be done by using Az CLI with PowerShell or Bash and parsing
+output then generating a comma separated string and passing it back to Az CLI
+😞&lt;/p&gt;
+&lt;h2 id=&#34;solution-&#34;&gt;Solution ⚡&lt;/h2&gt;
+&lt;p&gt;Often, when I am hit with such limitations with cmdlets or Az CLI making life
+hard. I go back to using simply the 2 cmdlets provided by &lt;em&gt;Az.Resources&lt;/em&gt; module.&lt;/p&gt;
+&lt;p&gt;Behold mighty!&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;Get-AzResource&lt;/em&gt; - Gets the Az resource&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Set-AzResource&lt;/em&gt; - Modifies the Az resource&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I ended up doing the below and creating a utility function out of it.&lt;/p&gt;
+&lt;p&gt;First, get the AKS Cluster resource. Make sure to specify the &lt;strong&gt;-ExpandProperties&lt;/strong&gt;
+switch to get back full fledged resource otherwise it returns a shallow instance.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;$ResourceGroup = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;test-aks-rg&amp;#34;&lt;/span&gt;
+$Name = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;aksCluster001&amp;#34;&lt;/span&gt;
+$IP = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;110.91.234.43&amp;#34;&lt;/span&gt;
+$AksCluster = Get-AzResource -ResourceGroupName $ResourceGroup -Name $Name -ExpandProperties -ErrorAction Stop
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Once you have the resource, walk-through the properties and append the IP (+=
+operator in PowerShell) to the local copy of the resource.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;$orgClusterInfo.Properties.apiServerAccessProfile.authorizedIpRanges += $Ip
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Finally, perform a Set operation by piping the modified local resource copy to
+&lt;strong&gt;Set-AzResource&lt;/strong&gt; cmdlet.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;$orgClusterInfo | Set-AzResource -ErrorAction Stop
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;takeaway-&#34;&gt;Takeaway 🔥&lt;/h2&gt;
+&lt;p&gt;Even, when there are certain utility functions not available in the Az PowerShell
+module. We can rely on the &lt;em&gt;`&lt;/em&gt;-Resource* cmdlets to work our way through.&lt;/p&gt;
+</description> 
     </item>
     
   </channel>
 </rss>
+

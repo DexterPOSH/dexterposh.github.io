@@ -1,20 +1,159 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>json on System Engineer taking Dev?Ops notes</title>
+    <title>json on Engineer taking Dev?Ops notes</title>
     <link>https://dexterposh.github.io/tags/json/</link>
-    <description>Recent content in json on System Engineer taking Dev?Ops notes</description>
+    <description>Recent content in json on Engineer taking Dev?Ops notes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 05 Oct 2020 09:07:45 +0530</lastBuildDate><atom:link href="https://dexterposh.github.io/tags/json/feed.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 05 Oct 2020 09:07:45 +0530</lastBuildDate>
+    
+	<atom:link href="https://dexterposh.github.io/tags/json/feed.xml" rel="self" type="application/rss+xml" />
+    
+    
     <item>
       <title>PowerShell to C# &amp; back - JSON Create, Beautify</title>
       <link>https://dexterposh.github.io/posts/011-dotnet-pwsh-json/</link>
       <pubDate>Mon, 05 Oct 2020 09:07:45 +0530</pubDate>
       
       <guid>https://dexterposh.github.io/posts/011-dotnet-pwsh-json/</guid>
-      <description>Background I have been following up the C# Tutorial and working my way through examples and converting them to PowerShell and notes.
-JSON Create object Interesting to see that System.Text.Json namespace offers Utf8JsonWriter type to write JSON (UTF-8 encoded) string from common .</description>
+      <description>&lt;h2 id=&#34;background&#34;&gt;Background&lt;/h2&gt;
+&lt;p&gt;I have been following up the &lt;a href=&#34;http://zetcode.com/csharp/json/&#34;&gt;C# Tutorial&lt;/a&gt; and working my way through examples and converting them to PowerShell and notes.&lt;/p&gt;
+&lt;h2 id=&#34;json-create-object&#34;&gt;JSON Create object&lt;/h2&gt;
+&lt;p&gt;Interesting to see that &lt;code&gt;System.Text.Json&lt;/code&gt; namespace offers &lt;code&gt;Utf8JsonWriter&lt;/code&gt; type to write JSON (UTF-8 encoded) string from common .NET types e.g. &lt;code&gt;String&lt;/code&gt;, &lt;code&gt;Int32&lt;/code&gt; and &lt;code&gt;DateTime&lt;/code&gt;. What this means is we can write custom JSON strings in-memory (using MemoryStream) and later flush &lt;code&gt;Utf8JsonWriter&lt;/code&gt; content to get the string back.
+I wanted to use this new writer to create a JSON string which will look like below&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;{
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;ComputerName&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;TestVM01&amp;#34;&lt;/span&gt;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Let&amp;rsquo;s do this in C# first. Below is a C# script which I am using.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-csharp&#34; data-lang=&#34;csharp&#34;&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;#&lt;/span&gt;!/usr/bin/env dotnet-script
+&lt;span style=&#34;color:#66d9ef&#34;&gt;using&lt;/span&gt; System;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;using&lt;/span&gt; System.Text;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;using&lt;/span&gt; System.Text.Json;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;using&lt;/span&gt; System.Net;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;using&lt;/span&gt; System.IO;
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;using&lt;/span&gt; (&lt;span style=&#34;color:#66d9ef&#34;&gt;var&lt;/span&gt; memStream = &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; MemoryStream())
+{
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;using&lt;/span&gt; (&lt;span style=&#34;color:#66d9ef&#34;&gt;var&lt;/span&gt; jsonWriter = &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; Utf8JsonWriter(memStream))
+    {
+        jsonWriter.WriteStartObject(); &lt;span style=&#34;color:#75715e&#34;&gt;// this is the start of JSON Object
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;        jsonWriter.WriteString(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;ComputerName&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;TestVM01&amp;#34;&lt;/span&gt;);
+        jsonWriter.WriteEndObject(); &lt;span style=&#34;color:#75715e&#34;&gt;// this is the end of the JSON Object
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;        &lt;span style=&#34;color:#75715e&#34;&gt;//jsonWriter.Flush();
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;    }
+
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;string&lt;/span&gt; json = Encoding.UTF8.GetString(memStream.ToArray());
+    Console.WriteLine(json);
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;This effectively translates to below in PowerShell, see inline comments.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#!/usr/bin/env pwsh&lt;/span&gt;
+using namespace System.IO
+using namespace System.Text
+using namespace System.Text.Json
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# create a memory stream to hold the data in-memory&lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;# the memory stream is a performant way to hold data without locking the source&lt;/span&gt;
+$memStream = &lt;span style=&#34;color:#66d9ef&#34;&gt;[MemoryStream]&lt;/span&gt;::new()
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# use the Utf8 Json Writer object&lt;/span&gt;
+$jsonWriter = &lt;span style=&#34;color:#66d9ef&#34;&gt;[Utf8JsonWriter]&lt;/span&gt;::new($memStream)
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# indicate the JSON object is starting&lt;/span&gt;
+$jsonWriter.WriteStartObject();
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# now the JSON string is written&lt;/span&gt;
+$jsonWriter.WriteString(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;ComputerName&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;TestVM01&amp;#34;&lt;/span&gt;);
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# instruct the JSON object is ending&lt;/span&gt;
+$jsonWriter.WriteEndObject();
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# flush the json writer content to the stream&lt;/span&gt;
+$jsonWriter.Flush();
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# dispose of the json writer&lt;/span&gt;
+$jsonWriter.Dispose();
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# Get the string from the byte[] array from the memory stream&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;[Encoding]&lt;/span&gt;::UTF8.GetString($memStream.ToArray())
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# dispose the memory stream once read the json string&lt;/span&gt;
+$memStream.Dispose()
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Below is the sample output that gets generated. Note it is a regular JSON string, let&amp;rsquo;s make it prettier in next section.
+&lt;img src=&#34;https://dexterposh.github.io/static/011/JsonStringOutput.png&#34; alt=&#34;JsonStringOutput&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;beautify-json&#34;&gt;Beautify JSON&lt;/h2&gt;
+&lt;p&gt;This is where tapping into the underlying .NET APIs to learn something really shines, there are so many tweaks that can be applied.&lt;/p&gt;
+&lt;p&gt;One such instance is to make out output JSON string look pretty, we can pass some options to our Utf8JsonWriter instance.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-csharp&#34; data-lang=&#34;csharp&#34;&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;#&lt;/span&gt;!/usr/bin/env dotnet-script
+&lt;span style=&#34;color:#66d9ef&#34;&gt;using&lt;/span&gt; System;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;using&lt;/span&gt; System.Text;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;using&lt;/span&gt; System.Text.Json;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;using&lt;/span&gt; System.Net;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;using&lt;/span&gt; System.IO;
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;using&lt;/span&gt; (&lt;span style=&#34;color:#66d9ef&#34;&gt;var&lt;/span&gt; memStream = &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; MemoryStream())
+{
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;using&lt;/span&gt; (&lt;span style=&#34;color:#66d9ef&#34;&gt;var&lt;/span&gt; jsonWriter = &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; Utf8JsonWriter(memStream, &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; JsonWriterOptions {Indented = &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;}))
+    {
+        jsonWriter.WriteStartObject(); &lt;span style=&#34;color:#75715e&#34;&gt;// this is the start of JSON Object
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;        jsonWriter.WriteString(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;ComputerName&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;TestVM01&amp;#34;&lt;/span&gt;);
+        jsonWriter.WriteEndObject(); &lt;span style=&#34;color:#75715e&#34;&gt;// this is the end of the JSON Object
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;        &lt;span style=&#34;color:#75715e&#34;&gt;//jsonWriter.Flush();
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;    }
+
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;string&lt;/span&gt; json = Encoding.UTF8.GetString(memStream.ToArray());
+    Console.WriteLine(json);
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;This is pretty similar in PowerShell as well, create options for the &lt;code&gt;Utf8JsonWriter&lt;/code&gt; and pass them.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#!/usr/bin/env pwsh&lt;/span&gt;
+using namespace System.IO
+using namespace System.Text
+using namespace System.Text.Json
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# create a memory stream to hold the data in-memory&lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;# the memory stream is a performant way to hold data without locking the source&lt;/span&gt;
+$memStream = &lt;span style=&#34;color:#66d9ef&#34;&gt;[MemoryStream]&lt;/span&gt;::new()
+
+&lt;span style=&#34;color:#75715e&#34;&gt;&amp;lt;#
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;create Json writer options which is a structure (value-type) using PowerShell cast initialization technique
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;or you could do below:
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;$jsonWriterOptions = [JsonWriterOptions]::new(); $jsonWriterOptions.Iden
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;$jsonWriterOptions.Indented = $true
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#&amp;gt;&lt;/span&gt;
+$jsonWriterOptions = &lt;span style=&#34;color:#66d9ef&#34;&gt;[JsonWriterOptions]&lt;/span&gt;@{&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Indented&amp;#34;&lt;/span&gt; = $true}
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# use the Utf8 Json Writer object&lt;/span&gt;
+$jsonWriter = &lt;span style=&#34;color:#66d9ef&#34;&gt;[Utf8JsonWriter]&lt;/span&gt;::new($memStream, $jsonWriterOptions)
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# indicate the JSON object is starting&lt;/span&gt;
+$jsonWriter.WriteStartObject();
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# now the JSON string is written&lt;/span&gt;
+$jsonWriter.WriteString(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;ComputerName&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;TestVM01&amp;#34;&lt;/span&gt;);
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# instruct the JSON object is ending&lt;/span&gt;
+$jsonWriter.WriteEndObject();
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# flush the json writer content to the stream&lt;/span&gt;
+$jsonWriter.Flush();
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# dispose of the json writer&lt;/span&gt;
+$jsonWriter.Dispose();
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# Get the string from the byte[] array from the memory stream&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;[Encoding]&lt;/span&gt;::UTF8.GetString($memStream.ToArray())
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# dispose the memory stream once read the json string&lt;/span&gt;
+$memStream.Dispose()
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Output is below:
+&lt;img src=&#34;https://dexterposh.github.io/static/011/beautifyJsonString.png&#34; alt=&#34;Beautify JSON string output&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;As a PowerShell developer, I learned using &lt;code&gt;Utf8JsonWriter&lt;/code&gt; to create JSON strings from scratch and beautify them.&lt;/p&gt;
+&lt;p&gt;There will be a follow up post on this soon&amp;hellip;&lt;/p&gt;
+&lt;h2 id=&#34;reference-links-&#34;&gt;Reference links 📖&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://leanpub.com/powershell-to-csharp&#34;&gt;PowerShell to C# &amp;amp; Back leanpub book&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;http://zetcode.com/csharp/json/&#34;&gt;C# JSON Tutorial&lt;/a&gt;&lt;/p&gt;
+</description> 
     </item>
     
     <item>
@@ -23,8 +162,112 @@ JSON Create object Interesting to see that System.Text.Json namespace offers Utf
       <pubDate>Fri, 25 Sep 2020 07:12:33 +0530</pubDate>
       
       <guid>https://dexterposh.github.io/posts/010-dotnet-pwsh-json/</guid>
-      <description>Background In the below previous post
- PowerShell to C# &amp;amp; back - JSON parse &amp;amp; enumerate  there were notes on how to enumerate &amp;amp; iterate over JSON documents. Let&amp;rsquo;s continue down the rabbit hole.</description>
+      <description>&lt;h2 id=&#34;background&#34;&gt;Background&lt;/h2&gt;
+&lt;p&gt;In the below previous post&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://dexterposh.github.io/posts/009-dotnet-pwsh-json/&#34;&gt;PowerShell to C# &amp;amp; back - JSON parse &amp;amp; enumerate&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;there were notes on how to enumerate &amp;amp; iterate over JSON documents. Let&amp;rsquo;s continue
+down the rabbit hole. In this post we will look at how to use &lt;code&gt;System.Text.Json&lt;/code&gt; namespace
+to:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Serialize to JSON&lt;/li&gt;
+&lt;li&gt;Deserialize from JSON&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;serialze-to-json&#34;&gt;Serialze to JSON&lt;/h2&gt;
+&lt;p&gt;This means converting any type into a JSON string. We start off with a type named &lt;code&gt;Computer&lt;/code&gt; and convert it into a JSON string. We call the &lt;code&gt;JsonSerializer.Serialze()&lt;/code&gt; static method for this operation.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-csharp&#34; data-lang=&#34;csharp&#34;&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;#&lt;/span&gt;!/usr/bin/env dotnet-script
+&lt;span style=&#34;color:#66d9ef&#34;&gt;using&lt;/span&gt; System;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;using&lt;/span&gt; System.Text.Json;
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Computer&lt;/span&gt;
+{
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;string&lt;/span&gt; hostName { &lt;span style=&#34;color:#66d9ef&#34;&gt;get&lt;/span&gt;; &lt;span style=&#34;color:#66d9ef&#34;&gt;set&lt;/span&gt;; }
+
+    &lt;span style=&#34;color:#75715e&#34;&gt;// In C# 6 and later, we can assign a default value to an auto property
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;string&lt;/span&gt; domainName { &lt;span style=&#34;color:#66d9ef&#34;&gt;get&lt;/span&gt;; &lt;span style=&#34;color:#66d9ef&#34;&gt;set&lt;/span&gt;; } = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;contoso.com&amp;#34;&lt;/span&gt;;
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;string&lt;/span&gt; IpAddress { &lt;span style=&#34;color:#66d9ef&#34;&gt;get&lt;/span&gt;; &lt;span style=&#34;color:#66d9ef&#34;&gt;set&lt;/span&gt;; }
+}
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;var&lt;/span&gt; machine1 = &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; Computer()
+{
+    hostName = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;testvm01&amp;#34;&lt;/span&gt;,
+    IpAddress = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;10.10.10.101&amp;#34;&lt;/span&gt;
+};
+
+&lt;span style=&#34;color:#75715e&#34;&gt;// serialize the object into JSON string
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;var&lt;/span&gt; json = JsonSerializer.Serialize(machine1);
+Console.WriteLine(json);
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Now doing the same in PowerShell 🤑&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#!/usr/bin/env pwsh&lt;/span&gt;
+using namespace System.Text.Json
+
+class Computer {
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;[string]&lt;/span&gt; $hostName
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;[string]&lt;/span&gt; $domainName = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;contoso.com&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# this is the initial value&lt;/span&gt;
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;[string]&lt;/span&gt; $IpAddress
+}
+
+$machine1 = &lt;span style=&#34;color:#66d9ef&#34;&gt;[Computer]&lt;/span&gt; @{
+    hostName = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;testvm01&amp;#34;&lt;/span&gt;
+    IpAddress = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;10.10.10.101&amp;#34;&lt;/span&gt;
+}
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# Invoke the static method on the class, it requires 2 arguments&lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;# the Value to convert and any JsonSerializer options which we have passed as $null&lt;/span&gt;
+$json = &lt;span style=&#34;color:#66d9ef&#34;&gt;[JsonSerializer]&lt;/span&gt;::Serialize($machine1, $null)
+Write-Host -Object $json
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;deserialize-from-json&#34;&gt;Deserialize from JSON&lt;/h2&gt;
+&lt;p&gt;This means constructing a typed object from JSON string. No surprise there exists a &lt;code&gt;JsonSerializer.Deserialze()&lt;/code&gt;
+static method which can take a JSON string as input and can deserialized it into a typed object instance.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-csharp&#34; data-lang=&#34;csharp&#34;&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;#&lt;/span&gt;!/usr/bin/env dotnet-script
+&lt;span style=&#34;color:#66d9ef&#34;&gt;using&lt;/span&gt; System;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;using&lt;/span&gt; System.Text.Json;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;using&lt;/span&gt; System.Net;
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Computer&lt;/span&gt;
+{
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;string&lt;/span&gt; hostName { &lt;span style=&#34;color:#66d9ef&#34;&gt;get&lt;/span&gt;; &lt;span style=&#34;color:#66d9ef&#34;&gt;set&lt;/span&gt;; }
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;string&lt;/span&gt; domainName { &lt;span style=&#34;color:#66d9ef&#34;&gt;get&lt;/span&gt;; &lt;span style=&#34;color:#66d9ef&#34;&gt;set&lt;/span&gt;; } = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;contoso.com&amp;#34;&lt;/span&gt;;
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;string&lt;/span&gt; IpAddress { &lt;span style=&#34;color:#66d9ef&#34;&gt;get&lt;/span&gt;; &lt;span style=&#34;color:#66d9ef&#34;&gt;set&lt;/span&gt;; }
+}
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;string&lt;/span&gt; jsonComputer = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;{\&amp;#34;domainName\&amp;#34;:\&amp;#34;contoso.com\&amp;#34;,\&amp;#34;hostName\&amp;#34;:\&amp;#34;testvm01\&amp;#34;,\&amp;#34;IpAddress\&amp;#34;:\&amp;#34;10.10.10.101\&amp;#34;}&amp;#34;&lt;/span&gt;;
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;var&lt;/span&gt; computerObject = JsonSerializer.Deserialize&amp;lt;Computer&amp;gt;(jsonComputer);
+Console.WriteLine(computerObject.domainName);
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;In PowerShell the deserialization works really well with classes. If we have a type
+defined in PowerShell class, we can use the &lt;code&gt;Deserialze()&lt;/code&gt; static method and pass
+it the type to deserialize the JSON string into.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#!/usr/bin/env pwsh&lt;/span&gt;
+using namespace System.Text.Json
+
+class Computer {
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;[string]&lt;/span&gt; $hostName
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;[string]&lt;/span&gt; $domainName = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;contoso.com&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# this is the initial value&lt;/span&gt;
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;[string]&lt;/span&gt; $IpAddress
+}
+
+$jsonComputer = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;{&amp;#34;hostName&amp;#34;:&amp;#34;testvm01&amp;#34;,&amp;#34;IpAddress&amp;#34;:&amp;#34;10.10.10.101&amp;#34;}&amp;#39;&lt;/span&gt;
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# Invoke the Deserialize static method on the class, it requires 3 arguments&lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;# the Value to convert, and the type to convert it into and JsonSerializer options which we have passed as $null&lt;/span&gt;
+$computer = &lt;span style=&#34;color:#66d9ef&#34;&gt;[JsonSerializer]&lt;/span&gt;::Deserialize($jsonComputer, &lt;span style=&#34;color:#66d9ef&#34;&gt;[Computer]&lt;/span&gt;, $null)
+&lt;span style=&#34;color:#75715e&#34;&gt;# $computer | Get-Member # verify that the type got back is a Computer object type&lt;/span&gt;
+Write-Host -Object $computer.domainName
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;bonus&#34;&gt;Bonus&lt;/h2&gt;
+&lt;p&gt;Above way to deserialize the JSON string into a typed object in PowerShell is pretty neat
+but we do mention another subtle way to achieve the same in our &lt;a href=&#34;https://leanpub.com/powershell-to-csharp&#34;&gt;Book&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Cast-Initialization technique, which works by invoking an empty constrcutor and initializing values.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;$jsonComputer = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;{&amp;#34;hostName&amp;#34;:&amp;#34;testvm01&amp;#34;,&amp;#34;IpAddress&amp;#34;:&amp;#34;10.10.10.101&amp;#34;}&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;[Computer]&lt;/span&gt;($jsonComputer | ConvertFrom-Json)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;conclusion-&#34;&gt;Conclusion 🗞&lt;/h2&gt;
+&lt;p&gt;As a PowerShell developer, I learned using &lt;code&gt;System.Text.Json&lt;/code&gt; namespace in PowerShell core to serialize/deserialize JSON in this post.&lt;/p&gt;
+&lt;p&gt;There will be a follow up post on this soon&amp;hellip;&lt;/p&gt;
+&lt;h2 id=&#34;reference-links-&#34;&gt;Reference links 📖&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://leanpub.com/powershell-to-csharp&#34;&gt;PowerShell to C# &amp;amp; Back leanpub book&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;http://zetcode.com/csharp/json/&#34;&gt;C# JSON Tutorial&lt;/a&gt;&lt;/p&gt;
+</description> 
     </item>
     
     <item>
@@ -33,8 +276,127 @@ JSON Create object Interesting to see that System.Text.Json namespace offers Utf
       <pubDate>Wed, 16 Sep 2020 11:12:33 +0530</pubDate>
       
       <guid>https://dexterposh.github.io/posts/009-dotnet-pwsh-json/</guid>
-      <description>Background Coming from PowerShell background, while learning ASP.NET Core based development I wanted to wrap my head around how to handle JSON, so ended up taking notes on how to do this in C# and as an exercise convert those into PowerShell code snippets for my reference.</description>
+      <description>&lt;h2 id=&#34;background&#34;&gt;Background&lt;/h2&gt;
+&lt;p&gt;Coming from PowerShell background, while learning ASP.NET Core based development
+I wanted to wrap my head around how to handle JSON, so ended up taking notes on how to do this in C# and as
+an exercise convert those into PowerShell code snippets for my reference.&lt;/p&gt;
+&lt;p&gt;In my explorations I like using the dotnet-script global tool for interactive user experience with C# and PowerShell core (which is already an interactive shell). So, you will see that I mostly use C# script files (.csx) and PowerShell script files (.ps1).&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Giving the credit where it&amp;rsquo;s due, I followed this &lt;a href=&#34;http://zetcode.com/csharp/json/&#34;&gt;tutorial&lt;/a&gt; to learn JSON handling in C# and made these notes of my own.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;In this post the topics covered are:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Parsing JSON&lt;/li&gt;
+&lt;li&gt;Enumerating JSON&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;System.Text.Json&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;This is the new namespace in .NET core which provides the API to work with JSON.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;json-parsing&#34;&gt;JSON parsing&lt;/h2&gt;
+&lt;p&gt;JSON parsing is basically reading the JSON data and converting it into a &lt;code&gt;JsonDocument&lt;/code&gt; typed object in C#.&lt;/p&gt;
+&lt;p&gt;Long story short:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Use the static method &lt;code&gt;Parse&lt;/code&gt; on the &lt;code&gt;JsonDocument&lt;/code&gt; class to consume a JSON string and get an object back.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;RootElement&lt;/code&gt; on the instance of &lt;code&gt;JsonDocument&lt;/code&gt; gives you the entire JSON object&lt;/li&gt;
+&lt;li&gt;Root element if it contains array can be indexed&lt;/li&gt;
+&lt;li&gt;To get the value of a property on the JSON object use &lt;code&gt;GetProperty(&#39;propertyName&#39;)&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Below are the contents of a test.csx file.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-csharp&#34; data-lang=&#34;csharp&#34;&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;#&lt;/span&gt;!/usr/bin/env dotnet-script
+&lt;span style=&#34;color:#66d9ef&#34;&gt;using&lt;/span&gt; System;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;using&lt;/span&gt; System.Text.Json;
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;string&lt;/span&gt; data = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34; [ {\&amp;#34;name\&amp;#34;: \&amp;#34;John Doe\&amp;#34;, \&amp;#34;occupation\&amp;#34;: \&amp;#34;gardener\&amp;#34;}, &amp;#34;&lt;/span&gt; +
+                &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;{\&amp;#34;name\&amp;#34;: \&amp;#34;Peter Novak\&amp;#34;, \&amp;#34;occupation\&amp;#34;: \&amp;#34;driver\&amp;#34;} ]&amp;#34;&lt;/span&gt;;
+
+&lt;span style=&#34;color:#75715e&#34;&gt;// using statement is used to dispose of the JsonDocument object later
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;// Parse static method parses the JSON string and returns a JsonDocument instance
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;using&lt;/span&gt; (JsonDocument doc = JsonDocument.Parse(data))
+{
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;var&lt;/span&gt; root = doc.RootElement; &lt;span style=&#34;color:#75715e&#34;&gt;// RootElement is the real object we are after
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;var&lt;/span&gt; user1 = root[&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;]; &lt;span style=&#34;color:#75715e&#34;&gt;// since our object contains an array, we can index into it
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;var&lt;/span&gt; user2 = root[&lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;];
+
+    &lt;span style=&#34;color:#75715e&#34;&gt;// Use the method GetProperty() to get properties of the JsonElement object
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;    Console.WriteLine(user1.GetProperty(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;name&amp;#34;&lt;/span&gt;)); &lt;span style=&#34;color:#75715e&#34;&gt;// GetProperty()
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;    Console.WriteLine(user2.GetProperty(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;name&amp;#34;&lt;/span&gt;));
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;To do the same in PowerShell, below are the contents of a test.ps1 file.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#!/usr/bin/env pwsh&lt;/span&gt;
+using namespace System.Text.Json
+
+$data = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;[{&amp;#34;name&amp;#34;: &amp;#34;John Doe&amp;#34;, &amp;#34;occupation&amp;#34;: &amp;#34;gardener&amp;#34;},&amp;#39;&lt;/span&gt; +
+                &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;{&amp;#34;name&amp;#34;: &amp;#34;Peter Novak&amp;#34;, &amp;#34;occupation&amp;#34;: &amp;#34;driver&amp;#34;} ]&amp;#39;&lt;/span&gt;;
+
+$doc = &lt;span style=&#34;color:#66d9ef&#34;&gt;[JsonDocument]&lt;/span&gt;::Parse($data)
+$root = $doc.RootElement
+$user1 = $root[0]
+$user2 = $root[1]
+
+Write-Host $User1.GetProperty(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;name&amp;#34;&lt;/span&gt;)
+Write-Host $User2.GetProperty(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;name&amp;#34;&lt;/span&gt;)
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# dispose the JsonDocument once done&lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;# We don&amp;#39;t do this in C# coz of the using statement automatically doing this&lt;/span&gt;
+$doc.Dispose()
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;json-enumerate&#34;&gt;JSON Enumerate&lt;/h2&gt;
+&lt;p&gt;In the above example we indexed into the elements of the array directly and then used &lt;code&gt;GetProperty()&lt;/code&gt; this only works if you know the number of elements in advance along with property names, but there are better ways to iterate and enumerate.&lt;/p&gt;
+&lt;p&gt;Trick for someone new is to remember:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Enumerating arrays to fetch different items&lt;/li&gt;
+&lt;li&gt;Enumerating objects to fetch properties.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-csharp&#34; data-lang=&#34;csharp&#34;&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;#&lt;/span&gt;!/usr/bin/env dotnet-script
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;using&lt;/span&gt; System;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;using&lt;/span&gt; System.Text.Json;
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;string&lt;/span&gt; data = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34; [ {\&amp;#34;name\&amp;#34;: \&amp;#34;John Doe\&amp;#34;, \&amp;#34;occupation\&amp;#34;: \&amp;#34;gardener\&amp;#34;}, &amp;#34;&lt;/span&gt; +
+                &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;{\&amp;#34;name\&amp;#34;: \&amp;#34;Peter Novak\&amp;#34;, \&amp;#34;occupation\&amp;#34;: \&amp;#34;driver\&amp;#34;} ]&amp;#34;&lt;/span&gt;;
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;using&lt;/span&gt; (&lt;span style=&#34;color:#66d9ef&#34;&gt;var&lt;/span&gt; doc = JsonDocument.Parse(data))
+{
+    JsonElement root = doc.RootElement;
+
+    &lt;span style=&#34;color:#75715e&#34;&gt;// call method EnumerateArray() to iterate over items in the array
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;foreach&lt;/span&gt; (&lt;span style=&#34;color:#66d9ef&#34;&gt;var&lt;/span&gt; user &lt;span style=&#34;color:#66d9ef&#34;&gt;in&lt;/span&gt; root.EnumerateArray())
+    {
+        Console.WriteLine(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;====== User details ====&amp;#34;&lt;/span&gt;);
+        &lt;span style=&#34;color:#75715e&#34;&gt;// EnumerateObject() method is used return an ObjectEnumerator
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;        &lt;span style=&#34;color:#75715e&#34;&gt;// which is then used to get the Name &amp;amp; Value pair for each property
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;        &lt;span style=&#34;color:#66d9ef&#34;&gt;foreach&lt;/span&gt; (&lt;span style=&#34;color:#66d9ef&#34;&gt;var&lt;/span&gt; prop &lt;span style=&#34;color:#66d9ef&#34;&gt;in&lt;/span&gt; user.EnumerateObject())
+        {
+            Console.WriteLine(&lt;span style=&#34;color:#e6db74&#34;&gt;$&amp;#34;{prop.Name} -&amp;gt; {prop.Value}&amp;#34;&lt;/span&gt;);
+        }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Doing the same in PowerShell makes it easier to grasp.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#!/usr/bin/env pwsh&lt;/span&gt;
+using namespace System.Text.Json
+
+$data = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;[ {&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;`&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;`&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;: &lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;`&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;John Doe&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;`&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;, &lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;`&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;occupation&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;`&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;: &lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;`&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;gardener&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;`&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}, &amp;#34;&lt;/span&gt; +
+                &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;{&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;`&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;`&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;: &lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;`&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;Peter Novak&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;`&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;, &lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;`&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;occupation&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;`&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;: &lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;`&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;driver&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;`&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;} ]&amp;#34;&lt;/span&gt;;
+
+$doc = &lt;span style=&#34;color:#66d9ef&#34;&gt;[JsonDocument]&lt;/span&gt;::Parse($data)
+$root = $doc.RootElement
+
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;foreach&lt;/span&gt; ($user &lt;span style=&#34;color:#66d9ef&#34;&gt;in&lt;/span&gt; $root.EnumerateArray()) {
+    Write-Host &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;====== User details ====&amp;#34;&lt;/span&gt;
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;foreach&lt;/span&gt; ($property &lt;span style=&#34;color:#66d9ef&#34;&gt;in&lt;/span&gt; $user.EnumerateObject()) {
+        Write-Host $(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;{0} -&amp;gt; {1}&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;-f&lt;/span&gt; $property.Name, $property.Value)
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;conclusion-&#34;&gt;Conclusion 🗞&lt;/h2&gt;
+&lt;p&gt;In my continued efforts to learn C# language and take some of the learnings back to PowerShell, I realized that though the JSON cmdlets provide a lot of ease working with JSON, there are other ways to skin the cat.&lt;/p&gt;
+&lt;p&gt;There will be a follow up post on this soon&amp;hellip;&lt;/p&gt;
+&lt;h2 id=&#34;reference-links-&#34;&gt;Reference links 📖&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://leanpub.com/powershell-to-csharp&#34;&gt;PowerShell to C# &amp;amp; Back leanpub book&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;http://zetcode.com/csharp/json/&#34;&gt;C# JSON Tutorial&lt;/a&gt;&lt;/p&gt;
+</description> 
     </item>
     
   </channel>
 </rss>
+

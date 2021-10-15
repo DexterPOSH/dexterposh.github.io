@@ -11,13 +11,13 @@
 <meta http-equiv="Cache-Control" content="public" />
 <!-- Enable responsiveness on mobile devices -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<meta name="generator" content="Hugo 0.80.0" />
+<meta name="generator" content="Hugo 0.88.1" />
 
     
     
     
 
-<title>PowerShell Classes - Validating ARM parameters • System Engineer taking Dev?Ops notes</title>
+<title>PowerShell Classes - Validating ARM parameters • Engineer taking Dev?Ops notes</title>
 
 
 <meta name="twitter:card" content="summary"/>
@@ -29,9 +29,10 @@ Recently, I was discussing with my colleague about this new book I am co-authori
 <meta property="og:description" content="Origin❓ (shameless plug, alert!) 🙃
 Recently, I was discussing with my colleague about this new book I am co-authoring (with Prateek) about why to learn .NET to be a better PowerShell programmer and upon further discussion we pondered some interesting ways to use PowerShell classes." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://dexterposh.github.io/posts/007-pwsh-class-usecase/" />
+<meta property="og:url" content="https://dexterposh.github.io/posts/007-pwsh-class-usecase/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2020-06-29T19:42:59+05:30" />
 <meta property="article:modified_time" content="2020-06-29T19:42:59+05:30" /><meta property="og:site_name" content="DexterPOSH" />
+
 
 
     
@@ -46,7 +47,7 @@ Recently, I was discussing with my colleague about this new book I am co-authori
 
 
 
-<link rel="stylesheet" href="/scss/hyde-hyde.71157e768c4e111a23c3531b95e0cbb59bbef3c9e6901d36247cb53d6b6be258.css" integrity="sha256-cRV&#43;doxOERojw1MbleDLtZu&#43;88nmkB02JHy1PWtr4lg=">
+<link rel="stylesheet" href="/scss/hyde-hyde.3081c4981fb69a2783dd36ecfdd0e6ba7a158d4cbfdd290ebce8f78ba0469fc6.css" integrity="sha256-MIHEmB&#43;2mieD3Tbs/dDmunoVjUy/3SkOvOj3i6BGn8Y=">
 
 
 <link rel="stylesheet" href="/scss/print.2744dcbf8a0b2e74f8a50e4b34e5f441be7cf93cc7de27029121c6a09f9e77bc.css" integrity="sha256-J0Tcv4oLLnT4pQ5LNOX0Qb58&#43;TzH3icCkSHGoJ&#43;ed7w=" media="print">
@@ -78,7 +79,7 @@ Recently, I was discussing with my colleague about this new book I am co-authori
   <div class="container ">
     <div class="sidebar-about">
       <span class="site__title">
-        <a href="https://dexterposh.github.io/">System Engineer taking Dev?Ops notes</a>
+        <a href="https://dexterposh.github.io/">Engineer taking Dev?Ops notes</a>
       </span>
       
         
@@ -91,12 +92,12 @@ Recently, I was discussing with my colleague about this new book I am co-authori
       
       
       <p class="site__description">
-         Cloud, Servers &amp; Code. 
+         Cloud, Containers &amp; Code. 
       </p>
     </div>
     <div class="collapsible-menu">
       <input type="checkbox" id="menuToggle">
-      <label for="menuToggle">System Engineer taking Dev?Ops notes</label>
+      <label for="menuToggle">Engineer taking Dev?Ops notes</label>
       <div class="menu-content">
         <div>
 	<ul class="sidebar-nav">
@@ -251,7 +252,7 @@ Well, I suggested to write Pester tests to check the input being passed and perf
 <h2 id="solution-">Solution 🚀</h2>
 <p>There exists the <a href="https://github.com/dfinke/ConvertToClass">ConvertToClass</a> module by Doug Finke, which comes to the rescue to automatically convert a JSON object to a PowerShell class. It even has VSCode integration, check it out.</p>
 <p>Let&rsquo;s start by taking a sample <code>azuredeploy.parameters.json</code> file.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
   <span style="color:#f92672">&#34;$schema&#34;</span>: <span style="color:#e6db74">&#34;https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#&#34;</span>,
   <span style="color:#f92672">&#34;contentVersion&#34;</span>: <span style="color:#e6db74">&#34;1.0.0.0&#34;</span>,
   <span style="color:#f92672">&#34;parameters&#34;</span>: {
@@ -271,10 +272,10 @@ Well, I suggested to write Pester tests to check the input being passed and perf
 }
 </code></pre></div><h3 id="convert-json-to-class-">Convert Json to Class ☯</h3>
 <p>Let&rsquo;s run the <code>ConverTo-Class</code> function in the ConvertToClass module against this <code>azuredeploy.parameters.json</code> file.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">ConvertTo-Class -Target (Get-Content ./azuredeploy.parameters.json -Raw)
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">ConvertTo-Class -Target (Get-Content ./azuredeploy.parameters.json -Raw)
 </code></pre></div><p><img src="/static/007/class1.png" alt="alt"></p>
 <p>Above command generates below content:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">class RootObject1 {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">class RootObject1 {
     <span style="color:#66d9ef">[string]</span>$$schema
     <span style="color:#66d9ef">[string]</span>$contentVersion
     <span style="color:#66d9ef">[parameters]</span>$parameters
@@ -317,7 +318,7 @@ class location1 {
 <blockquote>
 <p>Note the name <code>$value</code> is given to the property because this is how ARM parameters file take input.</p>
 </blockquote>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">class AzureParameters {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">class AzureParameters {
     <span style="color:#66d9ef">[string]</span>${$schema}
     <span style="color:#66d9ef">[string]</span>$contentVersion
     <span style="color:#66d9ef">[Parameters]</span>$parameters
@@ -355,7 +356,7 @@ class Location {
 }
 </code></pre></div><h3 id="add-logic-inside-empty-constructor-">Add logic inside Empty Constructor ⌛</h3>
 <p>We can add one more trick to the bag to add an empty constructor explicitly (this is present when no constructor exists) and put some more validation logic if the current validate attributes doesn' suit the needs.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">class AzureParameters {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">class AzureParameters {
     <span style="color:#66d9ef">[string]</span>${$schema}
     <span style="color:#66d9ef">[string]</span>$contentVersion
     <span style="color:#66d9ef">[Parameters]</span>$parameters
@@ -411,7 +412,7 @@ The answer is that we will be a using a trick with how we create an instance of 
 <p>For cast-initalization technique to work an empty constructor needs to be present in the Class definition. It is present by default if there is no constructor on the class present or you can add one explicitly.</p>
 </blockquote>
 <p>Modify some value in the <code>azuredeploy.parameters.json</code> file to not-follow some validation logic we added e.g. putting the value for <code>numberofStorageAccount</code> as <code>20</code>, remember our <code>[ValidateRange(1,10)]</code> attribute on the property should fails. See the parameters file below:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
   <span style="color:#f92672">&#34;$schema&#34;</span>: <span style="color:#e6db74">&#34;https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#&#34;</span>,
   <span style="color:#f92672">&#34;contentVersion&#34;</span>: <span style="color:#e6db74">&#34;1.0.0.0&#34;</span>,
   <span style="color:#f92672">&#34;parameters&#34;</span>: {
@@ -430,12 +431,12 @@ The answer is that we will be a using a trick with how we create an instance of 
   }
 }
 </code></pre></div><p>Now, see the result when casting this as our <code>ArmParameters</code> class.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell"><span style="color:#66d9ef">[azureparameters]</span> (Get-Content -Path $PSScriptRoot/azuredeploy.parameters.json | ConvertFrom-Json)
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell"><span style="color:#66d9ef">[azureparameters]</span> (Get-Content -Path $PSScriptRoot/azuredeploy.parameters.json | ConvertFrom-Json)
 </code></pre></div><p><img src="/static/007/validation.png" alt="Validation in Action"></p>
 <p>Throws below error:</p>
-<pre><code class="language-error" data-lang="error">InvalidArgument: Cannot convert value &quot;@{$schema=https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#; contentVersion=1.0.0.0; parameters=}&quot; to type &quot;AzureParameters&quot;. Error: &quot;Cannot convert value &quot;@{storageAccountNamePrefix=; numberofStorageAccounts=; storageAccountType=; location=}&quot; to type &quot;Parameters&quot;. Error: &quot;Cannot create object of type &quot;NumberofStorageAccounts&quot;. The 20 argument is greater than the maximum allowed range of 10. Supply an argument that is less than or equal to 10 and then try the command again.&quot;&quot;
+<pre tabindex="0"><code class="language-error" data-lang="error">InvalidArgument: Cannot convert value &quot;@{$schema=https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#; contentVersion=1.0.0.0; parameters=}&quot; to type &quot;AzureParameters&quot;. Error: &quot;Cannot convert value &quot;@{storageAccountNamePrefix=; numberofStorageAccounts=; storageAccountType=; location=}&quot; to type &quot;Parameters&quot;. Error: &quot;Cannot create object of type &quot;NumberofStorageAccounts&quot;. The 20 argument is greater than the maximum allowed range of 10. Supply an argument that is less than or equal to 10 and then try the command again.&quot;&quot;
 </code></pre><p>Fix the value for the <code>numberofStorageAccounts</code> parameter.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
   <span style="color:#f92672">&#34;$schema&#34;</span>: <span style="color:#e6db74">&#34;https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#&#34;</span>,
   <span style="color:#f92672">&#34;contentVersion&#34;</span>: <span style="color:#e6db74">&#34;1.0.0.0&#34;</span>,
   <span style="color:#f92672">&#34;parameters&#34;</span>: {
@@ -454,7 +455,7 @@ The answer is that we will be a using a trick with how we create an instance of 
   }
 }
 </code></pre></div><p>Run the below again:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell"><span style="color:#66d9ef">[azureparameters]</span> (Get-Content -Path $PSScriptRoot/azuredeploy.parameters.json | ConvertFrom-Json)
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell"><span style="color:#66d9ef">[azureparameters]</span> (Get-Content -Path $PSScriptRoot/azuredeploy.parameters.json | ConvertFrom-Json)
 </code></pre></div><p><img src="/static/007/valid.png" alt="Validation passes"></p>
 <h2 id="conclusion-">Conclusion ✅</h2>
 <p>This is maybe a very basic way of validating input data but I read about a topic and used it to solve a problem in a unique way, which is a win for me 😎.</p>

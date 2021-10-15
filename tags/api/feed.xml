@@ -1,19 +1,64 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>api on System Engineer taking Dev?Ops notes</title>
+    <title>api on Engineer taking Dev?Ops notes</title>
     <link>https://dexterposh.github.io/tags/api/</link>
-    <description>Recent content in api on System Engineer taking Dev?Ops notes</description>
+    <description>Recent content in api on Engineer taking Dev?Ops notes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 01 May 2020 12:21:28 +0530</lastBuildDate><atom:link href="https://dexterposh.github.io/tags/api/feed.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 01 May 2020 12:21:28 +0530</lastBuildDate>
+    
+	<atom:link href="https://dexterposh.github.io/tags/api/feed.xml" rel="self" type="application/rss+xml" />
+    
+    
     <item>
       <title>AKS PowerShell Tip - Add Authorized Ip</title>
       <link>https://dexterposh.github.io/posts/005-aks-tip-ip/</link>
       <pubDate>Fri, 01 May 2020 12:21:28 +0530</pubDate>
       
       <guid>https://dexterposh.github.io/posts/005-aks-tip-ip/</guid>
-      <description>Background 🐼 Recently, I found out that there is no sane way to perform adding a public IP address to the authorized IP address ranges using either the Az CLI or Az.</description>
+      <description>&lt;h2 id=&#34;background-&#34;&gt;Background 🐼&lt;/h2&gt;
+&lt;p&gt;Recently, I found out that there is no sane way to perform adding a public IP address to
+the authorized IP address ranges using either the
+&lt;a href=&#34;https://docs.microsoft.com/en-us/azure/aks/api-server-authorized-ip-ranges#update-a-clusters-api-server-authorized-ip-ranges&#34;&gt;Az CLI&lt;/a&gt;
+or &lt;a href=&#34;https://docs.microsoft.com/en-us/powershell/module/az.aks/?view=azps-3.8.0&#34;&gt;Az.Aks&lt;/a&gt; PowerShell (no cmdlets available yet) module.&lt;/p&gt;
+&lt;p&gt;From the official docs it says to use  something like below format with Az CLI.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;az aks update &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    --resource-group myResourceGroup &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    --name myAKSCluster &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    --api-server-authorized-ip-ranges 73.140.245.0/24
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;But it doesn&amp;rsquo;t tell you how to append the IP to the range, instead you need to
+supply a comma separated value of public IP addresses.&lt;/p&gt;
+&lt;h2 id=&#34;challenge-&#34;&gt;Challenge ☁️&lt;/h2&gt;
+&lt;p&gt;Well, this is can be done by using Az CLI with PowerShell or Bash and parsing
+output then generating a comma separated string and passing it back to Az CLI
+😞&lt;/p&gt;
+&lt;h2 id=&#34;solution-&#34;&gt;Solution ⚡&lt;/h2&gt;
+&lt;p&gt;Often, when I am hit with such limitations with cmdlets or Az CLI making life
+hard. I go back to using simply the 2 cmdlets provided by &lt;em&gt;Az.Resources&lt;/em&gt; module.&lt;/p&gt;
+&lt;p&gt;Behold mighty!&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;Get-AzResource&lt;/em&gt; - Gets the Az resource&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Set-AzResource&lt;/em&gt; - Modifies the Az resource&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I ended up doing the below and creating a utility function out of it.&lt;/p&gt;
+&lt;p&gt;First, get the AKS Cluster resource. Make sure to specify the &lt;strong&gt;-ExpandProperties&lt;/strong&gt;
+switch to get back full fledged resource otherwise it returns a shallow instance.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;$ResourceGroup = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;test-aks-rg&amp;#34;&lt;/span&gt;
+$Name = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;aksCluster001&amp;#34;&lt;/span&gt;
+$IP = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;110.91.234.43&amp;#34;&lt;/span&gt;
+$AksCluster = Get-AzResource -ResourceGroupName $ResourceGroup -Name $Name -ExpandProperties -ErrorAction Stop
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Once you have the resource, walk-through the properties and append the IP (+=
+operator in PowerShell) to the local copy of the resource.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;$orgClusterInfo.Properties.apiServerAccessProfile.authorizedIpRanges += $Ip
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Finally, perform a Set operation by piping the modified local resource copy to
+&lt;strong&gt;Set-AzResource&lt;/strong&gt; cmdlet.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;$orgClusterInfo | Set-AzResource -ErrorAction Stop
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;takeaway-&#34;&gt;Takeaway 🔥&lt;/h2&gt;
+&lt;p&gt;Even, when there are certain utility functions not available in the Az PowerShell
+module. We can rely on the &lt;em&gt;`&lt;/em&gt;-Resource* cmdlets to work our way through.&lt;/p&gt;
+</description> 
     </item>
     
     <item>
@@ -22,9 +67,88 @@
       <pubDate>Tue, 14 Apr 2020 15:06:22 +0530</pubDate>
       
       <guid>https://dexterposh.github.io/posts/002-azdo-tip-api/</guid>
-      <description>Problem Often working with Azure DevOps, I hit a wall trying to automate some tasks but there are no REST APIs made public yet.
-It was one of those task of automating creation of Environments in multi-stage YAML based pipelines in AzDO.</description>
+      <description>&lt;h2 id=&#34;problem&#34;&gt;Problem&lt;/h2&gt;
+&lt;p&gt;Often working with Azure DevOps, I hit a wall trying to automate some tasks but
+there are no REST APIs made public yet.&lt;/p&gt;
+&lt;p&gt;It was one of those task of automating creation of Environments in multi-stage
+YAML based pipelines in AzDO.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://dexterposh.github.io/static/002/env.png&#34; alt=&#34;Azure DevOps environments&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Quick research reveals that this has been requested in &lt;a href=&#34;https://developercommunity.visualstudio.com/content/problem/820737/rest-apis-for-environments-and-its-resources-multi.html&#34;&gt;uservoice&lt;/a&gt; (please upvote).
+Let&amp;rsquo;s see one of the very simple ways to discover some of these APIs.&lt;/p&gt;
+&lt;h2 id=&#34;developers-tools-to-rescue&#34;&gt;Developers Tools to rescue&lt;/h2&gt;
+&lt;p&gt;Using your browser&amp;rsquo;s developers tools you can actually inspect the HTTP requests
+being made while performing an action in the web portal.&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s do this.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://dexterposh.github.io/static/002/devnetwork.png&#34; alt=&#34;Developer tools&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s click on the &amp;ldquo;Create Environment&amp;rdquo; button, fill out some dummy values,
+hit create and keep an eye on the network tab in the developer tools.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://dexterposh.github.io/static/002/envcreatenetwork.png&#34; alt=&#34;Create env watch network&#34;&gt;&lt;/p&gt;
+&lt;p&gt;We see some activity, it might take you some time to walk through what happened but in this case the top activity named &amp;ldquo;environments&amp;rdquo; has the required details.&lt;/p&gt;
+&lt;p&gt;See below and note the URL &amp;amp; method used:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://dexterposh.github.io/static/002/analyzerequest.png&#34; alt=&#34;Analyze request sent&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Also, make note of the Json request in the payload.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://dexterposh.github.io/static/002/requestpayload.png&#34; alt=&#34;Request payload&#34;&gt;&lt;/p&gt;
+&lt;p&gt;That&amp;rsquo;s mostly it, fire up postman/PowerShell to make the API call to test this.&lt;/p&gt;
+&lt;h2 id=&#34;invoke-restmethod-in-pwsh&#34;&gt;Invoke-RestMethod in Pwsh&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://docs.microsoft.com/en-us/azure/devops/organizations/accounts/use-personal-access-tokens-to-authenticate?view=azure-devops&amp;amp;tabs=preview-page&#34;&gt;Generate a Personal Access Token&lt;/a&gt; in AzDO, typically start with a short lived PAT token with full access and then nail down on the specific permissions you need.&lt;/p&gt;
+&lt;p&gt;Below is the code snippet, I used with AzDO to hit the REST API endpoint:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;$url = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;https://dev.azure.com/ddhami/BITPro.AzDeploy/_apis/distributedtask/environments&amp;#39;&lt;/span&gt;
+$cred = Get-Credential -UserName &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;vsts&amp;#39;&lt;/span&gt; -Message &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Enter AzDO Personal Access Token with privs to create env&amp;#39;&lt;/span&gt;
+$encodedValue = &lt;span style=&#34;color:#66d9ef&#34;&gt;[Convert]&lt;/span&gt;::ToBase64String(
+            &lt;span style=&#34;color:#66d9ef&#34;&gt;[Text.Encoding]&lt;/span&gt;::ASCII.GetBytes(
+                (&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;{0}:{1}&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;-f&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;&amp;#39;&lt;/span&gt;, $cred.GetNetworkCredential().Password)
+            )
+        )
+
+$body = @{
+  name = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;test-pwsh-env&amp;#39;&lt;/span&gt;;
+  description = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;test environment from APR&amp;#39;&lt;/span&gt;
+} | ConvertTo-Json
+$headers = @{
+  Accept = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;application/json;&amp;#39;&lt;/span&gt;;
+  Authorization = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Basic {0}&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;-f&lt;/span&gt; $encodedValue
+}
+
+Invoke-RestMethod -Method POST -Uri $url -Body $body -Headers $headers -ContentType &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;application/json&amp;#39;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;But when I execute the above code, it gives me an error.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://dexterposh.github.io/static/002/pwsherror.png&#34; alt=&#34;Error thrown&#34;&gt;&lt;/p&gt;
+&lt;p&gt;The error thrown is below.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;{
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;$id&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;1&amp;#34;&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;innerException&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;null&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;message&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;No api-version was supplied for the \&amp;#34;POST\&amp;#34; request. The version must be supplied either as part of the Accept header (e.g. \&amp;#34;application/json; api-version=1.0\&amp;#34;) or as a query parameter (e.g. \&amp;#34;?api-version=1.0\&amp;#34;).&amp;#34;&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;typeName&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Microsoft.VisualStudio.Services.WebApi.VssVersionNotSpecifiedException, Microsoft.VisualStudio.Services.WebApi&amp;#34;&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;typeKey&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;VssVersionNotSpecifiedException&amp;#34;&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;errorCode&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;eventId&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;3000&lt;/span&gt;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Read the error message, it explains that the api-version is missing. Also, looking back at the capture and see where the api-version was specified.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://dexterposh.github.io/static/002/apiversion.png&#34; alt=&#34;API Version in header&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s make the same change in our code snippet to include API version in the
+header.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;$url = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;https://dev.azure.com/ddhami/BITPro.AzDeploy/_apis/distributedtask/environments&amp;#39;&lt;/span&gt;
+$cred = Get-Credential -UserName &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;vsts&amp;#39;&lt;/span&gt; -Message &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Enter AzDO Personal Access Token with privs to create env&amp;#39;&lt;/span&gt;
+$encodedValue = &lt;span style=&#34;color:#66d9ef&#34;&gt;[Convert]&lt;/span&gt;::ToBase64String(
+            &lt;span style=&#34;color:#66d9ef&#34;&gt;[Text.Encoding]&lt;/span&gt;::ASCII.GetBytes(
+                (&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;{0}:{1}&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;-f&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;&amp;#39;&lt;/span&gt;, $cred.GetNetworkCredential().Password)
+            )
+        )
+
+$body = @{
+  name = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;test-pwsh-env&amp;#39;&lt;/span&gt;;
+  description = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;test environment from APR&amp;#39;&lt;/span&gt;
+} | ConvertTo-Json
+$headers = @{
+&lt;span style=&#34;display:block;width:100%;background-color:#3c3d38&#34;&gt;  Accept = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;application/json;api-version=5.0-preview.1&amp;#39;&lt;/span&gt;;
+&lt;/span&gt;  Authorization = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Basic {0}&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;-f&lt;/span&gt; $encodedValue
+}
+
+Invoke-RestMethod -Method POST -Uri $url -Body $body -Headers $headers -ContentType = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;application/json&amp;#39;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Here I go, this finally works and using the similar API endpoint I can fetch the environments as well (GET request).&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://dexterposh.github.io/static/002/envsuccess.png&#34; alt=&#34;Env created success&#34;&gt;&lt;/p&gt;
+</description> 
     </item>
     
   </channel>
 </rss>
+

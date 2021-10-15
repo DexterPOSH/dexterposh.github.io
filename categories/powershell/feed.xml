@@ -1,21 +1,251 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>powershell on System Engineer taking Dev?Ops notes</title>
+    <title>powershell on Engineer taking Dev?Ops notes</title>
     <link>https://dexterposh.github.io/categories/powershell/</link>
-    <description>Recent content in powershell on System Engineer taking Dev?Ops notes</description>
+    <description>Recent content in powershell on Engineer taking Dev?Ops notes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 29 Jun 2020 19:42:59 +0530</lastBuildDate><atom:link href="https://dexterposh.github.io/categories/powershell/feed.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 29 Jun 2020 19:42:59 +0530</lastBuildDate>
+    
+	<atom:link href="https://dexterposh.github.io/categories/powershell/feed.xml" rel="self" type="application/rss+xml" />
+    
+    
     <item>
       <title>PowerShell Classes - Validating ARM parameters</title>
       <link>https://dexterposh.github.io/posts/007-pwsh-class-usecase/</link>
       <pubDate>Mon, 29 Jun 2020 19:42:59 +0530</pubDate>
       
       <guid>https://dexterposh.github.io/posts/007-pwsh-class-usecase/</guid>
-      <description>Origin❓ (shameless plug, alert!) 🙃
-Recently, I was discussing with my colleague about this new book I am co-authoring (with Prateek) about why to learn .NET to be a better PowerShell programmer and upon further discussion we pondered some interesting ways to use PowerShell classes.</description>
+      <description>&lt;h2 id=&#34;origin&#34;&gt;Origin❓&lt;/h2&gt;
+&lt;p&gt;(shameless plug, alert!) 🙃&lt;/p&gt;
+&lt;p&gt;Recently, I was discussing with my colleague about this new &lt;a href=&#34;https://leanpub.com/powershell-to-csharp&#34;&gt;book&lt;/a&gt; I am co-authoring (with &lt;a href=&#34;https://twitter.com/singhprateik&#34;&gt;Prateek&lt;/a&gt;) about why to learn .NET to be a better PowerShell programmer and upon further discussion we pondered some interesting ways to use PowerShell classes.&lt;/p&gt;
+&lt;h2 id=&#34;brain-storming-&#34;&gt;Brain-storming 🤔&lt;/h2&gt;
+&lt;p&gt;All was lost, until we had another quick conversation about how to validate ARM templates.
+Well, I suggested to write Pester tests to check the input being passed and perform &lt;code&gt;Test-AzDeployment&lt;/code&gt; for ARM templates.&lt;/p&gt;
+&lt;p&gt;Another idea that popped up in my mind was what if we write a PowerShell class to model the ARM parameters file and use that to validate the ARM template parameter inputs.&lt;/p&gt;
+&lt;h2 id=&#34;solution-&#34;&gt;Solution 🚀&lt;/h2&gt;
+&lt;p&gt;There exists the &lt;a href=&#34;https://github.com/dfinke/ConvertToClass&#34;&gt;ConvertToClass&lt;/a&gt; module by Doug Finke, which comes to the rescue to automatically convert a JSON object to a PowerShell class. It even has VSCode integration, check it out.&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s start by taking a sample &lt;code&gt;azuredeploy.parameters.json&lt;/code&gt; file.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;{
+  &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;$schema&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#&amp;#34;&lt;/span&gt;,
+  &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;contentVersion&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;1.0.0.0&amp;#34;&lt;/span&gt;,
+  &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;parameters&amp;#34;&lt;/span&gt;: {
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;storageAccountNamePrefix&amp;#34;&lt;/span&gt;: {
+      &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;value&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Azurearm6754&amp;#34;&lt;/span&gt;
+    },
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;numberofStorageAccounts&amp;#34;&lt;/span&gt;: {
+      &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;value&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;
+    },
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;storageAccountType&amp;#34;&lt;/span&gt;: {
+      &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;value&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Standard_LRS&amp;#34;&lt;/span&gt;
+    },
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;location&amp;#34;&lt;/span&gt;: {
+      &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;value&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;westus2&amp;#34;&lt;/span&gt;
+    }
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;convert-json-to-class-&#34;&gt;Convert Json to Class ☯&lt;/h3&gt;
+&lt;p&gt;Let&amp;rsquo;s run the &lt;code&gt;ConverTo-Class&lt;/code&gt; function in the ConvertToClass module against this &lt;code&gt;azuredeploy.parameters.json&lt;/code&gt; file.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;ConvertTo-Class -Target (Get-Content ./azuredeploy.parameters.json -Raw)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://dexterposh.github.io/static/007/class1.png&#34; alt=&#34;alt&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Above command generates below content:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;class RootObject1 {
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;[string]&lt;/span&gt;$$schema
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;[string]&lt;/span&gt;$contentVersion
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;[parameters]&lt;/span&gt;$parameters
+}
+
+class parameters1 {
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;[storageAccountNamePrefix]&lt;/span&gt;$storageAccountNamePrefix
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;[numberofStorageAccounts]&lt;/span&gt;$numberofStorageAccounts
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;[storageAccountType]&lt;/span&gt;$storageAccountType
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;[location]&lt;/span&gt;$location
+}
+
+class storageAccountNamePrefix1 {
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;[string]&lt;/span&gt;$value
+}
+
+class numberofStorageAccounts1 {
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;[int]&lt;/span&gt;$value
+}
+
+class storageAccountType1 {
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;[string]&lt;/span&gt;$value
+}
+
+class location1 {
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;[string]&lt;/span&gt;$value
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Let&amp;rsquo;s rename the above classes like below:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;$$schema&lt;/code&gt; property on &lt;code&gt;RootObject1&lt;/code&gt; to &lt;code&gt;${$schema}&lt;/code&gt;, done to escape &lt;code&gt;$&lt;/code&gt; char in property name&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;RootObject1&lt;/code&gt; to &lt;code&gt;AzureParameters&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;parameters1&lt;/code&gt; to &lt;code&gt;Parameters&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;storageAccountNamePrefix1&lt;/code&gt; to &lt;code&gt;StorageAccountType&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;numberofStorageAccounts1&lt;/code&gt; to &lt;code&gt;StorageAccountType&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;storageAccountType1&lt;/code&gt; to &lt;code&gt;StorageAccountType&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;location1&lt;/code&gt; to &lt;code&gt;Location&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;add-validation-attributes-&#34;&gt;Add validation attributes 🔨&lt;/h3&gt;
+&lt;p&gt;We can add validation attributes to the property &lt;code&gt;$value&lt;/code&gt; present inside the auto-generated class to add some quick validation rules to the properties present on the class.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Note the name &lt;code&gt;$value&lt;/code&gt; is given to the property because this is how ARM parameters file take input.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;class AzureParameters {
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;[string]&lt;/span&gt;${$schema}
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;[string]&lt;/span&gt;$contentVersion
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;[Parameters]&lt;/span&gt;$parameters
+}
+
+class Parameters {
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;[StorageAccountNamePrefix]&lt;/span&gt;$storageAccountNamePrefix
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;[NumberofStorageAccounts]&lt;/span&gt;$numberofStorageAccounts
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;[StorageAccountType]&lt;/span&gt;$storageAccountType
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;[Location]&lt;/span&gt;$location
+}
+
+class StorageAccountNamePrefix {
+    &lt;span style=&#34;color:#75715e&#34;&gt;# validate the prefix length&lt;/span&gt;
+    [&lt;span style=&#34;color:#66d9ef&#34;&gt;ValidateLength&lt;/span&gt;(3,15)]
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;[string]&lt;/span&gt;$value
+}
+
+class StorageAccountNamePrefix {
+    &lt;span style=&#34;color:#75715e&#34;&gt;# restricting the min=1 and max=10 storage accounts that one can request&lt;/span&gt;
+    [&lt;span style=&#34;color:#66d9ef&#34;&gt;ValidateRange&lt;/span&gt;(1,10)]
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;[int]&lt;/span&gt;$value
+}
+
+class StorageAccountType {
+    &lt;span style=&#34;color:#75715e&#34;&gt;# Restricting the StorageAccount SKUs&lt;/span&gt;
+    [&lt;span style=&#34;color:#66d9ef&#34;&gt;ValidateSet&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Standard_LRS&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Standard_GRS&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Standard_ZRS&amp;#39;&lt;/span&gt;)]
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;[string]&lt;/span&gt;$value
+}
+
+class Location {
+    &lt;span style=&#34;color:#75715e&#34;&gt;# Restricting the locations&lt;/span&gt;
+    [&lt;span style=&#34;color:#66d9ef&#34;&gt;ValidateSet&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;westus2&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;northcentralus&amp;#39;&lt;/span&gt;)]
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;[string]&lt;/span&gt;$value
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;add-logic-inside-empty-constructor-&#34;&gt;Add logic inside Empty Constructor ⌛&lt;/h3&gt;
+&lt;p&gt;We can add one more trick to the bag to add an empty constructor explicitly (this is present when no constructor exists) and put some more validation logic if the current validate attributes doesn&#39; suit the needs.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;class AzureParameters {
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;[string]&lt;/span&gt;${$schema}
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;[string]&lt;/span&gt;$contentVersion
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;[Parameters]&lt;/span&gt;$parameters
+}
+
+class Parameters {
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;[StorageAccountNamePrefix]&lt;/span&gt;$storageAccountNamePrefix
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;[NumberofStorageAccounts]&lt;/span&gt;$numberofStorageAccounts
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;[StorageAccountType]&lt;/span&gt;$storageAccountType
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;[Location]&lt;/span&gt;$location
+}
+
+class StorageAccountNamePrefix {
+    &lt;span style=&#34;color:#75715e&#34;&gt;# validate the prefix length&lt;/span&gt;
+    [&lt;span style=&#34;color:#66d9ef&#34;&gt;ValidateLength&lt;/span&gt;(3,15)]
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;[string]&lt;/span&gt;$value
+}
+
+class NumberofStorageAccounts {
+    &lt;span style=&#34;color:#75715e&#34;&gt;# restricting the min=1 and max=10 storage accounts that one can request&lt;/span&gt;
+    [&lt;span style=&#34;color:#66d9ef&#34;&gt;ValidateRange&lt;/span&gt;(1,10)]
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;[int]&lt;/span&gt;$value
+}
+
+class StorageAccountType {
+    &lt;span style=&#34;color:#75715e&#34;&gt;# Restricting the StorageAccount SKUs&lt;/span&gt;
+    [&lt;span style=&#34;color:#66d9ef&#34;&gt;ValidateSet&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Standard_LRS&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Standard_GRS&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Standard_ZRS&amp;#39;&lt;/span&gt;)]
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;[string]&lt;/span&gt;$value
+
+    &lt;span style=&#34;color:#75715e&#34;&gt;# Add some more validation logic inside the empty constructor&lt;/span&gt;
+    storageAccountType() {
+        &lt;span style=&#34;color:#75715e&#34;&gt;# Perform some validation on the property&lt;/span&gt;
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; ($this.value &lt;span style=&#34;color:#f92672&#34;&gt;-ne&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Standard_ZRS&amp;#39;&lt;/span&gt;) {
+            &lt;span style=&#34;color:#75715e&#34;&gt;# you can perform more checks or logging, throwing a warning here&lt;/span&gt;
+            Write-Warning -Message &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;No zone redundancy&amp;#34;&lt;/span&gt;
+        }
+    }
+}
+
+class Location {
+    &lt;span style=&#34;color:#75715e&#34;&gt;# Restricting the locations&lt;/span&gt;
+    [&lt;span style=&#34;color:#66d9ef&#34;&gt;ValidateSet&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;westus2&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;northcentralus&amp;#39;&lt;/span&gt;)]
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;[string]&lt;/span&gt;$value
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;blockquote&gt;
+&lt;p&gt;Why does this has to be an empty constructor?
+The answer is that we will be a using a trick with how we create an instance of the class in next section&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;secret-sauce--cast-initialization-&#34;&gt;Secret-Sauce : Cast-Initialization 🍲&lt;/h3&gt;
+&lt;p&gt;Credit goes to Bruce Payette&amp;rsquo;s &lt;a href=&#34;https://livebook.manning.com/book/windows-powershell-in-action-third-edition/chapter-19/311&#34;&gt;Windows PowerShell in Action 3rd&lt;/a&gt; edition which talks a bit about this technique in brief.&lt;/p&gt;
+&lt;p&gt;In short, you can take a hashtable or PSObjects and cast them as strongly type object instance. This will become more clear when we perform this casting a bit later.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;For cast-initalization technique to work an empty constructor needs to be present in the Class definition. It is present by default if there is no constructor on the class present or you can add one explicitly.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Modify some value in the &lt;code&gt;azuredeploy.parameters.json&lt;/code&gt; file to not-follow some validation logic we added e.g. putting the value for &lt;code&gt;numberofStorageAccount&lt;/code&gt; as &lt;code&gt;20&lt;/code&gt;, remember our &lt;code&gt;[ValidateRange(1,10)]&lt;/code&gt; attribute on the property should fails. See the parameters file below:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;{
+  &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;$schema&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#&amp;#34;&lt;/span&gt;,
+  &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;contentVersion&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;1.0.0.0&amp;#34;&lt;/span&gt;,
+  &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;parameters&amp;#34;&lt;/span&gt;: {
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;storageAccountNamePrefix&amp;#34;&lt;/span&gt;: {
+      &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;value&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;azurearm6754&amp;#34;&lt;/span&gt;
+    },
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;numberofStorageAccounts&amp;#34;&lt;/span&gt;: {
+      &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;value&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;20&lt;/span&gt;
+    },
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;storageAccountType&amp;#34;&lt;/span&gt;: {
+      &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;value&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Standard_LRS&amp;#34;&lt;/span&gt;
+    },
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;location&amp;#34;&lt;/span&gt;: {
+      &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;value&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;westus2&amp;#34;&lt;/span&gt;
+    }
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Now, see the result when casting this as our &lt;code&gt;ArmParameters&lt;/code&gt; class.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;[azureparameters]&lt;/span&gt; (Get-Content -Path $PSScriptRoot/azuredeploy.parameters.json | ConvertFrom-Json)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://dexterposh.github.io/static/007/validation.png&#34; alt=&#34;Validation in Action&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Throws below error:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-error&#34; data-lang=&#34;error&#34;&gt;InvalidArgument: Cannot convert value &amp;quot;@{$schema=https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#; contentVersion=1.0.0.0; parameters=}&amp;quot; to type &amp;quot;AzureParameters&amp;quot;. Error: &amp;quot;Cannot convert value &amp;quot;@{storageAccountNamePrefix=; numberofStorageAccounts=; storageAccountType=; location=}&amp;quot; to type &amp;quot;Parameters&amp;quot;. Error: &amp;quot;Cannot create object of type &amp;quot;NumberofStorageAccounts&amp;quot;. The 20 argument is greater than the maximum allowed range of 10. Supply an argument that is less than or equal to 10 and then try the command again.&amp;quot;&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Fix the value for the &lt;code&gt;numberofStorageAccounts&lt;/code&gt; parameter.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;{
+  &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;$schema&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#&amp;#34;&lt;/span&gt;,
+  &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;contentVersion&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;1.0.0.0&amp;#34;&lt;/span&gt;,
+  &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;parameters&amp;#34;&lt;/span&gt;: {
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;storageAccountNamePrefix&amp;#34;&lt;/span&gt;: {
+      &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;value&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;azurearm6754&amp;#34;&lt;/span&gt;
+    },
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;numberofStorageAccounts&amp;#34;&lt;/span&gt;: {
+      &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;value&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;
+    },
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;storageAccountType&amp;#34;&lt;/span&gt;: {
+      &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;value&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Standard_LRS&amp;#34;&lt;/span&gt;
+    },
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;location&amp;#34;&lt;/span&gt;: {
+      &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;value&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;westus2&amp;#34;&lt;/span&gt;
+    }
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Run the below again:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;[azureparameters]&lt;/span&gt; (Get-Content -Path $PSScriptRoot/azuredeploy.parameters.json | ConvertFrom-Json)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://dexterposh.github.io/static/007/valid.png&#34; alt=&#34;Validation passes&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;conclusion-&#34;&gt;Conclusion ✅&lt;/h2&gt;
+&lt;p&gt;This is maybe a very basic way of validating input data but I read about a topic and used it to solve a problem in a unique way, which is a win for me 😎.&lt;/p&gt;
+&lt;p&gt;I think slowly embracing more Object-Oriented programming using PowerShell classes (or C#) can open up some interesting ways to solve problems in my tooling.&lt;/p&gt;
+&lt;h2 id=&#34;resource-links-&#34;&gt;Resource links 📚&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://leanpub.com/powershell-to-csharp&#34;&gt;PowerShell to C# and back&lt;/a&gt; - Disclaimer: co-author on this one.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://ridicurious.com/2020/06/29/powershell-to-csharp-and-back-classes/&#34;&gt;PowerShell to C# and Back – Introduction to Classes&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://livebook.manning.com/book/windows-powershell-in-action-third-edition&#34;&gt;Windows PowerShell in Action, 3rd Edition&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/dfinke/ConvertToClass&#34;&gt;Doug Finke&amp;rsquo;s ConvertToClass module&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/Stephanevg/PSClassUtils&#34;&gt;PSClassUtils&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description> 
     </item>
     
   </channel>
 </rss>
+

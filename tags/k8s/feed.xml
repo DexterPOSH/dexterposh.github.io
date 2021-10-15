@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>K8s on Engineer taking Dev?Ops notes</title>
+    <link>https://dexterposh.github.io/tags/k8s/</link>
+    <description>Recent content in K8s on Engineer taking Dev?Ops notes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 15 Oct 2021 12:23:30 +0530</lastBuildDate>
+    
+	<atom:link href="https://dexterposh.github.io/tags/k8s/feed.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Kubernetes API Terms</title>
+      <link>https://dexterposh.github.io/posts/012-k8s-api-terms/</link>
+      <pubDate>Fri, 15 Oct 2021 12:23:30 +0530</pubDate>
+      
+      <guid>https://dexterposh.github.io/posts/012-k8s-api-terms/</guid>
+      <description>&lt;h2 id=&#34;overview&#34;&gt;Overview&lt;/h2&gt;
+&lt;p&gt;My notes on the Kubernetes API terminology.&lt;/p&gt;
+&lt;h2 id=&#34;api-server&#34;&gt;API-Server&lt;/h2&gt;
+&lt;p&gt;The K8s core component api-server is at the heart of the interactions made by Client and other K8s components.
+It is the only component that can interact with the the etcd (key-value) store.&lt;/p&gt;
+&lt;p&gt;Reponsibilities:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Serve the RESTful HTTP API
+&lt;ul&gt;
+&lt;li&gt;Reading state - fetch single object, list of objects and stream changes (via events)&lt;/li&gt;
+&lt;li&gt;Modify state - Create, Update &amp;amp; Delete objects&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Proxy cluster components e.g. Dashboard, kubectl exec sessions etc.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;API server HTTP interface handles HTTP requests to query and manipulate K8s resources using the standard HTTP verbs:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;HTTP GET - retrieve data with a specific resource or collection or list of resources&lt;/li&gt;
+&lt;li&gt;HTTP POST - create a resource&lt;/li&gt;
+&lt;li&gt;HTTP PUT - Updating an existing resource&lt;/li&gt;
+&lt;li&gt;HTTP PATCH - Partial updates to resources&lt;/li&gt;
+&lt;li&gt;HTTP DELETE - Destroy a resource (non-recoverable manner)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Above means that when we use a client like Kubectl to interact with the API-Server it is actually issuing
+HTTP requests against a certain endpoint.&lt;/p&gt;
+&lt;h3 id=&#34;api-terminology&#34;&gt;API terminology&lt;/h3&gt;
+&lt;p&gt;Below are some of the most common terms thrown around when referring to the REST HTTP API.&lt;/p&gt;
+&lt;h4 id=&#34;kind&#34;&gt;Kind&lt;/h4&gt;
+&lt;p&gt;To simply put this is the data type of the underlying object.&lt;/p&gt;
+&lt;p&gt;Broadly there are 3 categories of types:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Objects - this category represents individual object types like pod, deployment etc.&lt;/li&gt;
+&lt;li&gt;List - this data type is basically a collection of objects defined above.&lt;/li&gt;
+&lt;li&gt;Special kind of types - this collections refers to types which define action on objects or non-persistent entities.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Note - In K8s the &lt;code&gt;kind&lt;/code&gt; directly corresponds with a Golang type.&lt;/p&gt;
+&lt;h4 id=&#34;api-group&#34;&gt;API Group&lt;/h4&gt;
+&lt;p&gt;When logically related kind(s) are grouped together it is referred to as API group.
+For example - Kind &lt;code&gt;Job&lt;/code&gt; or &lt;code&gt;ScheduledJob&lt;/code&gt; are placed under the Batch API group.&lt;/p&gt;
+&lt;h4 id=&#34;version&#34;&gt;Version&lt;/h4&gt;
+&lt;p&gt;Each API group can exist in multiple version e.g. an API group first appears as v1alpha1 and is then promoted to v1beta1 and finally graduates to v1.&lt;/p&gt;
+&lt;p&gt;K8s supports multiple API versions for making it easy to extend, these are served under different API paths e.g. /api/v1 or /apis/extensions/v1beta1.&lt;/p&gt;
+&lt;p&gt;Different API verions imply diff level of stability and support:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Alpha level (e.g. v1alpha1) - disabled by default, support for a feature may be dropped at any time, use only in short lived testing clusters.&lt;/li&gt;
+&lt;li&gt;Beta level (e.g. v2beta3) enabled by default, code well tested. However object semantics might get a breaking change in next release.&lt;/li&gt;
+&lt;li&gt;Stable (e.g. v1) will appear in software for many subsequent versions.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;resource&#34;&gt;Resource&lt;/h4&gt;
+&lt;p&gt;This is usually a plural word and uniquely identifies the HTTP endpoint exposing CRUD semantics for an object type e.g. /pods, /pods/busybox. Common path patterns are:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The root e.g. /pods which lists all the instances of that type&lt;/li&gt;
+&lt;li&gt;Individual named resources e.g /pods/busybox&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Resources correspond to HTTP endpoint paths&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Kinds are the type of objects returned and recieved by these endpoints, which are then persisted into the datastore.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;points-to-note&#34;&gt;Points to note&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Resources are always part of an API group and version, also referred to as GroupVersionResource (GVR)&lt;/li&gt;
+&lt;li&gt;GVR basically uniquely defines an HTTP endpoint path&lt;/li&gt;
+&lt;li&gt;Each kind also is part of an API group and versio, referred to as GroupVersionKind (GVK)&lt;/li&gt;
+&lt;li&gt;Relation between GVK &amp;amp; GVR is - GVKs are served under the HTTP Path identified by GVR.&lt;/li&gt;
+&lt;li&gt;Above process of mapping GVK to GVR is also termed as REST Mapping in the K8s SDK.&lt;/li&gt;
+&lt;/ul&gt;
+</description> 
+    </item>
+    
+  </channel>
+</rss>
+

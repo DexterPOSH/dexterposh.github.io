@@ -1,20 +1,30 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Fixeds on System Engineer taking Dev?Ops notes</title>
+    <title>Fixeds on Engineer taking Dev?Ops notes</title>
     <link>https://dexterposh.github.io/fixed/</link>
-    <description>Recent content in Fixeds on System Engineer taking Dev?Ops notes</description>
+    <description>Recent content in Fixeds on Engineer taking Dev?Ops notes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 03 Jul 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://dexterposh.github.io/fixed/feed.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 03 Jul 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://dexterposh.github.io/fixed/feed.xml" rel="self" type="application/rss+xml" />
+    
+    
     <item>
       <title>About</title>
       <link>https://dexterposh.github.io/about/</link>
       <pubDate>Fri, 03 Jul 2020 00:00:00 +0000</pubDate>
       
       <guid>https://dexterposh.github.io/about/</guid>
-      <description>My name is Deepak and I currently live in Bengaluru working as a systems engineer. In my own time and at work, I do some of the below:
- Write code [C#, PowerShell, Python].</description>
+      <description>&lt;p&gt;My name is &lt;code&gt;Deepak&lt;/code&gt; and I currently live in Bengaluru working as a systems engineer. In my own time and at work, I do some of the below:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Write code &lt;code&gt;[C#, PowerShell, Python]&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Work on Cloud &lt;code&gt;[Azure]&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Work on Application Build/Release/Deploy.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I am trying to learn how to code&lt;/p&gt;
+</description> 
     </item>
     
     <item>
@@ -23,8 +33,9 @@
       <pubDate>Fri, 03 Jul 2020 00:00:00 +0000</pubDate>
       
       <guid>https://dexterposh.github.io/subscribe/</guid>
-      <description></description>
+      <description></description> 
     </item>
     
   </channel>
 </rss>
+

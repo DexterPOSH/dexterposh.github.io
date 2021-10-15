@@ -1,225 +1,149 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
-  
   <url>
     <loc>https://dexterposh.github.io/about/</loc>
     <lastmod>2020-07-03T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dexterposh.github.io/subscribe/</loc>
     <lastmod>2020-07-03T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
+    <loc>https://dexterposh.github.io/categories/</loc>
+    <lastmod>2021-10-15T12:23:30+05:30</lastmod>
+  </url><url>
+    <loc>https://dexterposh.github.io/tags/devops/</loc>
+    <lastmod>2021-10-15T12:23:30+05:30</lastmod>
+  </url><url>
+    <loc>https://dexterposh.github.io/</loc>
+    <lastmod>2021-10-15T12:23:30+05:30</lastmod>
+  </url><url>
+    <loc>https://dexterposh.github.io/tags/k8s/</loc>
+    <lastmod>2021-10-15T12:23:30+05:30</lastmod>
+  </url><url>
+    <loc>https://dexterposh.github.io/categories/kubernetes/</loc>
+    <lastmod>2021-10-15T12:23:30+05:30</lastmod>
+  </url><url>
+    <loc>https://dexterposh.github.io/posts/012-k8s-api-terms/</loc>
+    <lastmod>2021-10-15T12:23:30+05:30</lastmod>
+  </url><url>
+    <loc>https://dexterposh.github.io/tags/kubernetesapi/</loc>
+    <lastmod>2021-10-15T12:23:30+05:30</lastmod>
+  </url><url>
+    <loc>https://dexterposh.github.io/posts/</loc>
+    <lastmod>2021-10-15T12:23:30+05:30</lastmod>
+  </url><url>
+    <loc>https://dexterposh.github.io/tags/</loc>
+    <lastmod>2021-10-15T12:23:30+05:30</lastmod>
+  </url><url>
     <loc>https://dexterposh.github.io/tags/azure/</loc>
     <lastmod>2021-05-24T10:47:38+05:30</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dexterposh.github.io/posts/013-az-vms-resource-graph/</loc>
     <lastmod>2021-05-24T10:47:38+05:30</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://dexterposh.github.io/categories/</loc>
-    <lastmod>2021-05-24T10:47:38+05:30</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://dexterposh.github.io/tags/devops/</loc>
-    <lastmod>2021-05-24T10:47:38+05:30</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dexterposh.github.io/categories/devops/</loc>
     <lastmod>2021-05-24T10:47:38+05:30</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://dexterposh.github.io/posts/</loc>
-    <lastmod>2021-05-24T10:47:38+05:30</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dexterposh.github.io/tags/powershell/</loc>
     <lastmod>2021-05-24T10:47:38+05:30</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dexterposh.github.io/tags/resourcegraph/</loc>
     <lastmod>2021-05-24T10:47:38+05:30</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://dexterposh.github.io/</loc>
-    <lastmod>2021-05-24T10:47:38+05:30</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://dexterposh.github.io/tags/</loc>
-    <lastmod>2021-05-24T10:47:38+05:30</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dexterposh.github.io/tags/vms/</loc>
     <lastmod>2021-05-24T10:47:38+05:30</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dexterposh.github.io/categories/.net/</loc>
     <lastmod>2020-10-05T09:07:45+05:30</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dexterposh.github.io/tags/.net/</loc>
     <lastmod>2020-10-05T09:07:45+05:30</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dexterposh.github.io/tags/csharp/</loc>
     <lastmod>2020-10-05T09:07:45+05:30</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dexterposh.github.io/tags/json/</loc>
     <lastmod>2020-10-05T09:07:45+05:30</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dexterposh.github.io/posts/011-dotnet-pwsh-json/</loc>
     <lastmod>2020-10-05T09:07:45+05:30</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dexterposh.github.io/tags/pwshtocsharpandback/</loc>
     <lastmod>2020-10-05T09:07:45+05:30</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dexterposh.github.io/posts/010-dotnet-pwsh-json/</loc>
     <lastmod>2020-09-25T07:12:33+05:30</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dexterposh.github.io/posts/009-dotnet-pwsh-json/</loc>
     <lastmod>2020-09-16T11:12:33+05:30</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dexterposh.github.io/fixed/</loc>
     <lastmod>2020-07-03T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dexterposh.github.io/categories/powershell/</loc>
     <lastmod>2020-06-29T19:42:59+05:30</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dexterposh.github.io/posts/007-pwsh-class-usecase/</loc>
     <lastmod>2020-06-29T19:42:59+05:30</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dexterposh.github.io/tags/tip/</loc>
     <lastmod>2020-06-29T19:42:59+05:30</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dexterposh.github.io/posts/003-dotnet-sha256-hash/</loc>
     <lastmod>2020-06-05T10:18:40+05:30</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dexterposh.github.io/tags/cryptography/</loc>
     <lastmod>2020-06-05T10:18:40+05:30</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dexterposh.github.io/tags/sha256/</loc>
     <lastmod>2020-06-05T10:18:40+05:30</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dexterposh.github.io/tags/arm/</loc>
     <lastmod>2020-05-26T15:18:35+05:30</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dexterposh.github.io/posts/006-arm-template-loop/</loc>
     <lastmod>2020-05-26T15:18:35+05:30</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dexterposh.github.io/categories/azure/</loc>
     <lastmod>2020-05-26T15:18:35+05:30</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dexterposh.github.io/tags/cloud/</loc>
     <lastmod>2020-05-26T15:18:35+05:30</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dexterposh.github.io/tags/iac/</loc>
     <lastmod>2020-05-26T15:18:35+05:30</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dexterposh.github.io/tags/aks/</loc>
     <lastmod>2020-05-01T12:21:28+05:30</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dexterposh.github.io/posts/005-aks-tip-ip/</loc>
     <lastmod>2020-05-01T12:21:28+05:30</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dexterposh.github.io/tags/api/</loc>
     <lastmod>2020-05-01T12:21:28+05:30</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dexterposh.github.io/tags/ip/</loc>
     <lastmod>2020-05-01T12:21:28+05:30</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dexterposh.github.io/tags/azdo/</loc>
     <lastmod>2020-04-26T09:53:50+05:30</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dexterposh.github.io/posts/004-azdo-tip-job/</loc>
     <lastmod>2020-04-26T09:53:50+05:30</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dexterposh.github.io/tags/jobs/</loc>
     <lastmod>2020-04-26T09:53:50+05:30</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dexterposh.github.io/tags/yaml/</loc>
     <lastmod>2020-04-26T09:53:50+05:30</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dexterposh.github.io/posts/002-azdo-tip-api/</loc>
     <lastmod>2020-04-14T15:06:22+05:30</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dexterposh.github.io/categories/azuredevops/</loc>
     <lastmod>2020-04-14T15:06:22+05:30</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dexterposh.github.io/posts/001-hello-world/</loc>
     <lastmod>2020-04-14T12:20:36+05:30</lastmod>
   </url>
-  
 </urlset>

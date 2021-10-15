@@ -1,20 +1,399 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Azure on System Engineer taking Dev?Ops notes</title>
+    <title>Azure on Engineer taking Dev?Ops notes</title>
     <link>https://dexterposh.github.io/categories/azure/</link>
-    <description>Recent content in Azure on System Engineer taking Dev?Ops notes</description>
+    <description>Recent content in Azure on Engineer taking Dev?Ops notes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 26 May 2020 15:18:35 +0530</lastBuildDate><atom:link href="https://dexterposh.github.io/categories/azure/feed.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 26 May 2020 15:18:35 +0530</lastBuildDate>
+    
+	<atom:link href="https://dexterposh.github.io/categories/azure/feed.xml" rel="self" type="application/rss+xml" />
+    
+    
     <item>
       <title>ARM templates - iterate &amp; deploy resource</title>
       <link>https://dexterposh.github.io/posts/006-arm-template-loop/</link>
       <pubDate>Tue, 26 May 2020 15:18:35 +0530</pubDate>
       
       <guid>https://dexterposh.github.io/posts/006-arm-template-loop/</guid>
-      <description>Background 🧐 I like ARM templates, I use it a lot to deploy Azure cloud resources but as all things it has some pain points associated with it. In this post, let&amp;rsquo;s see how you can iterate over based on certain logic and deploy multiple resources using linked templates.</description>
+      <description>&lt;h2 id=&#34;background-&#34;&gt;Background 🧐&lt;/h2&gt;
+&lt;p&gt;I like ARM templates, I use it a lot to deploy Azure cloud resources but as all things it has some pain points associated with it. In this post, let&amp;rsquo;s see how you can iterate over based on certain logic and deploy multiple resources using linked templates.&lt;/p&gt;
+&lt;p&gt;As it stands out this logic of iterating over and deploying multiple instances of a resource tripped me a lot in the beginning.&lt;/p&gt;
+&lt;h2 id=&#34;walkthrough-&#34;&gt;Walkthrough 🏃&lt;/h2&gt;
+&lt;p&gt;Let&amp;rsquo;s work through the whole process of writing an ARM template which deploys multiple resources.&lt;/p&gt;
+&lt;p&gt;Github Repository - &lt;a href=&#34;https://github.com/DexterPOSH/ArmTemplateLoopExample&#34;&gt;ArmTemplateLoopExample&lt;/a&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;This is a simple post demonstrating looping logic I often use, feel free to sprinkle your own best practices &amp;amp; modifications on top e.g. storing templates in a private Cloud blob container, adding more parameters, names etc.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;scenario&#34;&gt;Scenario&lt;/h3&gt;
+&lt;p&gt;Let&amp;rsquo;s take a scenario of deploying many storage accounts based on the user input.&lt;/p&gt;
+&lt;p&gt;Ideally, if you&amp;rsquo;re in this situation you should write 2 templates and utilize ARM linked templates to deploy them because it becomes too cumbersome to maintain a single ARM template to deploy a resource and loop over user-input and deploy multiple iterations of that resource. Trust me this is coming from experience 😉&lt;/p&gt;
+&lt;p&gt;So, let&amp;rsquo;s start by creating 2 templates, I am going to use GitHub repository here for storing those but you can use a Cloud blob store account as well.&lt;/p&gt;
+&lt;p&gt;Below is how my project directory layout looks like.&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-output&#34; data-lang=&#34;output&#34;&gt;.
+├── azuredeploy.json
+└── linkedTemplate
+   └── storageaccount.json
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;author-linked-template&#34;&gt;Author linked template&lt;/h3&gt;
+&lt;p&gt;First thing to do when you&amp;rsquo;re writing an ARM template is to make sure you understand that component properly, how it works, best practices while using that Azure component etc. Why? you might be wondering because ARM templates is how you deploy your Azure cloud infrastructure and it would be as good as you make your ARM templates, they&amp;rsquo;re called blueprints for your Azure resources for this reason.&lt;/p&gt;
+&lt;p&gt;But at the same time start small and head over to &lt;a href=&#34;https://github.com/Azure/azure-quickstart-templates&#34;&gt;azure-quickstart-templates&lt;/a&gt; repository to get some samples.&lt;/p&gt;
+&lt;p&gt;I found out that the template stored here in this &lt;a href=&#34;https://github.com/Azure/azure-quickstart-templates/blob/master/101-storage-account-create/azuredeploy.json&#34;&gt;101-storage-account-create&lt;/a&gt; example is good enough for me. So, let me copypasta ✍ this and place the content inside my &lt;code&gt;linkedtemplate\storageaccount.json&lt;/code&gt; file.&lt;/p&gt;
+&lt;p&gt;So, we have a starting point which can deploy a single storage account for us, but you would notice on closer inspection that this &lt;code&gt;storageaccount.json&lt;/code&gt; template doesn&amp;rsquo;t take storageAccountName as a parameter but generates it in the variables section.&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s quickly modify it. Changes made:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;add parameter &lt;code&gt;storageAccountName&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;remove variable &lt;code&gt;storageAccountName&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;change &lt;code&gt;[variables(&#39;storageAccountName&#39;)]&lt;/code&gt; references to &lt;code&gt;[parameters(&#39;storageAccountName&#39;)]&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;{
+   &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;$schema&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#&amp;#34;&lt;/span&gt;,
+   &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;contentVersion&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;1.0.0.0&amp;#34;&lt;/span&gt;,
+   &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;parameters&amp;#34;&lt;/span&gt;: {
+     &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;storageAccountName&amp;#34;&lt;/span&gt;: { &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;//&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;added&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;the&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;storageAccountName&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;parameter&lt;/span&gt;
+       &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;type&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;string&amp;#34;&lt;/span&gt;
+     },
+     &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;storageAccountType&amp;#34;&lt;/span&gt;: {
+       &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;type&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;string&amp;#34;&lt;/span&gt;,
+       &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;defaultValue&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Standard_LRS&amp;#34;&lt;/span&gt;,
+       &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;allowedValues&amp;#34;&lt;/span&gt;: [
+         &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Standard_LRS&amp;#34;&lt;/span&gt;,
+         &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Standard_GRS&amp;#34;&lt;/span&gt;,
+         &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Standard_ZRS&amp;#34;&lt;/span&gt;,
+         &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Premium_LRS&amp;#34;&lt;/span&gt;
+       ],
+       &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;metadata&amp;#34;&lt;/span&gt;: {
+         &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;description&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Storage Account type&amp;#34;&lt;/span&gt;
+       }
+     },
+     &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;location&amp;#34;&lt;/span&gt;: {
+       &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;type&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;string&amp;#34;&lt;/span&gt;,
+       &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;defaultValue&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;[resourceGroup().location]&amp;#34;&lt;/span&gt;,
+       &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;metadata&amp;#34;&lt;/span&gt;: {
+         &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;description&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Location for all resources.&amp;#34;&lt;/span&gt;
+       }
+     }
+   },
+   &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;variables&amp;#34;&lt;/span&gt;: {
+     &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;//&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;removed&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;the&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;storageAccountName&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;variable&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;from&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;here&lt;/span&gt;
+   },
+   &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;resources&amp;#34;&lt;/span&gt;: [
+     {
+       &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;type&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Microsoft.Storage/storageAccounts&amp;#34;&lt;/span&gt;,
+       &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;apiVersion&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;2019-04-01&amp;#34;&lt;/span&gt;,
+       &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;name&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;[parameters(&amp;#39;storageAccountName&amp;#39;)]&amp;#34;&lt;/span&gt;,
+       &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;location&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;[parameters(&amp;#39;location&amp;#39;)]&amp;#34;&lt;/span&gt;,
+       &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;sku&amp;#34;&lt;/span&gt;: {
+         &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;name&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;[parameters(&amp;#39;storageAccountType&amp;#39;)]&amp;#34;&lt;/span&gt;
+       },
+       &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;kind&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;StorageV2&amp;#34;&lt;/span&gt;,
+       &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;properties&amp;#34;&lt;/span&gt;: {}
+     }
+   ],
+   &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;outputs&amp;#34;&lt;/span&gt;: {
+     &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;storageAccountName&amp;#34;&lt;/span&gt;: {
+       &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;type&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;string&amp;#34;&lt;/span&gt;,
+       &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;value&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;[parameters(&amp;#39;storageAccountName&amp;#39;)]&amp;#34;&lt;/span&gt;
+     }
+   }
+ }
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;author-the-stitching-logic&#34;&gt;Author the stitching logic&lt;/h3&gt;
+&lt;p&gt;Moving on to the logic of consolidating user input and then looping over and deploying a storage account multiple times.&lt;/p&gt;
+&lt;p&gt;The gist is that we have to do below:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Use variable iteration to create an array of objects based on our &lt;code&gt;numberofStorageAccounts&lt;/code&gt; parameter value&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Use resource iteration later with a linked template deployment and index into the array created above for parameter values.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Don&amp;rsquo;t worry if this is a bit daunting. It was for me the first time.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h4 id=&#34;adding-barebone-template&#34;&gt;Adding barebone template&lt;/h4&gt;
+&lt;p&gt;Let&amp;rsquo;s start by creating a blank ARM template. Open the &lt;code&gt;azuredeploy.json&lt;/code&gt; in VSCode. Key in &lt;code&gt;arm&lt;/code&gt; and it would give you a snippet dropdown, select the first one for targeting a Resource group deployment.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://dexterposh.github.io/static/006/arm_snippets.png&#34; alt=&#34;alt&#34;&gt;&lt;/p&gt;
+&lt;p&gt;So, we get this.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;{
+ &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;$schema&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#&amp;#34;&lt;/span&gt;,
+ &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;contentVersion&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;1.0.0.0&amp;#34;&lt;/span&gt;,
+ &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;parameters&amp;#34;&lt;/span&gt;: {},
+ &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;functions&amp;#34;&lt;/span&gt;: [],
+ &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;variables&amp;#34;&lt;/span&gt;: {},
+ &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;resources&amp;#34;&lt;/span&gt;: [],
+ &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;outputs&amp;#34;&lt;/span&gt;: {}
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h5 id=&#34;add-parameters&#34;&gt;Add parameters&lt;/h5&gt;
+&lt;p&gt;Time to add in some parameters to our &lt;code&gt;azuredeploy.json&lt;/code&gt; which is end-user facing. So you need to take input in this one from the user (which could be yourself as well) and then pass those over to the linkedtemplate.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;storageAccountNamePrefix - prefix for the storage accounts to be deployed. Length 5-10.&lt;/li&gt;
+&lt;li&gt;numberofStorageAccounts - integer representing how many storage accounts to deploy. [Default - 1, Min 1, Max 10.&lt;/li&gt;
+&lt;li&gt;storageAccountType - Type of the storage accounts, predefined allowed values. Default - Standard_GRS.&lt;/li&gt;
+&lt;li&gt;location - location for the storage accounts. Default is RG location.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Below is how the &lt;code&gt;parameters&lt;/code&gt; object looks now.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;parameters&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;:&lt;/span&gt; {
+  &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;storageAccountNamePrefix&amp;#34;&lt;/span&gt;: {
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;type&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;string&amp;#34;&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;minLength&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;5&amp;#34;&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;maxLength&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;10&amp;#34;&lt;/span&gt;
+  },
+  &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;numberofStorageAccounts&amp;#34;&lt;/span&gt;: {
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;type&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;int&amp;#34;&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;defaultValue&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;minValue&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;1&amp;#34;&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;maxValue&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;10&amp;#34;&lt;/span&gt;
+  },
+  &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;storageAccountType&amp;#34;&lt;/span&gt;: {
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;type&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;string&amp;#34;&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;defaultValue&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Standard_GRS&amp;#34;&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;allowedValues&amp;#34;&lt;/span&gt;: [
+      &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Standard_LRS&amp;#34;&lt;/span&gt;,
+      &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Standard_GRS&amp;#34;&lt;/span&gt;,
+      &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Standard_ZRS&amp;#34;&lt;/span&gt;,
+      &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Premium_LRS&amp;#34;&lt;/span&gt;
+    ]
+  },
+  &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;location&amp;#34;&lt;/span&gt;: {
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;type&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;string&amp;#34;&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;defaultValue&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;[resourceGroup().location]&amp;#34;&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;metadata&amp;#34;&lt;/span&gt;: {
+      &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;description&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Location for all resources.&amp;#34;&lt;/span&gt;
+    }
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h5 id=&#34;add-the-variables-iteration-logic&#34;&gt;Add the variables (iteration logic)&lt;/h5&gt;
+&lt;p&gt;I typically like to use variables a lot for transforming the input parameters and then using these variables later in the resources because it makes it easier in future to just modify these variables at once place.&lt;/p&gt;
+&lt;p&gt;Use the concept of &lt;a href=&#34;https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/copy-variables&#34;&gt;variable iteration&lt;/a&gt; in ARM templates.&lt;/p&gt;
+&lt;p&gt;We use the above concept to do the below&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Create a variable named &lt;code&gt;_deployMultipleStorageAccounts&lt;/code&gt; (sort of a convention I follow to name these variables used later in deployment to preceed with &lt;code&gt;_deploy&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;Use the parameter &lt;code&gt;numberofStorageAccounts&lt;/code&gt; to loop over that many times&lt;/li&gt;
+&lt;li&gt;Use the &lt;code&gt;input&lt;/code&gt; property in the copy loop object to generate an object containing properties which will be mapped one to one with the linked template storage.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I prefer one to one mapping between the properties inside the &lt;code&gt;input&lt;/code&gt; in the copy loop to the parameters of the linked template. It makes it easier to index into them and specify them (you&amp;rsquo;ll see later).&lt;/p&gt;
+&lt;p&gt;Below is a gist of what I added in the variables property.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;variables&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;:&lt;/span&gt; {
+  &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;copy&amp;#34;&lt;/span&gt;: [
+    {
+      &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;name&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;_deployMultipleStorageAccounts&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;//&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;variable&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;name&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;used&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;later&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;with&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;resources&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;count&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;[parameters(&amp;#39;numberofStorageAccounts&amp;#39;)]&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;//&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;loop&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;over&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;numberofStorageAccounts&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;time&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;input&amp;#34;&lt;/span&gt;: { &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;//&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;input&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;object&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;con&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;storageAccountType&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;[parameters(&amp;#39;storageAccountType&amp;#39;)]&amp;#34;&lt;/span&gt;,
+        &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;location&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;[parameters(&amp;#39;location&amp;#39;)]&amp;#34;&lt;/span&gt;,
+        &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;storageAccountName&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;[
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;          concat(
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;            parameters(&amp;#39;storageAccountNamePrefix&amp;#39;),
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;            uniqueString(resourceGroup().id),
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;            copyIndex(&amp;#39;_deployMultipleStorageAccounts&amp;#39;)
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;          )
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;        ]&amp;#34;&lt;/span&gt;
+      }
+    }
+  ]
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;In the outputs section we added a &lt;code&gt;variables&lt;/code&gt; property which essentially displays the value for the variable &lt;code&gt;_deployMultipleStorageAccounts&lt;/code&gt;. This can be used later with a trick to see what values go inside this variable.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;outputs&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;:&lt;/span&gt; {
+  &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;variables&amp;#34;&lt;/span&gt;: {
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;type&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;object&amp;#34;&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;value&amp;#34;&lt;/span&gt;: {
+      &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;_deployMultipleStorageAccounts&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;[variables(&amp;#39;_deployMultipleStorageAccounts&amp;#39;)]&amp;#34;&lt;/span&gt;
+    }
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Also, I added a &lt;code&gt;variables&lt;/code&gt; property in the output which is used to display what goes inside this variable once it is run by ARM API.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://dexterposh.github.io/static/006/transformParams.png&#34; alt=&#34;alt&#34;&gt;&lt;/p&gt;
+&lt;p&gt;From a data-view point above creates a variable named &lt;code&gt;_deployMultipleStorageAccounts&lt;/code&gt; which is an array of Json objects.&lt;/p&gt;
+&lt;p&gt;If we assume the &lt;code&gt;parameters(&#39;numberofStorageAccounts&#39;)&lt;/code&gt; is 2, &lt;code&gt;parameters(&#39;storageAccountType&#39;)&lt;/code&gt; is &lt;em&gt;Standard_GRS&lt;/em&gt; and &lt;code&gt;parameters(&#39;location&#39;)&lt;/code&gt; is &lt;em&gt;SouthEastAsia&lt;/em&gt;, then it creates an array like below:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;[
+  {
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;storageAccountName&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;lt;generatedValuebyARM&amp;gt;&amp;#34;&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;storageAccountType&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Standard_GRS&amp;#34;&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;loation&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;SouthEastAsia&amp;#34;&lt;/span&gt;,
+  },
+  {
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;storageAccountName&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;lt;generatedValuebyARM&amp;gt;&amp;#34;&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;storageAccountType&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Standard_GRS&amp;#34;&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;location&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;SouthEastAsia&amp;#34;&lt;/span&gt;,
+  }
+]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;add-the-deployment-resource&#34;&gt;Add the deployment resource&lt;/h4&gt;
+&lt;p&gt;Now, you already know we have the linked template to deploy a single storage account. So, we just need to invoke/call that template multiple times and pass in paramters.&lt;/p&gt;
+&lt;p&gt;This is done by an ARM template technique called as ARM template linked templates. Read about it more &lt;a href=&#34;https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/linked-templates#linked-template&#34;&gt;here&lt;/a&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Follow a &lt;a href=&#34;https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/deployment-tutorial-linked-template?tabs=azure-powershell#create-a-linked-template&#34;&gt;Tutorial&lt;/a&gt; to deploy a linked template, if this is the firs time you&amp;rsquo;re hearing about this.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;In short, within our &lt;code&gt;azuredeploy.json&lt;/code&gt; template we need to use a resource of type &lt;code&gt;Microsoft.Resources/deployments&lt;/code&gt; to link to our &lt;code&gt;storageaccount.json&lt;/code&gt; template and inside this resource we need to use another concept termed as &lt;a href=&#34;https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/copy-resources&#34;&gt;&lt;em&gt;Resource iteration&lt;/em&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s add it.&lt;/p&gt;
+&lt;p&gt;This is how my resources array property looks like.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;resources&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;:&lt;/span&gt; [
+  {
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;type&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Microsoft.Resources/deployments&amp;#34;&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;apiVersion&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;2019-10-01&amp;#34;&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;condition&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;false&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;name&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;[concat(&amp;#39;deploy-linkedStorageTemplate&amp;#39;, copyIndex())]&amp;#34;&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;copy&amp;#34;&lt;/span&gt;: {
+      &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;count&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;[parameters(&amp;#39;numberofStorageAccounts&amp;#39;)]&amp;#34;&lt;/span&gt;,
+      &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;name&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;_loopToDeployStorageAccounts&amp;#34;&lt;/span&gt;,
+      &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;mode&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Parallel&amp;#34;&lt;/span&gt;
+    },
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;properties&amp;#34;&lt;/span&gt;: {
+      &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;mode&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Incremental&amp;#34;&lt;/span&gt;,
+      &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;templateLink&amp;#34;&lt;/span&gt;: {
+        &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;contentVersion&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;1.0.0.0&amp;#34;&lt;/span&gt;,
+        &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;uri&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;https://raw.githubusercontent.com/DexterPOSH/ArmTemplateLoopExample/master/linkedtemplate/storageaccount.json&amp;#34;&lt;/span&gt;
+      },
+      &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;parameters&amp;#34;&lt;/span&gt;: {
+        &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;storageAccountName&amp;#34;&lt;/span&gt;: {
+          &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;value&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;[variables(&amp;#39;_deployMultipleStorageAccounts&amp;#39;)[copyIndex()].storageAccountName]&amp;#34;&lt;/span&gt;
+        },
+        &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;storageAccountType&amp;#34;&lt;/span&gt;: {
+          &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;value&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;[variables(&amp;#39;_deployMultipleStorageAccounts&amp;#39;)[copyIndex()].storageAccountType]&amp;#34;&lt;/span&gt;
+        },
+        &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;location&amp;#34;&lt;/span&gt;: {
+          &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;value&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;[variables(&amp;#39;_deployMultipleStorageAccounts&amp;#39;)[copyIndex()].location]&amp;#34;&lt;/span&gt;
+        }
+      }
+    }
+  }
+]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;I know it&amp;rsquo;s a handful but below is a breakdown of major things it does.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Uses &lt;code&gt;Microsoft.Resources/deployments&lt;/code&gt; resource type to deploy another template.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Note we generate a unique name for the deployment by concating the &lt;code&gt;copyIndex()&lt;/code&gt;
+The &lt;code&gt;condition&lt;/code&gt; property is set to &lt;code&gt;false&lt;/code&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;{
+  &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;type&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Microsoft.Resources/deployments&amp;#34;&lt;/span&gt;,
+  &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;apiVersion&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;2019-10-01&amp;#34;&lt;/span&gt;,
+  &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;condition&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;false&lt;/span&gt;,
+  &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;name&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;[concat(&amp;#39;deploy-linkedStorageTemplate&amp;#39;, copyIndex())]&amp;#34;&lt;/span&gt;
+  &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;//&amp;lt;--&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;skipped&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;below&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;properties&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;--&amp;gt;&lt;/span&gt;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;Uses the &lt;code&gt;uri&lt;/code&gt; of the raw template link for the &lt;code&gt;storageaccount.json&lt;/code&gt; in the GitHub repository.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;templateLink&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;:&lt;/span&gt; {
+  &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;contentVersion&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;1.0.0.0&amp;#34;&lt;/span&gt;,
+  &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;uri&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;https://raw.githubusercontent.com/DexterPOSH/ArmTemplateLoopExample/master/linkedtemplate/storageaccount.json&amp;#34;&lt;/span&gt;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;Uses resource iteration by using &lt;code&gt;copy&lt;/code&gt; property and using the &lt;code&gt;parameters(&#39;numberofStorageAccounts&#39;)&lt;/code&gt; as the value for count, which means it loops over this resource this many times. Also, gives this copy loop a friendly name &lt;code&gt;_loopToDeployStorageAccounts&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;copy&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;:&lt;/span&gt; {
+  &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;count&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;[parameters(&amp;#39;numberofStorageAccounts&amp;#39;)]&amp;#34;&lt;/span&gt;,
+  &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;name&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;_loopToDeployStorageAccounts&amp;#34;&lt;/span&gt;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;Passes on the parameters to this linked template by indexing into the variable &lt;code&gt;_deployMultipleStorageAccounts&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;storageAccountName&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;:&lt;/span&gt; {
+  &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;value&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;[variables(&amp;#39;_deployMultipleStorageAccounts&amp;#39;)[copyIndex()].storageAccountName]&amp;#34;&lt;/span&gt;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;dry-run---verify-variable-iteration-logic&#34;&gt;Dry run - Verify Variable iteration logic&lt;/h4&gt;
+&lt;p&gt;Based on my experience with this approach of looping over, we can most of the time validate what is inside the variable created for looping to verify it will work.&lt;/p&gt;
+&lt;p&gt;Remember the &lt;code&gt;condition&lt;/code&gt; is set to &lt;code&gt;false&lt;/code&gt; for our linked template deployment resource, which means when we submit this ARM template for deployment it won&amp;rsquo;t trigger it but however the &lt;code&gt;azuredeploy.json&lt;/code&gt; will be processed and we will get the output back which contains the &lt;code&gt;variables&lt;/code&gt; property.&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s create an ARM template parameters file, with the new release of the ARM tools VSCode extension, it is natively possible to generate these parameters file. Read more in the release notes &lt;a href=&#34;https://marketplace.visualstudio.com/items?itemName=msazurermtools.azurerm-vscode-tools&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Click on &lt;em&gt;Select Parameter File&amp;hellip;&lt;/em&gt; (at the bottom) &amp;gt; &lt;em&gt;New&lt;/em&gt; &amp;gt; &lt;em&gt;All parameters&lt;/em&gt; &amp;gt; Save it. Open it and fill the values.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://dexterposh.github.io/static/006/generateParam.png&#34; alt=&#34;Generate ARM parameters file&#34;&gt;&lt;/p&gt;
+&lt;p&gt;This is how it looks after adding values.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;{
+  &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;$schema&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#&amp;#34;&lt;/span&gt;,
+  &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;contentVersion&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;1.0.0.0&amp;#34;&lt;/span&gt;,
+  &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;parameters&amp;#34;&lt;/span&gt;: {
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;storageAccountNamePrefix&amp;#34;&lt;/span&gt;: {
+      &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;value&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;azurearm6754&amp;#34;&lt;/span&gt;
+    },
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;numberofStorageAccounts&amp;#34;&lt;/span&gt;: {
+      &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;value&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;
+    },
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;storageAccountType&amp;#34;&lt;/span&gt;: {
+      &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;value&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Standard_GRS&amp;#34;&lt;/span&gt;
+    },
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;location&amp;#34;&lt;/span&gt;: {
+      &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;value&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;southindia&amp;#34;&lt;/span&gt;
+    }
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Deploy it using Az PowerShell module cmdelt&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;$rg =  &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;test_arm_rg&amp;#34;&lt;/span&gt;
+New-AzResourceGroupDeployment -TemplateFile ./azuredeploy.json -TemplateParameterFile ./azuredeploy.parameters.json -ResourceGroupName $rg
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-output&#34; data-lang=&#34;output&#34;&gt;DeploymentName          : azuredeploy
+ResourceGroupName       : test_arm_rg
+ProvisioningState       : Succeeded
+Timestamp               : 06/07/2020 14:24:21
+Mode                    : Incremental
+TemplateLink            :
+Parameters              :
+                          Name                        Type                       Value
+                          ==========================  =========================  ==========
+                          storageAccountNamePrefix    String                     azurearm6754
+                          numberofStorageAccounts     Int                        2
+                          storageAccountType          String                     Standard_GRS
+                          location                    String                     southindia
+
+Outputs                 :
+                          Name             Type                       Value
+                          ===============  =========================  ==========
+                          variables        Object                     {
+                            &amp;quot;_deployMultipleStorageAccounts&amp;quot;: [
+                              {
+                                &amp;quot;storageAccountType&amp;quot;: &amp;quot;Standard_GRS&amp;quot;,
+                                &amp;quot;location&amp;quot;: &amp;quot;southindia&amp;quot;,
+                                &amp;quot;storageAccountName&amp;quot;: &amp;quot;azurearm67543ub5zsu77klvq0&amp;quot;
+                              },
+                              {
+                                &amp;quot;storageAccountType&amp;quot;: &amp;quot;Standard_GRS&amp;quot;,
+                                &amp;quot;location&amp;quot;: &amp;quot;southindia&amp;quot;,
+                                &amp;quot;storageAccountName&amp;quot;: &amp;quot;azurearm67543ub5zsu77klvq1&amp;quot;
+                              }
+                            ]
+                          }
+
+DeploymentDebugLogLevel :
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Look at the outputs section, it clearly lists out the variable we generated and upon which our whole logic of depolying multiple resources existed.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;_deployMultipleStorageAccounts&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;:&lt;/span&gt; [
+  {
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;storageAccountType&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Standard_GRS&amp;#34;&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;location&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;southindia&amp;#34;&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;storageAccountName&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;azurearm67543ub5zsu77klvq0&amp;#34;&lt;/span&gt;
+  },
+  {
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;storageAccountType&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Standard_GRS&amp;#34;&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;location&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;southindia&amp;#34;&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;storageAccountName&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;azurearm67543ub5zsu77klvq1&amp;#34;&lt;/span&gt;
+  }
+]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;test-the-solution&#34;&gt;Test the solution&lt;/h3&gt;
+&lt;p&gt;Once the variable iteration logic is verified, it is time to deploy the tempalte to see that it actually creates.&lt;/p&gt;
+&lt;p&gt;Wait! before you jump into testing it you need to make a minor change. Can you guess what? Set &lt;code&gt;condition&lt;/code&gt; to &lt;code&gt;true&lt;/code&gt; inside the linked template deployment resource.&lt;/p&gt;
+&lt;p&gt;Below is a snippet of where that change goes inside the template.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;resources&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;:&lt;/span&gt; [
+  {
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;type&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Microsoft.Resources/deployments&amp;#34;&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;apiVersion&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;2019-10-01&amp;#34;&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;condition&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;//&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;set&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;this&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;to&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;to&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;actually&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;deploy&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;the&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;linked&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;template&lt;/span&gt;,
+    &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;//&amp;lt;--&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;skipped&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;below&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;properties&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;--&amp;gt;&lt;/span&gt;
+  }
+]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Deploy again, this time it should deploy multiple storage accounts.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;$rg =  &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;test_arm_rg&amp;#34;&lt;/span&gt;
+New-AzResourceGroupDeployment -TemplateFile ./azuredeploy.json -TemplateParameterFile ./azuredeploy.parameters.json -ResourceGroupName $rg
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;tldr-solution-&#34;&gt;TLDR; Solution 🗞&lt;/h2&gt;
+&lt;p&gt;Head over to this GitHub repository to see the ARM templates.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/DexterPOSH/ArmTemplateLoopExample&#34;&gt;ArmTemplateLoopExample&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&#34;references-&#34;&gt;References 📚&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://marketplace.visualstudio.com/items?itemName=msazurermtools.azurerm-vscode-tools&#34;&gt;Azure Resource Manager (ARM) Tools VSCode extension&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/Azure/azure-quickstart-templates&#34;&gt;Azure QuickStart Templates&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/linked-templates#linked-template&#34;&gt;Linked Templates&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/deployment-tutorial-linked-template?tabs=azure-powershell#create-a-linked-template&#34;&gt;Deploy a linked template tutorial&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/copy-resources&#34;&gt;Resource-Ieration&lt;/a&gt;&lt;/p&gt;
+</description> 
     </item>
     
   </channel>
 </rss>
+

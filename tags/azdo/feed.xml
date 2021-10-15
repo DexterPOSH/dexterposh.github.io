@@ -1,20 +1,122 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>azdo on System Engineer taking Dev?Ops notes</title>
+    <title>azdo on Engineer taking Dev?Ops notes</title>
     <link>https://dexterposh.github.io/tags/azdo/</link>
-    <description>Recent content in azdo on System Engineer taking Dev?Ops notes</description>
+    <description>Recent content in azdo on Engineer taking Dev?Ops notes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 26 Apr 2020 09:53:50 +0530</lastBuildDate><atom:link href="https://dexterposh.github.io/tags/azdo/feed.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 26 Apr 2020 09:53:50 +0530</lastBuildDate>
+    
+	<atom:link href="https://dexterposh.github.io/tags/azdo/feed.xml" rel="self" type="application/rss+xml" />
+    
+    
     <item>
       <title>Azure DevOps Tip - Job re-use within a Stage</title>
       <link>https://dexterposh.github.io/posts/004-azdo-tip-job/</link>
       <pubDate>Sun, 26 Apr 2020 09:53:50 +0530</pubDate>
       
       <guid>https://dexterposh.github.io/posts/004-azdo-tip-job/</guid>
-      <description>Background Azure DevOps introduced multi-stage yaml pipelines a while ago. It allows us to define our entire Build/Release landscape inside these yaml definitions.
-To re-iterate of some terms used in this post:</description>
+      <description>&lt;h2 id=&#34;background&#34;&gt;Background&lt;/h2&gt;
+&lt;p&gt;Azure DevOps introduced multi-stage yaml pipelines a while ago. It allows us
+to define our entire Build/Release landscape inside these yaml definitions.&lt;/p&gt;
+&lt;p&gt;To re-iterate of some terms used in this post:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;A pipeline comprises one or more stages&lt;/li&gt;
+&lt;li&gt;Stage is collection of jobs&lt;/li&gt;
+&lt;li&gt;Job runs on an agent/ agentless&lt;/li&gt;
+&lt;li&gt;Job contains steps (task/script)&lt;/li&gt;
+&lt;li&gt;Steps are the atomic unit to perform a task&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;challenge&#34;&gt;Challenge&lt;/h2&gt;
+&lt;p&gt;Recently, working our multi-stage yaml pipelines, we hit an interesting
+behavior with our job template re-use.&lt;/p&gt;
+&lt;p&gt;We had quite few common steps we require to take in each stage (multiple times)
+to hit an external API. So, to re-use we extracted them out as a job
+&lt;a href=&#34;https://docs.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=azure-devops&#34;&gt;template&lt;/a&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;jobtemplateyml&#34;&gt;jobtemplate.yml&lt;/h3&gt;
+&lt;p&gt;For this post, creating a sample job and taking an
+&lt;a href=&#34;https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/utility/delay?view=azure-devops&#34;&gt;agentless delay task&lt;/a&gt; as an example but this job template can include
+series of steps.&lt;/p&gt;
+&lt;p&gt;Below is my extracted out job template definition (indues a delay) which I want to re-use within stages in my main &lt;strong&gt;azure-pipelines.yml&lt;/strong&gt; pipeline definition later.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;parameters&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;windows&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;jobs&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;job&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;commonJob&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;displayName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Common Job&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;pool&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;server&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;steps&lt;/span&gt;:
+    - &lt;span style=&#34;color:#f92672&#34;&gt;task&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Delay@1&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;displayName&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Delay by 1 minutes for ${{ parameters.name }}&amp;#39;&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;inputs&lt;/span&gt;:
+        &lt;span style=&#34;color:#f92672&#34;&gt;delayForMinutes&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;azure-pipelinesyml&#34;&gt;azure-pipelines.yml&lt;/h3&gt;
+&lt;p&gt;Now, I want to call my Job template from above inside two stages Build &amp;amp; Deploy
+in the multi-stage yaml pipeline as below.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;stages&lt;/span&gt;:
+- &lt;span style=&#34;color:#f92672&#34;&gt;stage&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Build&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;jobs&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;template&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;./jobtemplate.yml&lt;/span&gt;
+  - &lt;span style=&#34;color:#f92672&#34;&gt;job&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Build1&lt;/span&gt;
+
+- &lt;span style=&#34;color:#f92672&#34;&gt;stage&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Deploy&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;jobs&lt;/span&gt;:
+    - &lt;span style=&#34;color:#f92672&#34;&gt;template&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;./jobtemplate.yml&lt;/span&gt;
+    - &lt;span style=&#34;color:#f92672&#34;&gt;job&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Deploy1&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Kick off a build for this and you would see it in the AzDO portal, that it works
+out well.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://dexterposh.github.io/static/004/jobWithinDiffStages.png&#34; alt=&#34;Same Job template used with diffn stages&#34;&gt;&lt;/p&gt;
+&lt;p&gt;But, if I try to use the same Job template multiple times within the same stage
+that is when things get interesting. Let&amp;rsquo;s modify our &lt;strong&gt;azure-pipelines.yml&lt;/strong&gt; definition now.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;stages&lt;/span&gt;:
+- &lt;span style=&#34;color:#f92672&#34;&gt;stage&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Build&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;jobs&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;template&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;./jobtemplate.yml&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;parameters&lt;/span&gt;:
+        &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Deepak&lt;/span&gt;
+  - &lt;span style=&#34;color:#f92672&#34;&gt;template&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;./jobtemplate.yml&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;parameters&lt;/span&gt;:
+        &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Dhami&lt;/span&gt;
+  - &lt;span style=&#34;color:#f92672&#34;&gt;job&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Build1&lt;/span&gt;
+
+- &lt;span style=&#34;color:#f92672&#34;&gt;stage&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Deploy&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;jobs&lt;/span&gt;:
+    - &lt;span style=&#34;color:#f92672&#34;&gt;template&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;./jobtemplate.yml&lt;/span&gt;
+    - &lt;span style=&#34;color:#f92672&#34;&gt;job&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Deploy1&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Try running this new modified pipeline and you would be greeted with the below
+in the portal.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://dexterposh.github.io/static/004/nameCollision.png&#34; alt=&#34;Job name not unique&#34;&gt;&lt;/p&gt;
+&lt;p&gt;This is quite obvious but the job names in a stage should be unique.&lt;/p&gt;
+&lt;h2 id=&#34;solution&#34;&gt;Solution&lt;/h2&gt;
+&lt;p&gt;To get to a solution we looked at generating a unique name for our jobs but
+it turns out there is a very simple solution to this problem.&lt;/p&gt;
+&lt;p&gt;One can remove the job identifier in the job template completely while
+extracting out jobs to re-use.&lt;/p&gt;
+&lt;p&gt;What this means is we had to modify our Job templates like below:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;parameters&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;windows&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;jobs&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;job&lt;/span&gt;: &lt;span style=&#34;color:#75715e&#34;&gt;# Identifier here is removed&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;displayName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Common Job&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;pool&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;server&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;steps&lt;/span&gt;:
+    - &lt;span style=&#34;color:#f92672&#34;&gt;task&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Delay@1&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;displayName&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Delay by 1 minutes for ${{ parameters.name }}&amp;#39;&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;inputs&lt;/span&gt;:
+        &lt;span style=&#34;color:#f92672&#34;&gt;delayForMinutes&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Now, it works.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://dexterposh.github.io/static/004/jobReuse.png&#34; alt=&#34;Job re-use within same stage&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;As a general practice, when I start extracting out steps as independent job
+templates I tend to not populate the Job identifier if it&amp;rsquo;s scope is to be
+re-used multiple times in the same stage.&lt;/p&gt;
+&lt;p&gt;But if there is a job which you want to ensure that it is allowed to run only
+once, you could stick with populating the field.&lt;/p&gt;
+&lt;p&gt;So, as every engineer building solution says:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;It depends on the use-case&lt;/p&gt;
+&lt;/blockquote&gt;
+</description> 
     </item>
     
     <item>
@@ -23,9 +125,88 @@ To re-iterate of some terms used in this post:</description>
       <pubDate>Tue, 14 Apr 2020 15:06:22 +0530</pubDate>
       
       <guid>https://dexterposh.github.io/posts/002-azdo-tip-api/</guid>
-      <description>Problem Often working with Azure DevOps, I hit a wall trying to automate some tasks but there are no REST APIs made public yet.
-It was one of those task of automating creation of Environments in multi-stage YAML based pipelines in AzDO.</description>
+      <description>&lt;h2 id=&#34;problem&#34;&gt;Problem&lt;/h2&gt;
+&lt;p&gt;Often working with Azure DevOps, I hit a wall trying to automate some tasks but
+there are no REST APIs made public yet.&lt;/p&gt;
+&lt;p&gt;It was one of those task of automating creation of Environments in multi-stage
+YAML based pipelines in AzDO.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://dexterposh.github.io/static/002/env.png&#34; alt=&#34;Azure DevOps environments&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Quick research reveals that this has been requested in &lt;a href=&#34;https://developercommunity.visualstudio.com/content/problem/820737/rest-apis-for-environments-and-its-resources-multi.html&#34;&gt;uservoice&lt;/a&gt; (please upvote).
+Let&amp;rsquo;s see one of the very simple ways to discover some of these APIs.&lt;/p&gt;
+&lt;h2 id=&#34;developers-tools-to-rescue&#34;&gt;Developers Tools to rescue&lt;/h2&gt;
+&lt;p&gt;Using your browser&amp;rsquo;s developers tools you can actually inspect the HTTP requests
+being made while performing an action in the web portal.&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s do this.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://dexterposh.github.io/static/002/devnetwork.png&#34; alt=&#34;Developer tools&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s click on the &amp;ldquo;Create Environment&amp;rdquo; button, fill out some dummy values,
+hit create and keep an eye on the network tab in the developer tools.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://dexterposh.github.io/static/002/envcreatenetwork.png&#34; alt=&#34;Create env watch network&#34;&gt;&lt;/p&gt;
+&lt;p&gt;We see some activity, it might take you some time to walk through what happened but in this case the top activity named &amp;ldquo;environments&amp;rdquo; has the required details.&lt;/p&gt;
+&lt;p&gt;See below and note the URL &amp;amp; method used:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://dexterposh.github.io/static/002/analyzerequest.png&#34; alt=&#34;Analyze request sent&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Also, make note of the Json request in the payload.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://dexterposh.github.io/static/002/requestpayload.png&#34; alt=&#34;Request payload&#34;&gt;&lt;/p&gt;
+&lt;p&gt;That&amp;rsquo;s mostly it, fire up postman/PowerShell to make the API call to test this.&lt;/p&gt;
+&lt;h2 id=&#34;invoke-restmethod-in-pwsh&#34;&gt;Invoke-RestMethod in Pwsh&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://docs.microsoft.com/en-us/azure/devops/organizations/accounts/use-personal-access-tokens-to-authenticate?view=azure-devops&amp;amp;tabs=preview-page&#34;&gt;Generate a Personal Access Token&lt;/a&gt; in AzDO, typically start with a short lived PAT token with full access and then nail down on the specific permissions you need.&lt;/p&gt;
+&lt;p&gt;Below is the code snippet, I used with AzDO to hit the REST API endpoint:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;$url = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;https://dev.azure.com/ddhami/BITPro.AzDeploy/_apis/distributedtask/environments&amp;#39;&lt;/span&gt;
+$cred = Get-Credential -UserName &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;vsts&amp;#39;&lt;/span&gt; -Message &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Enter AzDO Personal Access Token with privs to create env&amp;#39;&lt;/span&gt;
+$encodedValue = &lt;span style=&#34;color:#66d9ef&#34;&gt;[Convert]&lt;/span&gt;::ToBase64String(
+            &lt;span style=&#34;color:#66d9ef&#34;&gt;[Text.Encoding]&lt;/span&gt;::ASCII.GetBytes(
+                (&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;{0}:{1}&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;-f&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;&amp;#39;&lt;/span&gt;, $cred.GetNetworkCredential().Password)
+            )
+        )
+
+$body = @{
+  name = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;test-pwsh-env&amp;#39;&lt;/span&gt;;
+  description = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;test environment from APR&amp;#39;&lt;/span&gt;
+} | ConvertTo-Json
+$headers = @{
+  Accept = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;application/json;&amp;#39;&lt;/span&gt;;
+  Authorization = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Basic {0}&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;-f&lt;/span&gt; $encodedValue
+}
+
+Invoke-RestMethod -Method POST -Uri $url -Body $body -Headers $headers -ContentType &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;application/json&amp;#39;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;But when I execute the above code, it gives me an error.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://dexterposh.github.io/static/002/pwsherror.png&#34; alt=&#34;Error thrown&#34;&gt;&lt;/p&gt;
+&lt;p&gt;The error thrown is below.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;{
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;$id&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;1&amp;#34;&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;innerException&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;null&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;message&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;No api-version was supplied for the \&amp;#34;POST\&amp;#34; request. The version must be supplied either as part of the Accept header (e.g. \&amp;#34;application/json; api-version=1.0\&amp;#34;) or as a query parameter (e.g. \&amp;#34;?api-version=1.0\&amp;#34;).&amp;#34;&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;typeName&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Microsoft.VisualStudio.Services.WebApi.VssVersionNotSpecifiedException, Microsoft.VisualStudio.Services.WebApi&amp;#34;&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;typeKey&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;VssVersionNotSpecifiedException&amp;#34;&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;errorCode&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;eventId&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;3000&lt;/span&gt;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Read the error message, it explains that the api-version is missing. Also, looking back at the capture and see where the api-version was specified.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://dexterposh.github.io/static/002/apiversion.png&#34; alt=&#34;API Version in header&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s make the same change in our code snippet to include API version in the
+header.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;$url = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;https://dev.azure.com/ddhami/BITPro.AzDeploy/_apis/distributedtask/environments&amp;#39;&lt;/span&gt;
+$cred = Get-Credential -UserName &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;vsts&amp;#39;&lt;/span&gt; -Message &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Enter AzDO Personal Access Token with privs to create env&amp;#39;&lt;/span&gt;
+$encodedValue = &lt;span style=&#34;color:#66d9ef&#34;&gt;[Convert]&lt;/span&gt;::ToBase64String(
+            &lt;span style=&#34;color:#66d9ef&#34;&gt;[Text.Encoding]&lt;/span&gt;::ASCII.GetBytes(
+                (&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;{0}:{1}&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;-f&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;&amp;#39;&lt;/span&gt;, $cred.GetNetworkCredential().Password)
+            )
+        )
+
+$body = @{
+  name = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;test-pwsh-env&amp;#39;&lt;/span&gt;;
+  description = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;test environment from APR&amp;#39;&lt;/span&gt;
+} | ConvertTo-Json
+$headers = @{
+&lt;span style=&#34;display:block;width:100%;background-color:#3c3d38&#34;&gt;  Accept = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;application/json;api-version=5.0-preview.1&amp;#39;&lt;/span&gt;;
+&lt;/span&gt;  Authorization = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Basic {0}&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;-f&lt;/span&gt; $encodedValue
+}
+
+Invoke-RestMethod -Method POST -Uri $url -Body $body -Headers $headers -ContentType = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;application/json&amp;#39;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Here I go, this finally works and using the similar API endpoint I can fetch the environments as well (GET request).&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://dexterposh.github.io/static/002/envsuccess.png&#34; alt=&#34;Env created success&#34;&gt;&lt;/p&gt;
+</description> 
     </item>
     
   </channel>
 </rss>
+

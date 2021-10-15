@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    
+    
+
+
+    <head>
+    <link href="https://gmpg.org/xfn/11" rel="profile">
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta http-equiv="Cache-Control" content="public" />
+<!-- Enable responsiveness on mobile devices -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<meta name="generator" content="Hugo 0.88.1" />
+
+    
+    
+    
+
+<title>Kubernetes API Terms • Engineer taking Dev?Ops notes</title>
+
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Kubernetes API Terms"/>
+<meta name="twitter:description" content="Overview My notes on the Kubernetes API terminology.
+API-Server The K8s core component api-server is at the heart of the interactions made by Client and other K8s components. It is the only component that can interact with the the etcd (key-value) store."/>
+
+<meta property="og:title" content="Kubernetes API Terms" />
+<meta property="og:description" content="Overview My notes on the Kubernetes API terminology.
+API-Server The K8s core component api-server is at the heart of the interactions made by Client and other K8s components. It is the only component that can interact with the the etcd (key-value) store." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://dexterposh.github.io/posts/012-k8s-api-terms/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-10-15T12:23:30+05:30" />
+<meta property="article:modified_time" content="2021-10-15T12:23:30+05:30" /><meta property="og:site_name" content="DexterPOSH" />
+
+
+
+    
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/scss/hyde-hyde.3081c4981fb69a2783dd36ecfdd0e6ba7a158d4cbfdd290ebce8f78ba0469fc6.css" integrity="sha256-MIHEmB&#43;2mieD3Tbs/dDmunoVjUy/3SkOvOj3i6BGn8Y=">
+
+
+<link rel="stylesheet" href="/scss/print.2744dcbf8a0b2e74f8a50e4b34e5f441be7cf93cc7de27029121c6a09f9e77bc.css" integrity="sha256-J0Tcv4oLLnT4pQ5LNOX0Qb58&#43;TzH3icCkSHGoJ&#43;ed7w=" media="print">
+
+
+
+
+<link rel="stylesheet" href="/scss/hugo-toc.0873834b0f2e9fdc9e1d0301e8ebce21fc10383882a41e9373f29b90e85a9987.css" integrity="sha256-CHODSw8un9yeHQMB6OvOIfwQODiCpB6Tc/KbkOhamYc=">
+
+
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <!-- Icons -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+    <link rel="shortcut icon" href="/favicon.png">
+    
+    
+
+</head>
+
+
+    <body class=" ">
+    
+<div class="sidebar">
+  <div class="container ">
+    <div class="sidebar-about">
+      <span class="site__title">
+        <a href="https://dexterposh.github.io/">Engineer taking Dev?Ops notes</a>
+      </span>
+      
+        
+        
+        
+        <div class="author-image">
+          <img src="https://dexterposh.github.io/avatar.jpg" alt="Author Image" class="img--circle img--headshot element--center">
+        </div>
+        
+      
+      
+      <p class="site__description">
+         Cloud, Containers &amp; Code. 
+      </p>
+    </div>
+    <div class="collapsible-menu">
+      <input type="checkbox" id="menuToggle">
+      <label for="menuToggle">Engineer taking Dev?Ops notes</label>
+      <div class="menu-content">
+        <div>
+	<ul class="sidebar-nav">
+		 
+		 
+			 
+				<li>
+					<a href="/about/">
+						<span>About</span>
+					</a>
+				</li>
+			 
+		 
+			 
+				<li>
+					<a href="/subscribe/">
+						<span>Subscribe</span>
+					</a>
+				</li>
+			 
+		 
+			 
+				<li>
+					<a href="/posts/">
+						<span>Posts</span>
+					</a>
+				</li>
+			 
+		
+	</ul>
+</div>
+
+        <section class="social">
+	
+	<a href="https://twitter.com/dexterposh" rel="me"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a>
+	
+	
+	
+	<a href="https://github.com/dexterposh" rel="me"><i class="fab fa-github fa-lg" aria-hidden="true"></i></a>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+</section>
+
+      </div>
+    </div>
+    
+
+
+  </div>
+</div>
+
+        <div class="content container">
+            
+    
+<article>
+  <header>
+    <h1>Kubernetes API Terms</h1>
+    
+    
+<div class="post__meta">
+    
+    
+      <i class="fas fa-calendar-alt"></i> Oct 15, 2021
+    
+    
+    
+      
+      
+          in
+          
+          
+              <a class="badge badge-category" href="/categories/kubernetes">KUBERNETES</a>
+              
+          
+      
+    
+    
+    
+      
+      
+          <br/>
+           <i class="fas fa-tags"></i>
+          
+          <a class="badge badge-tag" href="/tags/k8s">k8s</a>
+           
+      
+          <a class="badge badge-tag" href="/tags/devops">devops</a>
+           
+      
+          <a class="badge badge-tag" href="/tags/kubernetesapi">kubernetesapi</a>
+          
+      
+    
+    
+    <br/>
+    <i class="fas fa-clock"></i> 3 min read
+</div>
+
+
+  </header>
+  
+  
+  
+    <div class="toc-wrapper">
+      <input type="checkbox" id="tocToggle">
+      <label for="tocToggle">Table of Content</label>
+      
+          <nav id="TableOfContents">
+  <ul>
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#api-server">API-Server</a>
+      <ul>
+        <li><a href="#api-terminology">API terminology</a></li>
+        <li><a href="#points-to-note">Points to note</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+      
+    </div>
+  
+  
+  <div class="post">
+    <h2 id="overview">Overview</h2>
+<p>My notes on the Kubernetes API terminology.</p>
+<h2 id="api-server">API-Server</h2>
+<p>The K8s core component api-server is at the heart of the interactions made by Client and other K8s components.
+It is the only component that can interact with the the etcd (key-value) store.</p>
+<p>Reponsibilities:</p>
+<ul>
+<li>Serve the RESTful HTTP API
+<ul>
+<li>Reading state - fetch single object, list of objects and stream changes (via events)</li>
+<li>Modify state - Create, Update &amp; Delete objects</li>
+</ul>
+</li>
+<li>Proxy cluster components e.g. Dashboard, kubectl exec sessions etc.</li>
+</ul>
+<p>API server HTTP interface handles HTTP requests to query and manipulate K8s resources using the standard HTTP verbs:</p>
+<ul>
+<li>HTTP GET - retrieve data with a specific resource or collection or list of resources</li>
+<li>HTTP POST - create a resource</li>
+<li>HTTP PUT - Updating an existing resource</li>
+<li>HTTP PATCH - Partial updates to resources</li>
+<li>HTTP DELETE - Destroy a resource (non-recoverable manner)</li>
+</ul>
+<p>Above means that when we use a client like Kubectl to interact with the API-Server it is actually issuing
+HTTP requests against a certain endpoint.</p>
+<h3 id="api-terminology">API terminology</h3>
+<p>Below are some of the most common terms thrown around when referring to the REST HTTP API.</p>
+<h4 id="kind">Kind</h4>
+<p>To simply put this is the data type of the underlying object.</p>
+<p>Broadly there are 3 categories of types:</p>
+<ul>
+<li>Objects - this category represents individual object types like pod, deployment etc.</li>
+<li>List - this data type is basically a collection of objects defined above.</li>
+<li>Special kind of types - this collections refers to types which define action on objects or non-persistent entities.</li>
+</ul>
+<p>Note - In K8s the <code>kind</code> directly corresponds with a Golang type.</p>
+<h4 id="api-group">API Group</h4>
+<p>When logically related kind(s) are grouped together it is referred to as API group.
+For example - Kind <code>Job</code> or <code>ScheduledJob</code> are placed under the Batch API group.</p>
+<h4 id="version">Version</h4>
+<p>Each API group can exist in multiple version e.g. an API group first appears as v1alpha1 and is then promoted to v1beta1 and finally graduates to v1.</p>
+<p>K8s supports multiple API versions for making it easy to extend, these are served under different API paths e.g. /api/v1 or /apis/extensions/v1beta1.</p>
+<p>Different API verions imply diff level of stability and support:</p>
+<ul>
+<li>Alpha level (e.g. v1alpha1) - disabled by default, support for a feature may be dropped at any time, use only in short lived testing clusters.</li>
+<li>Beta level (e.g. v2beta3) enabled by default, code well tested. However object semantics might get a breaking change in next release.</li>
+<li>Stable (e.g. v1) will appear in software for many subsequent versions.</li>
+</ul>
+<h4 id="resource">Resource</h4>
+<p>This is usually a plural word and uniquely identifies the HTTP endpoint exposing CRUD semantics for an object type e.g. /pods, /pods/busybox. Common path patterns are:</p>
+<ul>
+<li>The root e.g. /pods which lists all the instances of that type</li>
+<li>Individual named resources e.g /pods/busybox</li>
+</ul>
+<blockquote>
+<p>Resources correspond to HTTP endpoint paths</p>
+</blockquote>
+<blockquote>
+<p>Kinds are the type of objects returned and recieved by these endpoints, which are then persisted into the datastore.</p>
+</blockquote>
+<h3 id="points-to-note">Points to note</h3>
+<ul>
+<li>Resources are always part of an API group and version, also referred to as GroupVersionResource (GVR)</li>
+<li>GVR basically uniquely defines an HTTP endpoint path</li>
+<li>Each kind also is part of an API group and versio, referred to as GroupVersionKind (GVK)</li>
+<li>Relation between GVK &amp; GVR is - GVKs are served under the HTTP Path identified by GVR.</li>
+<li>Above process of mapping GVK to GVR is also termed as REST Mapping in the K8s SDK.</li>
+</ul>
+
+  </div>
+  
+
+<div class="navigation navigation-single">
+    
+    <a href="/posts/013-az-vms-resource-graph/" class="navigation-prev">
+      <i aria-hidden="true" class="fa fa-chevron-left"></i>
+      <span class="navigation-tittle">Azure Vms Resource Graph Queries</span>
+    </a>
+    
+    
+</div>
+
+
+  
+
+  
+    
+
+
+</article>
+
+
+        </div>
+        
+    
+
+  
+  
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-165270256-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+<script defer src="https://use.fontawesome.com/releases/v5.11.2/js/all.js" integrity="sha384-b3ua1l97aVGAPEIe48b4TC60WUQbQaGi2jqAWM90y0OZXZeyaTCWtBTKtjW2GXG1" crossorigin="anonymous"></script>
+
+
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+        
+            
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/languages/powershell.min.js"></script>
+            
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/languages/bash.min.js"></script>
+            
+        
+    <script type="text/javascript">
+        
+        hljs.configure({languages: ["powershell, bash"]});
+        
+        hljs.initHighlightingOnLoad();
+    </script>
+    
+
+
+
+
+
+    
+
+
+
+    </body>
+</html>
